@@ -1,0 +1,239 @@
+/* ============================================================
+   1. CONFIGURAÇÕES GERAIS E LAYOUT A4
+   ============================================================ */
+:root {
+    --bg-gray: #f4f4f4;
+    --text-color: #333;
+    --border-dark: #000;
+}
+
+body {
+    background-color: var(--bg-gray);
+    font-family: "Times New Roman", Times, serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.a4-page {
+    background: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+/* Cabeçalho e Títulos */
+.document-header {
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.3;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+.sub-header { margin-top: 5px; }
+
+.title-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title-section h1 { font-size: 14px; margin: 0; }
+.title-section h2 { font-size: 13px; margin: 5px 0; }
+
+h3 { font-size: 12px; margin-bottom: 5px; }
+h4 { font-size: 11px; margin: 10px 0 5px 0; font-weight: bold; }
+
+.form-section { margin-top: 30px; }
+
+/* ============================================================
+   2. SISTEMA DE GRIDS E CÉLULAS (Seções 1 e 2)
+   ============================================================ */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    border: 1px solid var(--border-dark);
+}
+
+.cell {
+    border: 0.5px solid var(--border-dark);
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cell label {
+    font-size: 8px;
+    font-weight: bold;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.cell input {
+    border: none;
+    font-size: 11px;
+    outline: none;
+    padding: 2px 0;
+    background: transparent;
+}
+
+/* Classes de Colunas (12 Colunas) */
+.col-1 { grid-column: span 1; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-6 { grid-column: span 6; }
+.col-8 { grid-column: span 8; }
+.col-9 { grid-column: span 9; }
+.col-12 { grid-column: span 12; }
+
+/* Auxiliares */
+.center-text { text-align: center; text-transform: uppercase; }
+.form-grid > div { margin: -0.25px; }
+
+/* Checkboxes */
+.checkbox-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 5px 0;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    gap: 4px;
+}
+
+/* ============================================================
+   3. TABELAS (Dinâmicas e Estáticas)
+   ============================================================ */
+.dynamic-table, .static-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 10px;
+}
+
+.dynamic-table th, .dynamic-table td, 
+.static-table th, .static-table td {
+    border: 0.5px solid var(--border-dark);
+    text-align: center;
+    padding: 3px;
+}
+
+.dynamic-table th, .static-table th {
+    background-color: #f2f2f2;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.dynamic-table input, .static-table input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 10px;
+    background: transparent;
+    text-align: center;
+}
+
+/* AJUSTE PARA TEXTO LONGO (O que resolve o corte no PDF) */
+textarea.auto-grow {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10px;
+    resize: none;
+    overflow: hidden;
+    background: transparent;
+    display: block;
+    min-height: 20px;
+    line-height: 1.2;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   4. ORÇAMENTO (Seção 3)
+   ============================================================ */
+.budget-grid {
+    border: 1px solid var(--border-dark);
+    display: flex;
+    flex-direction: column;
+}
+
+.budget-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0.5px solid var(--border-dark);
+    padding: 5px 10px;
+}
+
+.budget-row .label { font-size: 11px; }
+.total-row { background-color: #f9f9f9; font-weight: bold; }
+
+.value-input {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    width: 200px;
+}
+
+.value-input input {
+    border: none;
+    outline: none;
+    text-align: right;
+    width: 100%;
+    font-weight: bold;
+}
+
+/* ============================================================
+   5. ASSINATURA E DECLARAÇÃO (Seção 6)
+   ============================================================ */
+.declaration-box { border: 1px solid var(--border-dark); padding: 12px; }
+.declaration-box p { font-size: 10px; text-align: justify; margin: 0; }
+
+.signature-container {
+    border: 1px solid var(--border-dark);
+    border-top: none;
+    padding: 30px 15px 20px 15px;
+}
+
+.sig-left { text-align: center; margin-bottom: 40px; }
+.sig-row { display: flex; justify-content: space-between; align-items: flex-end; }
+.sig-field { width: 45%; display: flex; flex-direction: column; }
+.sig-field input { border: none; border-bottom: 0.5px solid #000; text-align: center; outline: none; }
+.sig-name { text-transform: uppercase; font-weight: bold; }
+
+/* ============================================================
+   6. INTERFACE E IMPRESSÃO (BOTOES E PDF)
+   ============================================================ */
+.export-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+.btn-pdf {
+    background-color: #28a745; color: white; border: none;
+    padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;
+}
+
+#add-row-btn { background-color: #003366; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
+.btn-remove { background-color: #cc0000; color: white; border: none; cursor: pointer; padding: 2px 6px; }
+
+/* REGRAS DE IMPRESSÃO */
+@media print {
+    .no-print, #add-row-btn, #add-despesa-btn, .btn-remove, .export-container { display: none !important; }
+    body { background: white; padding: 0; margin: 0; }
+    .a4-page { box-shadow: none; margin: 0; width: 100%; padding: 10mm; }
+    textarea.auto-grow { height: auto !important; }
+    .form-section { page-break-inside: avoid; }
+}
+
+@media (max-width: 850px) { body { justify-content: flex-start; } }

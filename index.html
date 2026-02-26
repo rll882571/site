@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Trabalho - FDID</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="scripts/script.js"></script>
+</head>
+<body>
+    <div class="export-container no-print">
+    <button onclick="window.print()" class="btn-pdf">
+        📄 Gerar PDF do Plano de Trabalho
+    </button>
+</div>
+
+    <div class="a4-page">
+        <header class="document-header">
+            <p>MINISTÉRIO PÚBLICO DO ESTADO DO CEARÁ</p>
+            <p>FUNDO DE DEFESA DOS DIREITOS DIFUSOS</p>
+            <p>CONSELHO ESTADUAL GESTOR</p>
+            <p class="sub-header">CEG/FDID</p>
+        </header>
+
+        <section class="title-section">
+            <h1>ANEXO 2</h1>
+            <h2>PLANO DE TRABALHO DO PROJETO</h2>
+        </section>
+
+        <section class="form-section">
+            <h3>1- SOBRE A ENTIDADE PROPONENTE</h3>
+            
+            <div class="form-grid">
+                <div class="cell col-8">
+                    <label>Órgão/ Entidade Proponente</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-4">
+                    <label>CNPJ</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-12">
+                    <label>Endereço</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-3">
+                    <label>Cidade</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-1">
+                    <label>UF</label>
+                    <input type="text" maxlength="2" class="center-text">
+                </div>
+                <div class="cell col-2">
+                    <label>CEP</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-2">
+                    <label>DDD/Telefone</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-4">
+                    <label>E-mail</label>
+                    <input type="email">
+                </div>
+
+                <div class="cell col-9">
+                    <label>Nome do Responsável pela Entidade</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>CPF</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-3">
+                    <label>CI/Órgão Exp.</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>Cargo</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>Função</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>Matrícula</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-9">
+                    <label>Endereço (Residencial)</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>CEP</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-8">
+                    <label>Coordenador(a) do Projeto:</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-4">
+                    <label>CPF:</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-6">
+                    <label>E-mail:</label>
+                    <input type="email">
+                </div>
+                <div class="cell col-6">
+                    <label>Fone/fax:</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-6">
+                    <label>Data:</label>
+                    <input type="date">
+                </div>
+                <div class="cell col-6">
+                    <label>Assinatura:</label>
+                    <input type="text" readonly placeholder="Assinatura Digital">
+                </div>
+            </div>
+        </section>
+        <section class="form-section">
+            <h3>2- IDENTIFICAÇÃO DA ENTIDADE EXECUTORA NÃO CELEBRANTE DA PARCERIA</h3>
+            
+            <div class="form-grid">
+                <div class="cell col-6">
+                    <label>Entidade Executora:</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>CNPJ:</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>Fone/fax:</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-9">
+                    <label>Representante Legal:</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>CPF:</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-6">
+                    <label>Cargo:</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-6">
+                    <label>Função:</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-6">
+                    <label>Endereço residencial:</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>CEP:</label>
+                    <input type="text">
+                </div>
+                <div class="cell col-3">
+                    <label>Fone/fax:</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-6">
+                    <div class="checkbox-group">
+                        <label class="check-item"><input type="checkbox"> Fed.</label>
+                        <label class="check-item"><input type="checkbox"> Est.</label>
+                        <label class="check-item"><input type="checkbox"> Mun.</label>
+                        <label class="check-item"><input type="checkbox"> ONG</label>
+                        <label class="check-item"><input type="checkbox"> Outros</label>
+                    </div>
+                </div>
+                <div class="cell col-6">
+                    <label>E-mail:</label>
+                    <input type="email">
+                </div>
+
+                <div class="cell col-12">
+                    <label>Natureza da Participação:</label>
+                    <input type="text">
+                </div>
+
+                <div class="cell col-12">
+                    <label>Outras Fontes:</label>
+                    <input type="text">
+                </div>
+            </div>
+        </section>
+        <section class="form-section">
+    <h3>3- ORÇAMENTO</h3>
+    <h4>3.1- RESUMO</h4>
+    
+    <div class="budget-grid">
+        <div class="budget-row header-row">
+            <span class="label">3.1 – CONCEDENTE/VALOR</span>
+            <div class="value-input">R$: <input type="text" id="resumo-concedente" class="money-input-budget" placeholder="0,00"></div>
+        </div>
+        <div class="budget-row">
+            <span class="label">Despesas Correntes:</span>
+            <div class="value-input">R$: <input type="text" class="money-input-budget" placeholder="0,00"></div>
+        </div>
+        <div class="budget-row">
+            <span class="label">Despesas de Capital:</span>
+            <div class="value-input">R$: <input type="text" class="money-input-budget" placeholder="0,00"></div>
+        </div>
+
+        <div class="budget-row header-row">
+            <span class="label">3.2 – PROPONENTE/VALOR (opcional)</span>
+            <div class="value-input">R$: <input type="text" id="resumo-proponente" class="money-input-budget" placeholder="0,00"></div>
+        </div>
+        <div class="budget-row">
+            <span class="label">Recursos Financeiros (C1)</span>
+            <div class="value-input">R$: <input type="text" class="money-input-budget" placeholder="0,00"></div>
+        </div>
+        <div class="budget-row">
+            <span class="label">Bens e Serviços economicamente mensuráveis (C2)</span>
+            <div class="value-input">R$: <input type="text" class="money-input-budget" placeholder="0,00"></div>
+        </div>
+
+        <div class="budget-row total-row">
+            <span class="label">3.3 – VALOR TOTAL DO PROJETO (3.1+3.2):</span>
+            <div class="value-input">R$: <input type="text" id="resumo-total-projeto" readonly placeholder="0,00"></div>
+        </div>
+    </div>
+</section>
+        <section class="form-section">
+    <h3>4- CRONOGRAMA</h3>
+    <h4>4.1- CRONOGRAMA DE EXECUÇÃO (META, ETAPA OU FASE)</h4>
+    
+    <table class="dynamic-table" id="cronograma-table">
+        <thead>
+            <tr>
+                <th rowspan="2">Meta</th>
+                <th rowspan="2">Etapa Fase</th>
+                <th rowspan="2">Descrição</th>
+                <th colspan="2">Indicador Físico</th>
+                <th colspan="2">Duração</th>
+                <th rowspan="2" class="no-print">Ações</th>
+            </tr>
+            <tr>
+                <th>Unidade</th>
+                <th>Qtd</th>
+                <th>Início</th>
+                <th>Término</th>
+            </tr>
+        </thead>
+        <tbody>
+    <tr>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><textarea class="auto-grow" rows="1" placeholder="Descreva a meta ou fase..."></textarea></td>
+        <td><input type="text"></td>
+        <td><input type="number"></td>
+        <td><input type="date"></td>
+        <td><input type="date"></td>
+        <td class="no-print"><button type="button" class="btn-remove" onclick="removeRow(this)">×</button></td>
+    </tr>
+</tbody>
+    </table>
+    
+    <div class="table-actions no-print">
+        <button type="button" id="add-row-btn" onclick="addRow()">+ Adicionar Nova Linha</button>
+    </div>
+</section>
+<section class="form-section">
+    <h4>4.2- CRONOGRAMA DE DESEMBOLSO DO CONCEDENTE</h4>
+    
+    <table class="static-table">
+        <thead>
+            <tr>
+                <th>Despesa</th>
+                <th>Meta</th>
+                <th>MÊS 01</th>
+                <th>MÊS 02</th>
+                <th>MÊS 03</th>
+                <th>MÊS 04</th>
+                <th>MÊS 05</th>
+                <th>MÊS 06</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Corrente</td>
+                <td><input type="text" value="1"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+            </tr>
+            <tr>
+                <td>Capital</td>
+                <td><input type="text" value="1"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="static-table" style="margin-top: 10px;">
+        <thead>
+            <tr>
+                <th>Despesa</th>
+                <th>Meta</th>
+                <th>MÊS 07</th>
+                <th>MÊS 08</th>
+                <th>MÊS 09</th>
+                <th>MÊS 10</th>
+                <th>MÊS 11</th>
+                <th>MÊS 12</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Corrente</td>
+                <td><input type="text" value="1"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+            </tr>
+            <tr>
+                <td>Capital</td>
+                <td><input type="text" value="1"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+<section class="form-section">
+    <h4>4.3- CRONOGRAMA DE DESEMBOLSO DA CONTRAPARTIDA (somente para Órgãos Públicos)</h4>
+    
+    <table class="static-table">
+        <thead>
+            <tr>
+                <th>Despesa</th>
+                <th>Meta</th>
+                <th>MÊS 01</th>
+                <th>MÊS 02</th>
+                <th>MÊS 03</th>
+                <th>MÊS 04</th>
+                <th>MÊS 05</th>
+                <th>MÊS 06</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Corrente</td>
+                <td><input type="text"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+            </tr>
+            <tr>
+                <td>Capital</td>
+                <td><input type="text"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="static-table" style="margin-top: 10px;">
+        <thead>
+            <tr>
+                <th>Despesa</th>
+                <th>Meta</th>
+                <th>MÊS 07</th>
+                <th>MÊS 08</th>
+                <th>MÊS 09</th>
+                <th>MÊS 10</th>
+                <th>MÊS 11</th>
+                <th>MÊS 12</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Corrente</td>
+                <td><input type="text"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+            </tr>
+            <tr>
+                <td>Capital</td>
+                <td><input type="text"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+                <td><input type="text" placeholder="R$ 0,00"></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+<section class="form-section">
+    <h3>5- DETALHAMENTO DAS DESPESAS</h3>
+    
+    <table class="dynamic-table" id="despesas-table">
+        <thead>
+            <tr>
+                <th colspan="3">Descrição</th>
+                <th colspan="2">Indicador Físico</th>
+                <th colspan="3">Indicador Financeiro (R$ 1,00)</th>
+                <th rowspan="2" class="no-print">Ações</th>
+            </tr>
+            <tr>
+                <th>Código</th>
+                <th>Especificação</th>
+                <th>Descrição</th>
+                <th>Unidade</th>
+                <th>Qtd</th>
+                <th>Total</th>
+                <th>Concedente</th>
+                <th>Proponente</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="00000.00.0"></td>
+                <td><textarea class="auto-grow" rows="1"></textarea></td>
+                <td><textarea class="auto-grow" rows="1"></textarea></td>
+                <td><input type="text" placeholder="MÊS"></td>
+                <td><input type="number"></td>
+                <td><input type="text" placeholder="0,00" class="calc-trigger"></td>
+                <td><input type="text" placeholder="0,00" class="calc-trigger"></td>
+                <td><input type="text" placeholder="0,00" class="calc-trigger"></td>
+                <td class="no-print"><button type="button" class="btn-remove" onclick="removeRow(this)">×</button></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="total-row-dynamic">
+                <td colspan="5" style="text-align: right; font-weight: bold; padding-right: 10px;">TOTAL GERAL:</td>
+                <td><input type="text" id="total-geral-financeiro" value="0,00" readonly></td>
+                <td><input type="text" id="total-concedente" value="0,00" readonly></td>
+                <td><input type="text" id="total-proponente" value="0,00" readonly></td>
+                <td class="no-print"></td>
+            </tr>
+        </tfoot>
+    </table>
+    
+    <div class="table-actions no-print">
+        <button type="button" id="add-despesa-btn" onclick="addDespesaRow()">+ Adicionar Nova Despesa</button>
+    </div>
+</section>
+<section class="form-section">
+    <h3>6- DECLARAÇÃO DO REPRESENTANTE LEGAL</h3>
+    <div class="declaration-box">
+        <p>
+            Declaro, como representante legal, para fins de prova junto ao Conselho Estadual Gestor do Fundo dos Direitos 
+            Difusos – CEG/FDID e à Procuradoria-Geral de Justiça, que não possuo vínculo com Órgãos da Administração 
+            Pública Federal, Estadual e Municipal, para os efeitos e sob as penas de lei.
+        </p>
+    </div>
+
+    <div class="signature-container">
+        <div class="sig-left">
+            <p>Pede deferimento</p>
+        </div>
+        
+        <div class="sig-row">
+            <div class="sig-field">
+                <input type="text" placeholder="Fortaleza - CE, ___ de ________ de 2026">
+                <label>Local e Data</label>
+            </div>
+            
+            <div class="sig-field">
+                <input type="text" class="sig-name" placeholder="DIGITE O NOME DO REPRESENTANTE">
+                <label>Assinatura / Nome do Representante</label>
+            </div>
+        </div>
+    </div>
+</section>
+    </div>
+
+</body>
+</html>
