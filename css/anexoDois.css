@@ -1,0 +1,353 @@
+/* ============================================================
+   1. CONFIGURAÇÕES GERAIS E LAYOUT A4
+   ============================================================ */
+:root {
+    --bg-gray: #f4f4f4;
+    --text-color: #333;
+    --border-dark: #000;
+}
+
+body {
+    background-color: var(--bg-gray);
+    font-family: "Times New Roman", Times, serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.a4-page {
+    background: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+/* Cabeçalho e Títulos */
+.document-header {
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.3;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+.sub-header { margin-top: 5px; }
+
+.title-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title-section h1 { font-size: 14px; margin: 0; }
+.title-section h2 { font-size: 13px; margin: 5px 0; }
+
+h3 { font-size: 12px; margin-bottom: 5px; text-transform: uppercase; }
+h4 { font-size: 11px; margin: 10px 0 5px 0; font-weight: bold; }
+
+.form-section { margin-top: 25px; }
+
+/* ============================================================
+   2. SISTEMA DE GRIDS E CÉLULAS (ESTILO GERAL)
+   ============================================================ */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    border: 1px solid var(--border-dark);
+}
+
+.cell {
+    border: 0.5px solid var(--border-dark);
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cell label {
+    font-size: 8.5px;
+    font-weight: bold;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.cell input {
+    border: none;
+    font-size: 11px;
+    font-family: "Times New Roman", Times, serif;
+    outline: none;
+    padding: 2px 0;
+    background: transparent;
+}
+
+.form-grid > div { margin: -0.25px; }
+
+/* Classes de Colunas */
+.col-1 { grid-column: span 1; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-5 { grid-column: span 5; }
+.col-6 { grid-column: span 6; }
+.col-7 { grid-column: span 7; }
+.col-8 { grid-column: span 8; }
+.col-9 { grid-column: span 9; }
+.col-12 { grid-column: span 12; }
+
+/* ============================================================
+   3. ESTILOS ESPECÍFICOS POR SEÇÃO (CUSTOMIZAÇÕES)
+   ============================================================ */
+
+/* --- SEÇÃO 1: IDENTIFICAÇÃO (Estilo Fino) --- */
+.titulo-centralizado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px !important;
+    background-color: #f2f2f2;
+}
+
+.section-identificacao .cell:not(.titulo-centralizado) {
+    padding: 1px 6px !important;
+}
+
+.section-identificacao .cell input {
+    font-size: 10px;
+    height: 16px;
+    line-height: 16px;
+    margin: 0;
+}
+
+.section-identificacao .cell label {
+    font-size: 8px;
+    margin-bottom: -2px;
+}
+
+/* --- SEÇÃO 2: DETALHES (Textarea e Instruções) --- */
+.section-detalhes .cell {
+    padding: 5px 10px !important;
+}
+
+.instrucao-textarea {
+    font-size: 10px;
+    margin: 5px 0;
+    line-height: 1.3;
+    color: #333;
+    text-align: justify;
+}
+
+.limite-caracteres {
+    font-size: 10px;
+    font-weight: bold;
+    text-align: right;
+    margin-bottom: 5px;
+}
+
+.textarea-projeto {
+    border: 1px solid #000 !important;
+    width: 100%;
+    padding: 8px;
+    font-size: 11px;
+    font-family: "Times New Roman", Times, serif;
+    background-color: #fff;
+    min-height: 80px;
+    box-sizing: border-box;
+}
+
+.textarea-projeto::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* ============================================================
+   4. TABELAS, ORÇAMENTO E ASSINATURAS
+   ============================================================ */
+.dynamic-table, .static-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 10px;
+}
+
+.dynamic-table th, .dynamic-table td, 
+.static-table th, .static-table td {
+    border: 0.5px solid var(--border-dark);
+    text-align: center;
+    padding: 3px;
+}
+
+.dynamic-table th, .static-table th {
+    background-color: #f2f2f2;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.dynamic-table input, .static-table input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 10px;
+    background: transparent;
+    text-align: center;
+}
+
+textarea.auto-grow {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10px;
+    resize: none;
+    overflow: hidden;
+    background: transparent;
+    display: block;
+    min-height: 20px;
+    line-height: 1.2;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+.budget-grid {
+    border: 1px solid var(--border-dark);
+    display: flex;
+    flex-direction: column;
+}
+
+.budget-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0.5px solid var(--border-dark);
+    padding: 5px 10px;
+}
+
+.budget-row .label { font-size: 11px; }
+.total-row { background-color: #f9f9f9; font-weight: bold; }
+
+.value-input {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    width: 200px;
+}
+
+.value-input input {
+    border: none;
+    outline: none;
+    text-align: right;
+    width: 100%;
+    font-weight: bold;
+}
+
+.declaration-box { border: 1px solid var(--border-dark); padding: 12px; }
+.declaration-box p { font-size: 10px; text-align: justify; margin: 0; }
+
+.signature-container {
+    border: 1px solid var(--border-dark);
+    border-top: none;
+    padding: 30px 15px 20px 15px;
+}
+
+.sig-left { text-align: center; margin-bottom: 40px; }
+.sig-row { display: flex; justify-content: space-between; align-items: flex-end; }
+.sig-field { width: 45%; display: flex; flex-direction: column; }
+.sig-field input { border: none; border-bottom: 0.5px solid #000; text-align: center; outline: none; }
+.sig-name { text-transform: uppercase; font-weight: bold; }
+
+/* ============================================================
+   5. INTERFACE E IMPRESSÃO
+   ============================================================ */
+.export-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+.btn-pdf {
+    background-color: #28a745; color: white; border: none;
+    padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;
+}
+
+#add-row-btn { background-color: #003366; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
+.btn-remove { background-color: #cc0000; color: white; border: none; cursor: pointer; padding: 2px 6px; }
+
+@media print {
+    .no-print, #add-row-btn, #add-despesa-btn, .btn-remove, .export-container { display: none !important; }
+    body { background: white; padding: 0; margin: 0; }
+    .a4-page { box-shadow: none; margin: 0; width: 100%; padding: 10mm; }
+    textarea.auto-grow { height: auto !important; }
+    .form-section { page-break-inside: avoid; }
+}
+
+/* Estilos para a Tabela do Público Alvo (Pergunta 18) */
+.tabela-publico {
+    width: 300px; /* Largura fixa como na imagem */
+    border-collapse: collapse;
+    margin-top: 10px;
+    border: 1px solid #000;
+}
+
+.tabela-publico td {
+    border: 1px solid #000;
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+.label-tabela {
+    text-align: left;
+    width: 70%;
+}
+
+.input-tabela {
+    text-align: center;
+    width: 30%;
+}
+
+.input-tabela input {
+    width: 100%;
+    border: none;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11px;
+    outline: none;
+}
+
+.total-row-publico {
+    background-color: #fff;
+    font-weight: bold;
+}
+
+.tabela-idades {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8px;
+    text-align: center;
+}
+
+.tabela-idades th, .tabela-idades td {
+    border: 0.5px solid #000;
+    padding: 2px;
+}
+
+.tabela-idades input {
+    width: 100%;
+    border: none;
+    text-align: center;
+    font-size: 9px;
+    outline: none;
+}
+
+.col-total, .res-total { background-color: #f9f9f9; font-weight: bold; width: 35px; }
+.header-subtotal, .res-subtotal { background-color: #f2f2f2; font-weight: bold; width: 50px; font-size: 10px; }
+
+.tabela-total-final {
+    border-collapse: collapse;
+    font-weight: bold;
+}
+
+.tabela-total-final td {
+    border: 1px solid #000;
+    padding: 4px 10px;
+    font-size: 11px;
+}
+
+.label-final { background-color: #fff; width: 200px; }
+.valor-final { background-color: #fff; width: 60px; text-align: center; }

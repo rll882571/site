@@ -1,0 +1,50 @@
+/*@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");*/
+
+:root {
+  --primary-color: #468ff0f3;
+  --secondary-color: #ffffff;
+  --text-color: #333333;
+  --font-family: "Roboto", sans-serif;
+}
+
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+body {
+  font-family: var(--font-family);
+  color: var(--text-color);
+  background-color: var(--secondary-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+/* Header Styles */
+header{
+  background-color: var(--secondary-color);/*cor de fundo do header*/
+  color: var(--primary-color);/*cor do texto do header*/
+  display: grid; /*Usa o layout de grade para organizar os elementos dentro do header.*/
+  grid-template-columns: 120px 3fr; 
+  align-items: center; /*Alinha os itens verticalmente ao centro dentro do header.*/
+  border-bottom: 1px solid #ccc; /*Crie uma margem interna de segurança nas laterais. Empurre o conteúdo 5 unidades para longe das bordas esquerda e direita da tela.*/
+  position: sticky; /*Faz com que o header fique fixo no topo da página quando o usuário rolar para baixo.*/
+  top: 0; /*Define a posição do header para ficar no topo da página.*/
+  z-index: 1000; /*Garante que o header fique acima de outros elementos na página.*/
+}
+
+nav{
+  text-align: right;
+}
+.navegation{
+ list-style: none;/*Remove os marcadores de lista padrão.*/
+ display: flex;/*Usa o layout flexível para organizar os itens de navegação em linha.*/
+ justify-content: space-evenly;/*Alinha os itens de navegação à direita do container.*/
+ gap: 1rem;/*Adiciona um espaço de 1 rem entre os itens de navegação para melhorar a legibilidade e a estética.*/
+
+}
+.navegation a{
+  text-decoration: none;/*Remove o sublinhado dos links de navegação.*/
+}
+
+

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plano de Trabalho - FDID</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="scripts/script.js"></script>
+    <script src="scripts/script.js" defer></script>
 </head>
 <body>
     <div class="export-container no-print">
@@ -433,17 +433,17 @@
     </table>
 </section>
 <section class="form-section">
-    <h3>5- DETALHAMENTO DAS DESPESAS</h3>
+    <h3 class="center-text">5- DETALHAMENTO DAS DESPESAS</h3>
     
-    <table class="dynamic-table" id="despesas-table">
+    <table class="dynamic-table" id="tabela-despesas-unica">
         <thead>
-            <tr>
+            <tr class="gray-header">
                 <th colspan="3">Descrição</th>
                 <th colspan="2">Indicador Físico</th>
-                <th colspan="3">Indicador Financeiro (R$ 1,00)</th>
+                <th colspan="3">Indicador Financeiro (R$)</th>
                 <th rowspan="2" class="no-print">Ações</th>
             </tr>
-            <tr>
+            <tr class="gray-header">
                 <th>Código</th>
                 <th>Especificação</th>
                 <th>Descrição</th>
@@ -455,31 +455,39 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><input type="text" placeholder="00000.00.0"></td>
-                <td><textarea class="auto-grow" rows="1"></textarea></td>
-                <td><textarea class="auto-grow" rows="1"></textarea></td>
-                <td><input type="text" placeholder="MÊS"></td>
-                <td><input type="number"></td>
-                <td><input type="text" placeholder="0,00" class="calc-trigger"></td>
-                <td><input type="text" placeholder="0,00" class="calc-trigger"></td>
-                <td><input type="text" placeholder="0,00" class="calc-trigger"></td>
-                <td class="no-print"><button type="button" class="btn-remove" onclick="removeRow(this)">×</button></td>
-            </tr>
-        </tbody>
+            </tbody>
         <tfoot>
-            <tr class="total-row-dynamic">
-                <td colspan="5" style="text-align: right; font-weight: bold; padding-right: 10px;">TOTAL GERAL:</td>
-                <td><input type="text" id="total-geral-financeiro" value="0,00" readonly></td>
-                <td><input type="text" id="total-concedente" value="0,00" readonly></td>
-                <td><input type="text" id="total-proponente" value="0,00" readonly></td>
+            <tr class="subtotal-row">
+                <td colspan="5" class="text-right bold">TOTAL DESPESAS CORRENTES (5.1):</td>
+                <td><input type="text" id="total-corrente-geral" value="0,00" readonly></td>
+                <td><input type="text" id="total-corrente-conced" value="0,00" readonly></td>
+                <td><input type="text" id="total-corrente-propon" value="0,00" readonly></td>
                 <td class="no-print"></td>
+            </tr>
+            <tr class="subtotal-row">
+                <td colspan="5" class="text-right bold">TOTAL DESPESAS DE CAPITAL (5.2):</td>
+                <td><input type="text" id="total-capital-geral" value="0,00" readonly></td>
+                <td><input type="text" id="total-capital-conced" value="0,00" readonly></td>
+                <td><input type="text" id="total-capital-propon" value="0,00" readonly></td>
+                <td class="no-print"></td>
+            </tr>
+            <tr class="total-geral-final">
+                <td colspan="5" class="text-right bold" style="background-color: #eee;">TOTAL GERAL DO PROJETO (5.1 + 5.2):</td>
+                <td style="background-color: #eee;"><input type="text" id="total-projeto-geral" value="0,00" readonly class="bold"></td>
+                <td style="background-color: #eee;"><input type="text" id="total-projeto-conced" value="0,00" readonly></td>
+                <td style="background-color: #eee;"><input type="text" id="total-projeto-propon" value="0,00" readonly></td>
+                <td class="no-print" style="background-color: #eee;"></td>
             </tr>
         </tfoot>
     </table>
-    
-    <div class="table-actions no-print">
-        <button type="button" id="add-despesa-btn" onclick="addDespesaRow()">+ Adicionar Nova Despesa</button>
+
+    <div class="table-actions no-print" style="margin-top: 15px; display: flex; gap: 10px;">
+        <button type="button" onclick="addLinhaUnica('corrente')" style="background-color: #0056b3; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">
+            + Adicionar Despesa Corrente
+        </button>
+        <button type="button" onclick="addLinhaUnica('capital')" style="background-color: #28a745; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">
+            + Adicionar Despesa de Capital
+        </button>
     </div>
 </section>
 <section class="form-section">

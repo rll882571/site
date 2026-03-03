@@ -237,3 +237,11 @@ textarea.auto-grow {
 }
 
 @media (max-width: 850px) { body { justify-content: flex-start; } }
+
+.linha-corrente {
+    background-color: #e7f0ff; /* azul claro */
+}
+
+.linha-capital {
+    background-color: #e9f7ef; /* verde claro */
+}
