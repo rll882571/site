@@ -23,9 +23,9 @@ body {
 /* Header Styles */
 header{
   background-color: var(--secondary-color);/*cor de fundo do header*/
-  color: var(--primary-color);/*cor do texto do header*/
+  color:#004d40;/*cor do texto do header*/
   display: grid; /*Usa o layout de grade para organizar os elementos dentro do header.*/
-  grid-template-columns: 120px 3fr; 
+  grid-template-columns: 1fr 3fr; 
   align-items: center; /*Alinha os itens verticalmente ao centro dentro do header.*/
   border-bottom: 1px solid #ccc; /*Crie uma margem interna de segurança nas laterais. Empurre o conteúdo 5 unidades para longe das bordas esquerda e direita da tela.*/
   position: sticky; /*Faz com que o header fique fixo no topo da página quando o usuário rolar para baixo.*/
@@ -33,8 +33,12 @@ header{
   z-index: 1000; /*Garante que o header fique acima de outros elementos na página.*/
 }
 
+
 nav{
-  text-align: right;
+  grid-column: 1 / 3;
+  grid-row: 2;
+  text-align: center;
+  background-color: #ffc107;
 }
 .navegation{
  list-style: none;/*Remove os marcadores de lista padrão.*/
@@ -45,6 +49,7 @@ nav{
 }
 .navegation a{
   text-decoration: none;/*Remove o sublinhado dos links de navegação.*/
+   color:#004d40;
 }
 
 
