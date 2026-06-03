@@ -1,0 +1,201 @@
+/* ==========================================================================
+   CSS CORRIGIDO - VISUAL APURADO E LIMPO (ESTILO LIVRO)
+   ========================================================================== */
+
+:root {
+    --primary-color: #2b4c7e;
+    --primary-hover: #1a3256;
+    --secondary-color: #2ec4b6;
+    --bg-color: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-color: #2d3748;
+    --text-muted: #718096;
+    --border-radius: 8px;
+    --transition-fast: 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    width: 100%;
+    margin: 0 auto; 
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Header Dinâmico --- */
+
+#main-header {
+    background-color: var(--bg-card);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    width: 100%; 
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    width: 100%;         
+    max-width: 100%;     
+    padding: 0.8rem 5%;  
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+/* --- Ajuste da Imagem (Logo) --- */
+
+.logo-image {
+    height: 45px;        
+    width: auto;         
+    display: block;
+    object-fit: contain;
+}
+
+/* --- Navegação --- */
+
+.header-nav ul {
+    display: flex;
+    gap: 2.5rem;         
+    list-style: none;
+}
+
+.header-nav a {
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+    padding: 5px 0;
+}
+
+.header-nav a:hover {
+    color: var(--primary-color);
+}
+
+.header-nav a:after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: var(--secondary-color);
+    transition: width var(--transition-fast);
+}
+
+.header-nav a:hover:after {
+    width: 100%;
+}
+
+/* --- Estilização do Conteúdo Principal (Folha de Papel) --- */
+.lesson-container {
+    width: 65%; 
+    margin: 3rem auto; 
+    background-color: var(--bg-card); 
+    padding: 3rem 4rem;              
+    border-radius: 8px;              
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
+    text-align: center;
+}
+
+.lesson-title {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--text-color);
+    letter-spacing: 2px;
+}
+
+/* Grid das duas colunas */
+.lesson-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 4rem; /* Aumentei o espaçamento entre as colunas centrais */
+    flex-wrap: wrap; 
+}
+
+.verb-column {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+/* Cabeçalho de cada verbo */
+.verb-header {
+    margin-bottom: 2rem;
+}
+
+.verb-header h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+/* Estilo das linhas de frases */
+.practice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem; /* Espaço ligeiramente maior entre as linhas de exercício */
+}
+
+.practice-row {
+    display: grid;
+    /* Altera o grid para o texto e o ícone ficarem juntos, logo após o play */
+    grid-template-columns: 40px max-content max-content; 
+    align-items: center;
+    gap: 0.8rem; /* Espaço curto e idêntico entre os três elementos */
+    text-align: left;
+}
+
+.practice-text {
+    font-style: italic;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Botão de Play */
+.play-btn {
+    background: none;
+    border: 2px solid var(--text-muted);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.play-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* --- Remoção dos fundos provisórios das imagens --- */
+.img-placeholder {
+    /* Removido o background cinza e as bordas tracejadas */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-img {
+    width: 90px;  /* Leve aumento para destacar bem os cabeçalhos */
+    height: 90px;
+    margin: 0 auto 10px;
+}
+
+.icon-img {
+    width: 35px;  /* Proporção excelente para os pequenos ícones e bandeiras */
+    height: 25px;
+    display: block;
+}
