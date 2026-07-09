@@ -145,7 +145,7 @@ h4 { font-size: 11px; margin: 10px 0 5px 0; font-weight: bold; }
     text-align: center;
 }
 
-/* AJUSTE PARA TEXTO LONGO (O que resolve o corte no PDF) */
+/* AJUSTE PARA TEXTO LONGO (Tela Normal do Navegador) */
 textarea.auto-grow {
     width: 100%;
     border: none;
@@ -157,10 +157,28 @@ textarea.auto-grow {
     background: transparent;
     display: block;
     min-height: 20px;
+    height: auto;
     line-height: 1.2;
     padding: 2px;
     box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
+.editable {
+    width: 100%;
+    min-height: 20px;
+    padding: 2px;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow: visible;
+    height: auto;
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10px;
+}
+
 
 /* ============================================================
    4. ORÇAMENTO (Seção 3)
@@ -216,7 +234,7 @@ textarea.auto-grow {
 .sig-name { text-transform: uppercase; font-weight: bold; }
 
 /* ============================================================
-   6. INTERFACE E IMPRESSÃO (BOTOES E PDF)
+   6. INTERFACE DE USUÁRIO (BOTÕES E ACOES EM TELA)
    ============================================================ */
 .export-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
 .btn-pdf {
@@ -227,21 +245,75 @@ textarea.auto-grow {
 #add-row-btn { background-color: #003366; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
 .btn-remove { background-color: #cc0000; color: white; border: none; cursor: pointer; padding: 2px 6px; }
 
-/* REGRAS DE IMPRESSÃO */
-@media print {
-    .no-print, #add-row-btn, #add-despesa-btn, .btn-remove, .export-container { display: none !important; }
-    body { background: white; padding: 0; margin: 0; }
-    .a4-page { box-shadow: none; margin: 0; width: 100%; padding: 10mm; }
-    textarea.auto-grow { height: auto !important; }
-    .form-section { page-break-inside: avoid; }
-}
+.linha-corrente { background-color: #e7f0ff; }
+.linha-capital { background-color: #e9f7ef; }
 
 @media (max-width: 850px) { body { justify-content: flex-start; } }
 
-.linha-corrente {
-    background-color: #e7f0ff; /* azul claro */
+/* ============================================================
+   7. REGRAS DE IMPRESSÃO ULTRA-FORÇADAS (Geração do PDF)
+   ============================================================ */
+@media print {
+
+    body {
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .a4-page {
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 10mm !important;
+        box-shadow: none !important;
+    }
+
+    .no-print,
+    .export-container,
+    .table-actions {
+        display: none !important;
+    }
+
+    #cronograma-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    #cronograma-table tr {
+        height: auto !important;
+        page-break-inside: avoid;
+    }
+
+    #cronograma-table td {
+        height: auto !important;
+        vertical-align: top !important;
+        overflow: visible !important;
+    }
+    .editable {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 20px !important;
 }
 
-.linha-capital {
-    background-color: #e9f7ef; /* verde claro */
+    textarea.auto-grow {
+        width: 100% !important;
+        min-height: 60px !important;
+        height: auto !important;
+        overflow: visible !important;
+        resize: none !important;
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        display: block !important;
+        border: none !important;
+        padding: 2px !important;
+        box-sizing: border-box !important;
+    }
+
+    table,
+    tr,
+    td,
+    th {
+        page-break-inside: avoid !important;
+    }
 }

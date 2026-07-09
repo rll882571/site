@@ -135,21 +135,29 @@ function calcularTotaisUnificados() {
 // ============================================================
 
 function addRow() {
+
     const table = document.getElementById("cronograma-table")
-        .getElementsByTagName('tbody')[0];
+        .getElementsByTagName("tbody")[0];
 
     const newRow = table.insertRow();
 
     newRow.innerHTML = `
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td><textarea class="auto-grow" rows="1"></textarea></td>
+        <td><div class="editable" contenteditable="true"></div></td>
+        <td><div class="editable" contenteditable="true"></div></td>
+        <td><div class="editable" contenteditable="true"></div></td>
+
         <td><input type="text"></td>
         <td><input type="number"></td>
-        <td><input type="date"></td>
-        <td><input type="date"></td>
+
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+
         <td class="no-print">
-            <button type="button" class="btn-remove" onclick="removeRow(this)">×</button>
+            <button type="button"
+                    class="btn-remove"
+                    onclick="removeRow(this)">
+                ×
+            </button>
         </td>
     `;
 }
@@ -201,3 +209,4 @@ function removeRow(button) {
     row.remove();
     calcularTotaisUnificados();
 }
+
