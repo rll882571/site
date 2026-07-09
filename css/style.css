@@ -317,3 +317,49 @@ textarea.auto-grow {
         page-break-inside: avoid !important;
     }
 }
+/* Coluna de ações: mostra somente o botão */
+.coluna-acoes {
+    width: 35px;
+    text-align: center;
+    padding: 0;
+}
+
+/* Botão X */
+.btn-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 16px;
+    line-height: 18px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-remove:hover {
+    background: #a71d2a;
+}
+/* Apenas a coluna ações da tabela de despesas */
+#tabela-despesas-unica .coluna-acoes {
+    width: 35px;
+    min-width: 35px;
+    max-width: 35px;
+    text-align: center;
+    padding: 2px;
+}
+
+/* Botão X */
+#tabela-despesas-unica .btn-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 18px;
+    padding: 0;
+}

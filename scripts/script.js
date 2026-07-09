@@ -1,5 +1,5 @@
 // ============================================================
-// 1. MOTOR DE EVENTOS (Monitora digitação em toda a página)
+// 1. MOTOR DE EVENTOS (Monitora digitação e salvamento)
 // ============================================================
 
 document.addEventListener('input', function (event) {
@@ -17,8 +17,8 @@ document.addEventListener('input', function (event) {
     if (tabelaDespesas && target.tagName === 'INPUT' && !target.readOnly) {
         const colIndex = target.parentElement.cellIndex;
 
-        // Colunas financeiras
-        if (colIndex >= 5) {
+        // Colunas financeiras (Ajustado para os novos índices das colunas 4, 5 e 6)
+        if (colIndex >= 4) {
             maskMoney(target);
             calcularTotaisUnificados();
         }
@@ -39,7 +39,18 @@ document.addEventListener('input', function (event) {
         }
     }
 
+    // DISPARADOR DE SALVAMENTO AUTOMÁTICO
+    salvarFormularioAuto();
+
 }, false);
+
+// Escuta mudanças em Checkboxes ou elementos contenteditable
+document.addEventListener('change', salvarFormularioAuto);
+document.addEventListener('blur', function(event) {
+    if (event.target.classList.contains('editable')) {
+        salvarFormularioAuto();
+    }
+}, true);
 
 
 // ============================================================
@@ -80,7 +91,7 @@ function formatMoney(value) {
 
 
 // ============================================================
-// 3. CÁLCULO DOS TOTAIS
+// 3. CÁLCULO DOS TOTAIS (Ajustado com os índices corretos)
 // ============================================================
 
 function calcularTotaisUnificados() {
@@ -92,9 +103,10 @@ function calcularTotaisUnificados() {
     rows.forEach(row => {
         const tipo = row.getAttribute("data-tipo");
 
-        const totalInput = row.cells[5]?.querySelector("input");
-        const concedInput = row.cells[6]?.querySelector("input");
-        const proponInput = row.cells[7]?.querySelector("input");
+        // Índices corrigidos após a remoção da coluna fantasma[cite: 1]
+        const totalInput = row.cells[4]?.querySelector("input");
+        const concedInput = row.cells[5]?.querySelector("input");
+        const proponInput = row.cells[6]?.querySelector("input");
 
         const total = parseMoney(totalInput?.value);
         const conced = parseMoney(concedInput?.value);
@@ -135,36 +147,27 @@ function calcularTotaisUnificados() {
 // ============================================================
 
 function addRow() {
-
-    const table = document.getElementById("cronograma-table")
-        .getElementsByTagName("tbody")[0];
-
+    const table = document.getElementById("cronograma-table").getElementsByTagName("tbody")[0];
     const newRow = table.insertRow();
 
     newRow.innerHTML = `
         <td><div class="editable" contenteditable="true"></div></td>
         <td><div class="editable" contenteditable="true"></div></td>
         <td><div class="editable" contenteditable="true"></div></td>
-
         <td><input type="text"></td>
         <td><input type="number"></td>
-
         <td><input type="text"></td>
         <td><input type="text"></td>
-
         <td class="no-print">
-            <button type="button"
-                    class="btn-remove"
-                    onclick="removeRow(this)">
-                ×
-            </button>
+            <button type="button" class="btn-remove" onclick="removeRow(this)">×</button>
         </td>
     `;
+    salvarFormularioAuto();
 }
 
 
 // ============================================================
-// 5. ADICIONAR LINHAS DE DESPESAS (MODIFICADO)
+// 5. ADICIONAR LINHAS DE DESPESAS (Ajustado - Sem coluna fantasma)
 // ============================================================
 
 function addLinhaUnica(tipo) {
@@ -173,7 +176,6 @@ function addLinhaUnica(tipo) {
 
     newRow.setAttribute("data-tipo", tipo);
 
-    // AQUI ESTÁ A MUDANÇA
     if (tipo === 'corrente') {
         newRow.classList.add('linha-corrente');
     }
@@ -182,12 +184,12 @@ function addLinhaUnica(tipo) {
         newRow.classList.add('linha-capital');
     }
 
+    // Ajustado para conter exatamente as 7 colunas de inputs do cabeçalho[cite: 1]
     newRow.innerHTML = `
         <td><input type="text" placeholder="00000.00.0"></td>
-        <td><textarea class="auto-grow" rows="1"></textarea></td>
-        <td><textarea class="auto-grow" rows="1"></textarea></td>
+        <td><textarea class="auto-grow" rows="1" placeholder="Especificação"></textarea></td>
         <td><input type="text" placeholder="UN"></td>
-        <td><input type="number"></td>
+        <td><input type="number" placeholder="0"></td>
         <td><input type="text" placeholder="0,00"></td>
         <td><input type="text" placeholder="0,00"></td>
         <td><input type="text" placeholder="0,00"></td>
@@ -197,6 +199,7 @@ function addLinhaUnica(tipo) {
     `;
 
     calcularTotaisUnificados();
+    salvarFormularioAuto();
 }
 
 
@@ -208,5 +211,210 @@ function removeRow(button) {
     const row = button.parentNode.parentNode;
     row.remove();
     calcularTotaisUnificados();
+    salvarFormularioAuto();
 }
 
+
+// ============================================================
+// 7. MOTOR DE PERSISTÊNCIA (Ajustado para a nova estrutura)
+// ============================================================
+
+function capturarDadosEstruturados() {
+    const backup = {
+        camposEstaticos: {},
+        cronograma: [],
+        despesas: []
+    };
+
+    // 1. Mapear inputs e textareas fixos com IDs
+    document.querySelectorAll("input, textarea").forEach((campo) => {
+        if (campo.id) {
+            if (campo.type === "checkbox") {
+                backup.camposEstaticos[campo.id] = campo.checked;
+            } else {
+                backup.camposEstaticos[campo.id] = campo.value;
+            }
+        }
+    });
+
+    // Mapear inputs estruturados sem ID por ordem de aparição
+    let totalInputsFixos = [];
+    document.querySelectorAll("section:not(.dynamic-table):not(#tabela-despesas-unica) input, section:not(.dynamic-table):not(#tabela-despesas-unica) textarea").forEach((el, index) => {
+         if(!el.closest('table')) {
+             totalInputsFixos.push({index: index, value: el.type === 'checkbox' ? el.checked : el.value, type: el.type});
+         }
+    });
+    backup.inputsFixosEstruturados = totalInputsFixos;
+
+    // 2. Mapear linhas dinâmicas do Cronograma
+    document.querySelectorAll("#cronograma-table tbody tr").forEach(row => {
+        const divEditables = row.querySelectorAll(".editable");
+        const inputs = row.querySelectorAll("input");
+        if(divEditables.length >= 3) {
+            backup.cronograma.push({
+                meta: divEditables[0].innerHTML,
+                etapa: divEditables[1].innerHTML,
+                descricao: divEditables[2].innerHTML,
+                unidade: inputs[0]?.value || "",
+                qtd: inputs[1]?.value || "",
+                inicio: inputs[2]?.value || "",
+                termino: inputs[3]?.value || ""
+            });
+        }
+    });
+
+    // 3. Mapear linhas dinâmicas de Despesas (Ajustado para 7 inputs de dados)[cite: 1]
+    document.querySelectorAll("#tabela-despesas-unica tbody tr").forEach(row => {
+        const tipo = row.getAttribute("data-tipo");
+        const inputs = row.querySelectorAll("input, textarea");
+        if (inputs.length >= 7) {
+            backup.despesas.push({
+                tipo: tipo,
+                codigo: inputs[0].value,
+                especificacao: inputs[1].value,
+                unidade: inputs[2].value,
+                quantidade: inputs[3].value,
+                total: inputs[4].value,
+                concedente: inputs[5].value,
+                proponente: inputs[6].value
+            });
+        }
+    });
+
+    return backup;
+}
+
+function aplicarDadosEstruturados(dados) {
+    if (!dados) return;
+
+    // Limpar tabelas dinâmicas atuais
+    document.querySelector("#cronograma-table tbody").innerHTML = "";
+    document.querySelector("#tabela-despesas-unica tbody").innerHTML = "";
+
+    // Restaurar Cronograma
+    if (dados.cronograma && Array.isArray(dados.cronograma)) {
+        dados.cronograma.forEach(item => {
+            addRow();
+            const rows = document.querySelectorAll("#cronograma-table tbody tr");
+            const lastRow = rows[rows.length - 1];
+            if (lastRow) {
+                const editables = lastRow.querySelectorAll(".editable");
+                const inputs = lastRow.querySelectorAll("input");
+                if (editables[0]) editables[0].innerHTML = item.meta;
+                if (editables[1]) editables[1].innerHTML = item.etapa;
+                if (editables[2]) editables[2].innerHTML = item.descricao;
+                if (inputs[0]) inputs[0].value = item.unidade;
+                if (inputs[1]) inputs[1].value = item.qtd;
+                if (inputs[2]) inputs[2].value = item.inicio;
+                if (inputs[3]) inputs[3].value = item.termino;
+            }
+        });
+    }
+
+    // Restaurar Despesas (Ajustado para as 7 colunas corretas)[cite: 1]
+    if (dados.despesas && Array.isArray(dados.despesas)) {
+        dados.despesas.forEach(item => {
+            addLinhaUnica(item.tipo);
+            const rows = document.querySelectorAll("#tabela-despesas-unica tbody tr");
+            const lastRow = rows[rows.length - 1];
+            if (lastRow) {
+                const inputs = lastRow.querySelectorAll("input, textarea");
+                if (inputs[0]) inputs[0].value = item.codigo;
+                if (inputs[1]) inputs[1].value = item.especificacao;
+                if (inputs[2]) inputs[2].value = item.unidade;
+                if (inputs[3]) inputs[3].value = item.quantidade;
+                if (inputs[4]) inputs[4].value = item.total;
+                if (inputs[5]) inputs[5].value = item.concedente;
+                if (inputs[6]) inputs[6].value = item.proponente;
+            }
+        });
+    }
+
+    // Restaurar demais campos fixos estruturados
+    if (dados.inputsFixosEstruturados && Array.isArray(dados.inputsFixosEstruturados)) {
+        const fixosAtuais = [];
+        document.querySelectorAll("section:not(.dynamic-table):not(#tabela-despesas-unica) input, section:not(.dynamic-table):not(#tabela-despesas-unica) textarea").forEach(el => {
+            if(!el.closest('table')) fixosAtuais.push(el);
+        });
+
+        dados.inputsFixosEstruturados.forEach(item => {
+            const el = fixosAtuais[item.index];
+            if (el) {
+                if (item.type === "checkbox") {
+                    el.checked = item.value;
+                } else {
+                    el.value = item.value;
+                }
+            }
+        });
+    }
+
+    // Atualiza cálculos e redimensionamento de campos de texto
+    calcularTotaisUnificados();
+    document.querySelectorAll('.auto-grow').forEach(textarea => {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    });
+}
+
+function salvarFormularioAuto() {
+    const dados = capturarDadosEstruturados();
+    localStorage.setItem("PlanoFDID_v2", JSON.stringify(dados));
+}
+
+function carregarFormularioAuto() {
+    const localData = localStorage.getItem("PlanoFDID_v2");
+    if (localData) {
+        try {
+            const dados = JSON.parse(localData);
+            aplicarDadosEstruturados(dados);
+        } catch (e) {
+            console.error("Erro ao carregar dados automáticos.", e);
+        }
+    }
+}
+
+
+// ============================================================
+// 8. CONTROLES ADICIONAIS (Backup externo e Novo Plano)
+// ============================================================
+
+function exportarBackup() {
+    const dados = capturarDadosEstruturados();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "Plano_de_Trabalho_FDID.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+function importarBackup(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const dados = JSON.parse(e.target.result);
+            aplicarDadosEstruturados(dados);
+            salvarFormularioAuto();
+            alert("Backup carregado com sucesso!");
+        } catch (err) {
+            alert("Erro ao processar arquivo de backup. Verifique se o arquivo JSON é válido.");
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
+}
+
+function novoPlano() {
+    if (confirm("Atenção: Deseja apagar todo o plano de trabalho atual? Dados não salvos externamente serão perdidos definitivamente.")) {
+        localStorage.removeItem("PlanoFDID_v2");
+        window.location.reload();
+    }
+}
+
+// Inicialização imediata assim que a estrutura do documento estiver pronta
+window.addEventListener("DOMContentLoaded", carregarFormularioAuto);
