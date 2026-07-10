@@ -7,16 +7,15 @@
     <link rel="stylesheet" href="css/style.css">
     <script src="scripts/script.js" defer></script>
 </head>
+<!-- 1. BOTÕES PARA GERAR O PDF, SALVAR O BACKUP , ABRIR O BACKUP E NOVO PLANO -->
 <body>
-    <div class="export-container no-print">
-    <button onclick="window.print()" class="btn-pdf">📄 Gerar PDF do Plano de Trabalho</button>
-    <button onclick="exportarBackup()" style="background-color: #17a2b8; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">💾 Salvar Backup (JSON)</button>
+  <div class="export-container no-print">
+    <button onclick="verificarAntesDeImprimir()" class="btn-pdf">📄 Gerar PDF do Plano de Trabalho</button>
     <button onclick="document.getElementById('import-file').click()" style="background-color: #ffc107; color: #212529; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">📂 Abrir Backup</button>
     <button onclick="novoPlano()" style="background-color: #dc3545; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">🗑️ Novo Plano</button>
-    
     <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
   </div>
-
+<!-- 2. CABEÇARIO -->
     <div class="a4-page">
         <header class="document-header">
             <p>MINISTÉRIO PÚBLICO DO ESTADO DO CEARÁ</p>
@@ -132,6 +131,7 @@
                 </div>
             </div>
         </section>
+        <!-- 3. IDENTIFICAÇÃO DA ENTIDADE EXECUTORA NÃO CELEBRANTE DA PARCERIA -->
         <section class="form-section">
             <h3>2- IDENTIFICAÇÃO DA ENTIDADE EXECUTORA NÃO CELEBRANTE DA PARCERIA</h3>
             

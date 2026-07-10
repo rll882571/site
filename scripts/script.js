@@ -2,6 +2,8 @@
 // 1. MOTOR DE EVENTOS (Monitora digitação e salvamento)
 // ============================================================
 
+
+// VIGILANTE A: Monitora quando você DIGITA algo (input)
 document.addEventListener('input', function (event) {
     const target = event.target;
 
@@ -11,14 +13,22 @@ document.addEventListener('input', function (event) {
         target.style.height = target.scrollHeight + 'px';
     }
 
-    // B. TABELA DE DETALHAMENTO DAS DESPESAS
+    // B. TABELA DE DETALHAMENTO DAS DESPESAS (Com máscara de código e dinheiro)
     const tabelaDespesas = target.closest("#tabela-despesas-unica");
-
-    if (tabelaDespesas && target.tagName === 'INPUT' && !target.readOnly) {
+    if (tabelaDespesas && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') && !target.readOnly) {
+        
         const colIndex = target.parentElement.cellIndex;
 
-        // Colunas financeiras (Ajustado para os novos índices das colunas 4, 5 e 6)
-        if (colIndex >= 4) {
+        // SE FOR A PRIMEIRA COLUNA (CÓDIGO), APLICA A MÁSCARA AUTOMÁTICA
+        if (colIndex === 0) {
+            maskCodigo(target);
+        }
+
+        // Verifica se o usuário está digitando em um dos campos de dinheiro
+        if (target.classList.contains('campo-total') || 
+            target.classList.contains('campo-concedente') || 
+            target.classList.contains('campo-proponente')) {
+            
             maskMoney(target);
             calcularTotaisUnificados();
         }
@@ -44,11 +54,20 @@ document.addEventListener('input', function (event) {
 
 }, false);
 
-// Escuta mudanças em Checkboxes ou elementos contenteditable
-document.addEventListener('change', salvarFormularioAuto);
-document.addEventListener('blur', function(event) {
-    if (event.target.classList.contains('editable')) {
-        salvarFormularioAuto();
+
+// VIGILANTE B: Monitora quando você SAI de um campo (blur)
+document.addEventListener('blur', function (event) {
+    const target = event.target;
+    
+    // Verifica se o campo pertence à tabela de despesas e é a primeira coluna (Código)
+    const tabelaDespesas = target.closest("#tabela-despesas-unica");
+    if (tabelaDespesas && target.tagName === 'INPUT' && !target.readOnly) {
+        const colIndex = target.parentElement.cellIndex;
+        
+        // Se saiu do campo de Código (índice 0), faz a validação do Pop-up
+        if (colIndex === 0) {
+            validarCodigoDespesa(target);
+        }
     }
 }, true);
 
@@ -94,6 +113,8 @@ function formatMoney(value) {
 // 3. CÁLCULO DOS TOTAIS (Ajustado com os índices corretos)
 // ============================================================
 
+
+
 function calcularTotaisUnificados() {
     let corr = { t: 0, c: 0, p: 0 };
     let cap = { t: 0, c: 0, p: 0 };
@@ -103,10 +124,9 @@ function calcularTotaisUnificados() {
     rows.forEach(row => {
         const tipo = row.getAttribute("data-tipo");
 
-        // Índices corrigidos após a remoção da coluna fantasma[cite: 1]
-        const totalInput = row.cells[4]?.querySelector("input");
-        const concedInput = row.cells[5]?.querySelector("input");
-        const proponInput = row.cells[6]?.querySelector("input");
+        const totalInput = row.querySelector(".campo-total");
+        const concedInput = row.querySelector(".campo-concedente");
+        const proponInput = row.querySelector(".campo-proponente");
 
         const total = parseMoney(totalInput?.value);
         const conced = parseMoney(concedInput?.value);
@@ -125,20 +145,29 @@ function calcularTotaisUnificados() {
         }
     });
 
-    // Totais Correntes
-    document.getElementById('total-corrente-geral').value = formatMoney(corr.t);
-    document.getElementById('total-corrente-conced').value = formatMoney(corr.c);
-    document.getElementById('total-corrente-propon').value = formatMoney(corr.p);
+    // Atualiza Totais Correntes apenas se os elementos existirem no HTML
+    const elCorrGeral = document.getElementById('total-corrente-geral');
+    const elCorrConced = document.getElementById('total-corrente-conced');
+    const elCorrPropon = document.getElementById('total-corrente-propon');
+    if (elCorrGeral) elCorrGeral.value = formatMoney(corr.t);
+    if (elCorrConced) elCorrConced.value = formatMoney(corr.c);
+    if (elCorrPropon) elCorrPropon.value = formatMoney(corr.p);
 
-    // Totais Capital
-    document.getElementById('total-capital-geral').value = formatMoney(cap.t);
-    document.getElementById('total-capital-conced').value = formatMoney(cap.c);
-    document.getElementById('total-capital-propon').value = formatMoney(cap.p);
+    // Atualiza Totais Capital apenas se os elementos existirem no HTML
+    const elCapGeral = document.getElementById('total-capital-geral');
+    const elCapConced = document.getElementById('total-capital-conced');
+    const elCapPropon = document.getElementById('total-capital-propon');
+    if (elCapGeral) elCapGeral.value = formatMoney(cap.t);
+    if (elCapConced) elCapConced.value = formatMoney(cap.c);
+    if (elCapPropon) elCapPropon.value = formatMoney(cap.p);
 
-    // Total Geral
-    document.getElementById('total-projeto-geral').value = formatMoney(corr.t + cap.t);
-    document.getElementById('total-projeto-conced').value = formatMoney(corr.c + cap.c);
-    document.getElementById('total-projeto-propon').value = formatMoney(corr.p + cap.p);
+    // Atualiza Total Geral do Projeto apenas se os elementos existirem no HTML
+    const elProjGeral = document.getElementById('total-projeto-geral');
+    const elProjConced = document.getElementById('total-projeto-conced');
+    const elProjPropon = document.getElementById('total-projeto-propon');
+    if (elProjGeral) elProjGeral.value = formatMoney(corr.t + cap.t);
+    if (elProjConced) elProjConced.value = formatMoney(corr.c + cap.c);
+    if (elProjPropon) elProjPropon.value = formatMoney(corr.p + cap.p);
 }
 
 
@@ -184,15 +213,14 @@ function addLinhaUnica(tipo) {
         newRow.classList.add('linha-capital');
     }
 
-    // Ajustado para conter exatamente as 7 colunas de inputs do cabeçalho[cite: 1]
     newRow.innerHTML = `
         <td><input type="text" placeholder="00000.00.0"></td>
         <td><textarea class="auto-grow" rows="1" placeholder="Especificação"></textarea></td>
         <td><input type="text" placeholder="UN"></td>
         <td><input type="number" placeholder="0"></td>
-        <td><input type="text" placeholder="0,00"></td>
-        <td><input type="text" placeholder="0,00"></td>
-        <td><input type="text" placeholder="0,00"></td>
+        <td><input type="text" placeholder="0,00" class="campo-total"></td>
+        <td><input type="text" placeholder="0,00" class="campo-concedente"></td>
+        <td><input type="text" placeholder="0,00" class="campo-proponente"></td>
         <td class="no-print">
             <button type="button" class="btn-remove" onclick="removeRow(this)">×</button>
         </td>
@@ -418,3 +446,86 @@ function novoPlano() {
 
 // Inicialização imediata assim que a estrutura do documento estiver pronta
 window.addEventListener("DOMContentLoaded", carregarFormularioAuto);
+
+function validarCodigoDespesa(input) {
+    // Lista de códigos autorizados
+    const codigosValidos = [
+        "33390.04.00", "33390.14.00", "33390.18.00", "33390.30.00", 
+        "33390.31.00", "33390.32.00", "33390.33.00", "33390.35.00", 
+        "33390.36.00", "33390.37.00", "33390.38.00", "33390.39.00", 
+        "33390.47.00", "33390.48.00", "33390.49.00", "33390.91.00", 
+        "33390.93.00", "33390.95.00", "4422.51.00", "4422.52.00"
+    ];
+
+    const valorDigitado = input.value.trim();
+
+    // Se estiver vazio, não faz nada
+    if (valorDigitado === "") {
+        input.style.color = ""; // Volta a cor padrão do texto
+        return true;
+    }
+
+    // Se o código for válido
+    if (codigosValidos.includes(valorDigitado)) {
+        input.style.color = "#28a745"; // Texto fica verde (opcional, indica sucesso)
+        return true;
+    } else {
+        // Se o código for inválido
+        input.style.color = "#dc3545"; // Deixa os NÚMEROS vermelhos
+        
+        // Abre o pop-up de aviso na tela
+        alert("Código fora do padrão!");
+        
+        return false;
+    }
+}
+function maskCodigo(input) {
+    // Remove tudo o que não for número
+    let value = input.value.replace(/\D/g, "");
+    
+    // Se começar com 3 (padrão 33390.00.00)
+    if (value.startsWith("3")) {
+        if (value.length > 5 && value.length <= 7) {
+            value = value.replace(/^(\d{5})(\d+)/, "$1.$2");
+        } else if (value.length > 7) {
+            value = value.replace(/^(\d{5})(\d{2})(\d+)/, "$1.$2.$3");
+        }
+    } 
+    // Se começar com 4 (padrão 4422.51.00)
+    else if (value.startsWith("4")) {
+        if (value.length > 4 && value.length <= 6) {
+            value = value.replace(/^(\d{4})(\d+)/, "$1.$2");
+        } else if (value.length > 6) {
+            value = value.replace(/^(\d{4})(\d{2})(\d+)/, "$1.$2.$3");
+        }
+    }
+
+    // Limita o tamanho máximo de caracteres para não passar do padrão
+    input.value = value.slice(0, 11);
+}
+function verificarAntesDeImprimir() {
+    // 1. Pega os textos dos dois campos de totais
+    const textoTotalResumo = document.getElementById('resumo-total-projeto')?.value || "0,00";
+    const textoTotalDetalhamento = document.getElementById('total-projeto-geral')?.value || "0,00";
+
+    // 2. Converte os textos para números decimais para podermos comparar matematicamente
+    const valorResumo = parseMoney(textoTotalResumo);
+    const valorDetalhamento = parseMoney(textoTotalDetalhamento);
+
+    // 3. Se os valores forem diferentes, exibe o pop-up de confirmação
+    if (valorResumo !== valorDetalhamento) {
+        const mensagem = 
+            "⚠️ Atenção: Os valores totais do projeto não coincidem!\n\n" +
+            "• Valor no Resumo (Tópico 3): R$ " + textoTotalResumo + "\n" +
+            "• Valor no Detalhamento (Tópico 5): R$ " + textoTotalDetalhamento + "\n\n" +
+            "Deseja gerar o PDF mesmo assim?";
+        
+        // Se o usuário clicar em "Cancelar", a função para aqui e não imprime
+        if (!confirm(mensagem)) {
+            return; 
+        }
+    }
+
+    // 4. Se os valores forem iguais OU se o usuário clicou em "OK" no aviso, abre a tela de impressão
+    window.print();
+}
