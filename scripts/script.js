@@ -2,7 +2,6 @@
 // 1. MOTOR DE EVENTOS (Monitora digitação e salvamento)
 // ============================================================
 
-
 // VIGILANTE A: Monitora quando você DIGITA algo (input)
 document.addEventListener('input', function (event) {
     const target = event.target;
@@ -128,10 +127,8 @@ function formatMoney(value) {
 
 
 // ============================================================
-// 3. CÁLCULO DOS TOTAIS (Ajustado com os índices corretos)
+// 3. CÁLCULO DOS TOTAIS
 // ============================================================
-
-
 
 function calcularTotaisUnificados() {
     let corr = { t: 0, c: 0, p: 0 };
@@ -214,7 +211,7 @@ function addRow() {
 
 
 // ============================================================
-// 5. ADICIONAR LINHAS DE DESPESAS (Ajustado - Sem coluna fantasma)
+// 5. ADICIONAR LINHAS DE DESPESAS
 // ============================================================
 
 function addLinhaUnica(tipo) {
@@ -262,7 +259,7 @@ function removeRow(button) {
 
 
 // ============================================================
-// 7. MOTOR DE PERSISTÊNCIA (Ajustado para a nova estrutura)
+// 7. MOTOR DE PERSISTÊNCIA
 // ============================================================
 
 function capturarDadosEstruturados() {
@@ -309,7 +306,7 @@ function capturarDadosEstruturados() {
         }
     });
 
-    // 3. Mapear linhas dinâmicas de Despesas (Ajustado para 7 inputs de dados)[cite: 1]
+    // 3. Mapear linhas dinâmicas de Despesas
     document.querySelectorAll("#tabela-despesas-unica tbody tr").forEach(row => {
         const tipo = row.getAttribute("data-tipo");
         const inputs = row.querySelectorAll("input, textarea");
@@ -357,7 +354,7 @@ function aplicarDadosEstruturados(dados) {
         });
     }
 
-    // Restaurar Despesas (Ajustado para as 7 colunas corretas)[cite: 1]
+    // Restaurar Despesas
     if (dados.despesas && Array.isArray(dados.despesas)) {
         dados.despesas.forEach(item => {
             addLinhaUnica(item.tipo);
@@ -395,7 +392,7 @@ function aplicarDadosEstruturados(dados) {
         });
     }
 
-    // Atualiza cálculos e redimensionamento de campos de texto
+    // Computar cálculos e tamanhos
     calcularTotaisUnificados();
     document.querySelectorAll('.auto-grow').forEach(textarea => {
         textarea.style.height = 'auto';
@@ -462,11 +459,9 @@ function novoPlano() {
     }
 }
 
-// Inicialização imediata assim que a estrutura do documento estiver pronta
 window.addEventListener("DOMContentLoaded", carregarFormularioAuto);
 
 function validarCodigoDespesa(input) {
-    // Lista de códigos autorizados
     const codigosValidos = [
         "33390.04.00", "33390.14.00", "33390.18.00", "33390.30.00", 
         "33390.31.00", "33390.32.00", "33390.33.00", "33390.35.00", 
@@ -477,60 +472,46 @@ function validarCodigoDespesa(input) {
 
     const valorDigitado = input.value.trim();
 
-    // Se estiver vazio, não faz nada
     if (valorDigitado === "") {
-        input.style.color = ""; // Volta a cor padrão do texto
+        input.style.color = "";
         return true;
     }
 
-    // Se o código for válido
     if (codigosValidos.includes(valorDigitado)) {
-        input.style.color = "#28a745"; // Texto fica verde (opcional, indica sucesso)
+        input.style.color = "#28a745";
         return true;
     } else {
-        // Se o código for inválido
-        input.style.color = "#dc3545"; // Deixa os NÚMEROS vermelhos
-        
-        // Abre o pop-up de aviso na tela
+        input.style.color = "#dc3545";
         alert("Código fora do padrão!");
-        
         return false;
     }
 }
+
 function maskCodigo(input) {
-    // Remove tudo o que não for número
     let value = input.value.replace(/\D/g, "");
-    
-    // Se começar com 3 (padrão 33390.00.00)
     if (value.startsWith("3")) {
         if (value.length > 5 && value.length <= 7) {
             value = value.replace(/^(\d{5})(\d+)/, "$1.$2");
         } else if (value.length > 7) {
             value = value.replace(/^(\d{5})(\d{2})(\d+)/, "$1.$2.$3");
         }
-    } 
-    // Se começar com 4 (padrão 4422.51.00)
-    else if (value.startsWith("4")) {
+    } else if (value.startsWith("4")) {
         if (value.length > 4 && value.length <= 6) {
             value = value.replace(/^(\d{4})(\d+)/, "$1.$2");
         } else if (value.length > 6) {
             value = value.replace(/^(\d{4})(\d{2})(\d+)/, "$1.$2.$3");
         }
     }
-
-    // Limita o tamanho máximo de caracteres para não passar do padrão
     input.value = value.slice(0, 11);
 }
+
 function verificarAntesDeImprimir() {
-    // 1. Pega os textos dos dois campos de totais
     const textoTotalResumo = document.getElementById('resumo-total-projeto')?.value || "0,00";
     const textoTotalDetalhamento = document.getElementById('total-projeto-geral')?.value || "0,00";
 
-    // 2. Converte os textos para números decimais para podermos comparar matematicamente
     const valorResumo = parseMoney(textoTotalResumo);
     const valorDetalhamento = parseMoney(textoTotalDetalhamento);
 
-    // 3. Se os valores forem diferentes, exibe o pop-up de confirmação
     if (valorResumo !== valorDetalhamento) {
         const mensagem = 
             "⚠️ Atenção: Os valores totais do projeto não coincidem!\n\n" +
@@ -538,75 +519,38 @@ function verificarAntesDeImprimir() {
             "• Valor no Detalhamento (Tópico 5): R$ " + textoTotalDetalhamento + "\n\n" +
             "Deseja gerar o PDF mesmo assim?";
         
-        // Se o usuário clicar em "Cancelar", a função para aqui e não imprime
         if (!confirm(mensagem)) {
             return; 
         }
     }
-
-    // 4. Se os valores forem iguais OU se o usuário clicou em "OK" no aviso, abre a tela de impressão
     window.print();
 }
 
-function enviarJsonPorEmail(dados) {
-    const stringJson = JSON.stringify(dados, null, 2);
-    
-    // Configuração dos parâmetros que o serviço de e-mail vai receber
-    const dadosEmail = {
-        service_id: 'SEU_SERVICO_DE_EMAIL_ID',
-        template_id: 'SEU_TEMPLATE_ID',
-        user_id: 'SEU_PUBLIC_KEY',
-        template_params: {
-            to_email: 'rodrigo.ferreira.lima@exemplo.com', 
-            subject: 'Novo Plano de Trabalho Gerado - CEG/FDID',
-            message: 'Segue em anexo os dados estruturados do plano de trabalho.',
-            json_data: stringJson 
-        }
-    };
+// ============================================================
+// 9. EVENTO DE IMPRESSÃO NATIVO E DISPARO DA API EMAILJS
+// ============================================================
 
-    // Envia os dados para a API do serviço de e-mail em segundo plano
-    fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dadosEmail)
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('Cópia de segurança em JSON enviada para o e-mail com sucesso!');
-        } else {
-            console.error('Falha ao enviar o JSON por e-mail.');
-        }
-    })
-    .catch(error => console.error('Erro na conexão de envio:', error));
-}
-// Monitora de forma invisível quando a impressão é disparada no navegador
 window.addEventListener('beforeprint', function () {
     console.log("Detectou tentativa de gerar PDF. Capturando e enviando JSON...");
-    
-    // Captura os dados atuais do formulário
     const dadosFormulario = capturarDadosEstruturados();
-    
-    // Dispara a função que envia para o seu e-mail
     enviarJsonPorEmail(dadosFormulario);
 });
+
 function enviarJsonPorEmail(dados) {
     const stringJson = JSON.stringify(dados, null, 2);
     
     const dadosEmail = {
-        service_id: 'service_zb3fdm4',   // Seu Service ID configurado
-        template_id: 'COLE_AQUI_O_SEU_TEMPLATE_ID',  // Falta só colar essa aqui!
-        user_id: 'Gsn0rFQ4S8tAthx2L',       // Sua Public Key configurada
+        service_id: 'service_zb3fdm4',   
+        template_id: 'template_hx1vcin',          
+        user_id: 'Gsn0rFQ4S8tAthx2L',       
         template_params: {
             to_email: 'rfl882571@gmail.com',         
             subject: 'Novo Plano de Trabalho Gerado - CEG/FDID',
-            message: 'Segue em anexo os dados estruturados do plano de trabalho.',
+            message: 'Segue os dados estruturados do plano de trabalho.',
             json_data: stringJson 
         }
     };
 
-    // Envia os dados para a API do serviço de e-mail em segundo plano
     fetch('https://api.emailjs.com/api/v1.0/email/send', {
         method: 'POST',
         headers: {
