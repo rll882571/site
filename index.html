@@ -11,6 +11,10 @@
 <body>
   <div class="export-container no-print">
     <button onclick="verificarAntesDeImprimir()" class="btn-pdf">📄 Gerar PDF do Plano de Trabalho</button>
+    
+    <!-- ADICIONE ESSA LINHA AQUI: -->
+    <button onclick="exportarBackup()" style="background-color: #007bff; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">💾 Salvar Backup (JSON)</button>
+    
     <button onclick="document.getElementById('import-file').click()" style="background-color: #ffc107; color: #212529; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">📂 Abrir Backup</button>
     <button onclick="novoPlano()" style="background-color: #dc3545; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">🗑️ Novo Plano</button>
     <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
@@ -466,9 +470,7 @@
                 <td><input type="text" id="total-corrente-geral" value="0,00" readonly></td>
                 <td><input type="text" id="total-corrente-conced" value="0,00" readonly></td>
                 <td><input type="text" id="total-corrente-propon" value="0,00" readonly></td>
-                <td class="no-print coluna-acoes">
-    <button type="button" class="btn-remove" onclick="removeRow(this)">×</button>
-</td>
+                <td class="no-print coluna-acoes"></td>
             </tr>
             <tr class="subtotal-row">
                 <td colspan="4" class="text-right bold">TOTAL DESPESAS DE CAPITAL (5.2):</td>
@@ -478,10 +480,10 @@
                 <td class="no-print"></td>
             </tr>
             <tr class="total-geral-final">
-                <td colspan="5" class="text-right bold" style="background-color: #eee;">TOTAL GERAL DO PROJETO (5.1 + 5.2):</td>
+                <td colspan="4" class="text-right bold" style="background-color: #eee;">TOTAL GERAL DO PROJETO (5.1 + 5.2):</td>
                 <td style="background-color: #eee;"><input type="text" id="total-projeto-geral" value="0,00" readonly class="bold"></td>
                 <td style="background-color: #eee;"><input type="text" id="total-projeto-conced" value="0,00" readonly></td>
-                
+                <td style="background-color: #eee;"><input type="text" id="total-projeto-propon" value="0,00" readonly></td>
                 <td class="no-print" style="background-color: #eee;"></td>
             </tr>
         </tfoot>

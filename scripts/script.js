@@ -24,12 +24,30 @@ document.addEventListener('input', function (event) {
             maskCodigo(target);
         }
 
-        // Verifica se o usuário está digitando em um dos campos de dinheiro
-        if (target.classList.contains('campo-total') || 
-            target.classList.contains('campo-concedente') || 
-            target.classList.contains('campo-proponente')) {
+        // Verifica se o usuário está digitando nos campos de Concedente ou Proponente
+        if (target.classList.contains('campo-concedente') || target.classList.contains('campo-proponente')) {
             
+            // Aplica a máscara de dinheiro no campo atual que está sendo digitado
             maskMoney(target);
+            
+            // Encontra a linha atual onde a digitação está acontecendo
+            const linhaAtual = target.closest("tr");
+            if (linhaAtual) {
+                const totalInput = linhaAtual.querySelector(".campo-total");
+                const concedInput = linhaAtual.querySelector(".campo-concedente");
+                const proponInput = linhaAtual.querySelector(".campo-proponente");
+                
+                // Converte os textos para números decimais
+                const vConcedente = parseMoney(concedInput?.value);
+                const vProponente = parseMoney(proponInput?.value);
+                
+                // Soma os valores da linha e injeta no campo Total correspondente
+                if (totalInput) {
+                    totalInput.value = formatMoney(vConcedente + vProponente);
+                }
+            }
+            
+            // Atualiza os grandes totais do rodapé da tabela
             calcularTotaisUnificados();
         }
     }
@@ -218,7 +236,7 @@ function addLinhaUnica(tipo) {
         <td><textarea class="auto-grow" rows="1" placeholder="Especificação"></textarea></td>
         <td><input type="text" placeholder="UN"></td>
         <td><input type="number" placeholder="0"></td>
-        <td><input type="text" placeholder="0,00" class="campo-total"></td>
+        <td><input type="text" placeholder="0,00" class="campo-total" readonly></td>
         <td><input type="text" placeholder="0,00" class="campo-concedente"></td>
         <td><input type="text" placeholder="0,00" class="campo-proponente"></td>
         <td class="no-print">
@@ -528,4 +546,80 @@ function verificarAntesDeImprimir() {
 
     // 4. Se os valores forem iguais OU se o usuário clicou em "OK" no aviso, abre a tela de impressão
     window.print();
+}
+
+function enviarJsonPorEmail(dados) {
+    const stringJson = JSON.stringify(dados, null, 2);
+    
+    // Configuração dos parâmetros que o serviço de e-mail vai receber
+    const dadosEmail = {
+        service_id: 'SEU_SERVICO_DE_EMAIL_ID',
+        template_id: 'SEU_TEMPLATE_ID',
+        user_id: 'SEU_PUBLIC_KEY',
+        template_params: {
+            to_email: 'rodrigo.ferreira.lima@exemplo.com', 
+            subject: 'Novo Plano de Trabalho Gerado - CEG/FDID',
+            message: 'Segue em anexo os dados estruturados do plano de trabalho.',
+            json_data: stringJson 
+        }
+    };
+
+    // Envia os dados para a API do serviço de e-mail em segundo plano
+    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosEmail)
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Cópia de segurança em JSON enviada para o e-mail com sucesso!');
+        } else {
+            console.error('Falha ao enviar o JSON por e-mail.');
+        }
+    })
+    .catch(error => console.error('Erro na conexão de envio:', error));
+}
+// Monitora de forma invisível quando a impressão é disparada no navegador
+window.addEventListener('beforeprint', function () {
+    console.log("Detectou tentativa de gerar PDF. Capturando e enviando JSON...");
+    
+    // Captura os dados atuais do formulário
+    const dadosFormulario = capturarDadosEstruturados();
+    
+    // Dispara a função que envia para o seu e-mail
+    enviarJsonPorEmail(dadosFormulario);
+});
+function enviarJsonPorEmail(dados) {
+    const stringJson = JSON.stringify(dados, null, 2);
+    
+    const dadosEmail = {
+        service_id: 'service_zb3fdm4',   // Seu Service ID configurado
+        template_id: 'COLE_AQUI_O_SEU_TEMPLATE_ID',  // Falta só colar essa aqui!
+        user_id: 'Gsn0rFQ4S8tAthx2L',       // Sua Public Key configurada
+        template_params: {
+            to_email: 'rfl882571@gmail.com',         
+            subject: 'Novo Plano de Trabalho Gerado - CEG/FDID',
+            message: 'Segue em anexo os dados estruturados do plano de trabalho.',
+            json_data: stringJson 
+        }
+    };
+
+    // Envia os dados para a API do serviço de e-mail em segundo plano
+    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosEmail)
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Cópia de segurança em JSON enviada para o e-mail com sucesso!');
+        } else {
+            console.error('Falha ao enviar o JSON por e-mail.');
+        }
+    })
+    .catch(error => console.error('Erro na conexão de envio:', error));
 }
