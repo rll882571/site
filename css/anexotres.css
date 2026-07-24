@@ -1,0 +1,537 @@
+/* ============================================================
+   1. CONFIGURAÇÕES GERAIS E FOLHA A4
+   ============================================================ */
+:root {
+    --bg-gray: #f4f4f4;
+    --border-dark: #000;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-gray);
+    font-family: "Times New Roman", Times, serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.a4-page {
+    background: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 15mm 20mm;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* Cabeçalho do Documento */
+.document-header {
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.sub-header { 
+    margin-top: 3px; 
+}
+
+.title-section {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.title-section h1 { 
+    font-size: 14px; 
+    margin: 0; 
+}
+
+.title-section h2 { 
+    font-size: 12px; 
+    margin: 3px 0; 
+}
+
+.form-section { 
+    margin-top: 10px; 
+}
+
+/* ============================================================
+   2. TABELA DE IDENTIFICAÇÃO E DETALHES (ANEXO 3 - PARTE 1)
+   ============================================================ */
+.form-table-container {
+    border: 1.5px solid var(--border-dark);
+    width: 100%;
+}
+
+.table-header-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 6px;
+    border-bottom: 1px solid var(--border-dark);
+    text-transform: uppercase;
+    background-color: #fff;
+}
+
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10.5px;
+}
+
+.form-table td {
+    border: 1px solid var(--border-dark);
+    padding: 3px 6px;
+    vertical-align: middle;
+}
+
+.col-label {
+    width: 38%;
+    font-weight: bold;
+    color: #000;
+}
+
+.col-label .num {
+    display: inline-block;
+    width: 15px;
+}
+
+.col-input input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    background: transparent;
+}
+
+.italic-placeholder::placeholder {
+    font-style: italic;
+    color: #555;
+}
+
+/* Campos de Data */
+.date-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.date-group input {
+    border: 0.5px solid var(--border-dark);
+    padding: 1px 4px;
+}
+
+.width-day { width: 35px; }
+.width-month { width: 90px; }
+.width-year { width: 50px; }
+
+/* Campo de Valor */
+.currency-input {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    width: 100%;
+}
+
+.currency-symbol {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.currency-input input {
+    text-align: left !important;
+    width: 100%;
+}
+
+/* Subdivisão E-mail e Telefone */
+.row-split {
+    display: flex;
+    align-items: center;
+    padding: 0 !important;
+    width: 100%;
+}
+
+.email-part {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex: 6;
+    border-right: 1px solid var(--border-dark);
+    padding: 3px 6px;
+    white-space: nowrap;
+}
+
+.email-part input {
+    text-align: left !important;
+    width: 100%;
+}
+
+.phone-part {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    flex: 4;
+    padding: 3px 6px;
+    white-space: nowrap;
+}
+
+.phone-part input.width-ddd { 
+    width: 28px !important; 
+    border: 0.5px solid var(--border-dark); 
+    text-align: center;
+}
+
+.phone-part input.width-phone { 
+    width: 90px !important; 
+    border: 0.5px solid var(--border-dark); 
+    text-align: center;
+}
+
+.inline-label {
+    font-weight: bold;
+    margin-right: 6px;
+}
+
+.link-style {
+    color: #0000ee;
+    text-decoration: underline;
+}
+
+.center-text { text-align: center; }
+.bold-text { font-weight: bold; }
+
+/* ============================================================
+   3. BLOCOS DE TEXTAREA (AUTO-GROW E ESTILO LIMPO)
+   ============================================================ */
+
+/* Oculta o controle nativo de redimensionamento */
+textarea {
+    resize: none !important;
+}
+
+.textarea-box {
+    border-top: 1px solid var(--border-dark);
+    padding: 6px;
+    background: #fff;
+}
+
+.box-title {
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.box-instruction {
+    font-size: 10px;
+    margin: 4px 0;
+    text-align: justify;
+}
+
+.box-limit {
+    text-align: right;
+    font-weight: bold;
+    font-size: 10px;
+    margin-bottom: 4px;
+}
+
+.limite-caracteres {
+    font-size: 10px;
+    font-weight: bold;
+    text-align: right;
+    margin-bottom: 5px;
+    margin-top: 2px;
+}
+
+/* Regra unificada para auto-grow na tela */
+textarea.auto-grow,
+.textarea-projeto {
+    width: 100%;
+    border: 1px solid var(--border-dark);
+    padding: 6px 8px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    background-color: #fff;
+    box-sizing: border-box;
+    outline: none;
+    display: block;
+    line-height: 1.3;
+    overflow: hidden; /* Esconde barras de rolagem na tela */
+    height: auto;
+}
+
+/* Ajuste específico para textareas inseridas dentro de tabelas (Ex: Seção 23) */
+.tabela-entidades-parceiras td textarea.auto-grow {
+    border: none !important;
+    padding: 2px;
+    min-height: 22px;
+}
+
+.textarea-projeto::placeholder,
+textarea.auto-grow::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* ============================================================
+   4. TABELAS DE PÚBLICO E IDADES (SEÇÕES 18 E 19)
+   ============================================================ */
+
+.tabela-publico {
+    width: 250px;
+    border-collapse: collapse;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.tabela-publico td {
+    border: 1px solid var(--border-dark);
+    padding: 3px 6px;
+    font-size: 10.5px;
+}
+
+.label-tabela { text-align: left; width: 70%; }
+.input-tabela { text-align: center; width: 30%; }
+
+.input-tabela input {
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    background: transparent;
+}
+
+.input-tabela input::-webkit-outer-spin-button,
+.input-tabela input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input-tabela input[type=number] { -moz-appearance: textfield; }
+
+.total-row-publico { background-color: #fff; }
+
+.table-scroll-wrapper { width: 100%; overflow-x: auto; }
+
+.tabela-idades {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8px;
+    text-align: center;
+    table-layout: fixed;
+}
+
+.tabela-idades th, 
+.tabela-idades td {
+    border: 1px solid var(--border-dark);
+    padding: 2px 1px;
+    vertical-align: middle;
+}
+
+.tabela-idades th { background-color: #fff; font-weight: bold; font-size: 8.5px; }
+
+.tabela-idades input {
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 9.5px;
+    background: transparent;
+    padding: 2px 0;
+}
+
+.tabela-idades input::-webkit-outer-spin-button,
+.tabela-idades input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.tabela-idades input[type=number] { -moz-appearance: textfield; }
+
+.col-total, .res-total { font-weight: bold; background-color: #fff; }
+.header-subtotal, .res-subtotal { font-weight: bold; background-color: #fff; width: 45px; font-size: 9px; }
+
+.tabela-total-final { border-collapse: collapse; font-weight: bold; }
+.tabela-total-final td { border: 1px solid var(--border-dark); padding: 4px 8px; font-size: 10px; }
+.label-final { background-color: #fff; }
+.valor-final { background-color: #fff; width: 50px; text-align: center; }
+
+/* ============================================================
+   5. SEÇÕES DE PARCERIA E APOIO (SEÇÕES 21, 22 E 23)
+   ============================================================ */
+
+.title-with-select {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.select-inline-box {
+    display: flex;
+    border: 1px solid var(--border-dark);
+    font-size: 10px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.select-inline-box span {
+    padding: 2px 8px;
+    border-right: 1px solid var(--border-dark);
+    font-weight: bold;
+}
+
+.select-sim-nao {
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    padding: 1px 6px;
+    background: transparent;
+    cursor: pointer;
+    text-align: center;
+}
+
+.tabela-parcerias {
+    width: 60%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    margin-bottom: 4px;
+}
+
+.tabela-parcerias td {
+    border: 1px solid var(--border-dark);
+    padding: 3px 6px;
+    font-size: 10px;
+}
+
+.col-parceria-desc { width: 80%; text-align: left; }
+.col-parceria-opt { width: 20%; text-align: center; }
+.col-parceria-opt select { width: 100%; text-align-last: center; }
+
+.tabela-entidades-parceiras {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    margin-bottom: 6px;
+}
+
+.tabela-entidades-parceiras th,
+.tabela-entidades-parceiras td {
+    border: 1px solid var(--border-dark);
+    padding: 3px 6px;
+    font-size: 10px;
+    vertical-align: middle;
+}
+
+.tabela-entidades-parceiras th {
+    font-weight: bold;
+    text-align: center;
+    background-color: #fff;
+}
+
+.tabela-entidades-parceiras td input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10px;
+    background: transparent;
+}
+
+.tabela-entidades-parceiras td input.cnpj-input {
+    text-align: center;
+}
+
+/* ============================================================
+   6. IMPRESSÃO A4 (EXPANSÃO E IMPRESSÃO SEM CORTES)
+   ============================================================ */
+.export-container { 
+    position: fixed; 
+    top: 20px; 
+    right: 20px; 
+    z-index: 1000; 
+}
+
+.btn-pdf {
+    background-color: #28a745; 
+    color: white; 
+    border: none;
+    padding: 10px 18px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-weight: bold;
+}
+
+/* ============================================================
+   6. IMPRESSÃO A4 (SOLUÇÃO DEFINITIVA SEM BARRAS DE ROLAGEM)
+   ============================================================ */
+.export-container { 
+    position: fixed; 
+    top: 20px; 
+    right: 20px; 
+    z-index: 1000; 
+}
+
+.btn-pdf {
+    background-color: #28a745; 
+    color: white; 
+    border: none;
+    padding: 10px 18px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-weight: bold;
+}
+
+@media print {
+    .no-print, .export-container { 
+        display: none !important; 
+    }
+    
+    body { 
+        background: white !important; 
+        padding: 0 !important; 
+        margin: 0 !important; 
+    }
+    
+    .a4-page { 
+        box-shadow: none !important; 
+        margin: 0 !important; 
+        width: 100% !important; 
+        padding: 10mm !important; 
+        border: none !important;
+    }
+
+    /* Libera a altura dos containers */
+    .form-table-container,
+    .textarea-box,
+    .cell {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    /* Oculta barras de rolagem e permite expansão limpa no PDF */
+    textarea,
+    textarea.auto-grow,
+    .textarea-projeto {
+        overflow: hidden !important; /* Esconde a scrollbar na impressão */
+        resize: none !important;
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        display: block !important;
+        border: 1px solid var(--border-dark) !important;
+    }
+
+    .textarea-box, tr, table {
+        page-break-inside: avoid !important;
+    }
+}
