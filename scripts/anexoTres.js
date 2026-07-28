@@ -257,3 +257,100 @@ window.addEventListener("DOMContentLoaded", function () {
     prepararParaImprimir();
     carregarFormularioAuto();
 });
+// ============================================================
+// FUNÇÕES DO QUADRO LÓGICO (ITEM 24)
+// ============================================================
+
+function adicionarLinhaQuadroLogico(dadosValores = null) {
+    const tbody = document.querySelector('#tabela-quadro-logico tbody');
+    if (!tbody) return;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><textarea class="auto-grow" rows="2" placeholder="Lógica de intervenção..."></textarea></td>
+        <td><textarea class="auto-grow" rows="2" placeholder="Indicadores..."></textarea></td>
+        <td><textarea class="auto-grow" rows="2" placeholder="Meios de verificação..."></textarea></td>
+        <td><textarea class="auto-grow" rows="2" placeholder="Prazo/frequência..."></textarea></td>
+        <td><textarea class="auto-grow" rows="2" placeholder="Responsável..."></textarea></td>
+        <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
+    `;
+
+    tbody.appendChild(tr);
+
+    // Aplica os valores se vierem do backup ou restauração
+    if (dadosValores && Array.isArray(dadosValores)) {
+        const textareas = tr.querySelectorAll('textarea');
+        dadosValores.forEach((val, idx) => {
+            if (textareas[idx]) textareas[idx].value = val;
+        });
+    }
+
+    // Recalcula alturas e vincula o autosave
+    tr.querySelectorAll('textarea').forEach(ajustarAlturaTextarea);
+    salvarFormularioAuto();
+}
+
+function removerLinhaQuadroLogico(btn) {
+    const tr = btn.closest('tr');
+    const tbody = tr.parentElement;
+    
+    // Mantém pelo menos uma linha visível
+    if (tbody.querySelectorAll('tr').length > 1) {
+        tr.remove();
+        salvarFormularioAuto();
+    } else {
+        alert("O quadro lógico deve conter pelo menos uma linha.");
+    }
+}
+// ============================================================
+// FUNÇÕES DO CRONOGRAMA DE ATIVIDADES (ITEM 25)
+// ============================================================
+
+function adicionarLinhaCronograma(dadosLinha = null) {
+    const tbody = document.querySelector('#tabela-cronograma tbody');
+    if (!tbody) return;
+
+    const tr = document.createElement('tr');
+    
+    let tdsMeses = '';
+    for (let i = 1; i <= 12; i++) {
+        tdsMeses += `<td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>`;
+    }
+
+    tr.innerHTML = `
+        <td><textarea class="auto-grow" rows="2" placeholder="Descreva a atividade..."></textarea></td>
+        ${tdsMeses}
+        <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaCronograma(this)">❌</button></td>
+    `;
+
+    tbody.appendChild(tr);
+
+    // Se houver dados (backup / localStorage)
+    if (dadosLinha) {
+        if (dadosLinha.atividade) {
+            const ta = tr.querySelector('textarea');
+            if (ta) ta.value = dadosLinha.atividade;
+        }
+        if (dadosLinha.meses && Array.isArray(dadosLinha.meses)) {
+            const inputs = tr.querySelectorAll('.input-mes');
+            dadosLinha.meses.forEach((val, idx) => {
+                if (inputs[idx]) inputs[idx].value = val;
+            });
+        }
+    }
+
+    tr.querySelectorAll('textarea').forEach(ajustarAlturaTextarea);
+    salvarFormularioAuto();
+}
+
+function removerLinhaCronograma(btn) {
+    const tr = btn.closest('tr');
+    const tbody = tr.parentElement;
+    
+    if (tbody.querySelectorAll('tr').length > 1) {
+        tr.remove();
+        salvarFormularioAuto();
+    } else {
+        alert("O cronograma deve conter pelo menos uma linha.");
+    }
+}

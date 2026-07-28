@@ -61,7 +61,7 @@ body {
 }
 
 /* ============================================================
-   2. TABELA DE IDENTIFICAÇÃO E DETALHES (ANEXO 3 - PARTE 1)
+   2. TABELA DE IDENTIFICAÇÃO E DETALHES (PARTE 1 E GERAL)
    ============================================================ */
 .form-table-container {
     border: 1.5px solid var(--border-dark);
@@ -86,7 +86,7 @@ body {
 
 .form-table td {
     border: 1px solid var(--border-dark);
-    padding: 3px 6px;
+    padding: 4px 6px;
     vertical-align: middle;
 }
 
@@ -112,19 +112,21 @@ body {
 
 .italic-placeholder::placeholder {
     font-style: italic;
-    color: #555;
+    color: #666;
 }
 
 /* Campos de Data */
 .date-group {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
 }
 
 .date-group input {
     border: 0.5px solid var(--border-dark);
-    padding: 1px 4px;
+    padding: 2px 4px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
 }
 
 .width-day { width: 35px; }
@@ -210,10 +212,8 @@ body {
 .bold-text { font-weight: bold; }
 
 /* ============================================================
-   3. BLOCOS DE TEXTAREA (AUTO-GROW E ESTILO LIMPO)
+   3. BLOCOS DE TEXTAREA (AUTO-GROW)
    ============================================================ */
-
-/* Oculta o controle nativo de redimensionamento */
 textarea {
     resize: none !important;
 }
@@ -250,7 +250,6 @@ textarea {
     margin-top: 2px;
 }
 
-/* Regra unificada para auto-grow na tela */
 textarea.auto-grow,
 .textarea-projeto {
     width: 100%;
@@ -263,11 +262,10 @@ textarea.auto-grow,
     outline: none;
     display: block;
     line-height: 1.3;
-    overflow: hidden; /* Esconde barras de rolagem na tela */
+    overflow: hidden;
     height: auto;
 }
 
-/* Ajuste específico para textareas inseridas dentro de tabelas (Ex: Seção 23) */
 .tabela-entidades-parceiras td textarea.auto-grow {
     border: none !important;
     padding: 2px;
@@ -281,9 +279,8 @@ textarea.auto-grow::placeholder {
 }
 
 /* ============================================================
-   4. TABELAS DE PÚBLICO E IDADES (SEÇÕES 18 E 19)
+   4. TABELAS DE PÚBLICO E IDADES (PARTE 3)
    ============================================================ */
-
 .tabela-publico {
     width: 250px;
     border-collapse: collapse;
@@ -365,9 +362,8 @@ textarea.auto-grow::placeholder {
 .valor-final { background-color: #fff; width: 50px; text-align: center; }
 
 /* ============================================================
-   5. SEÇÕES DE PARCERIA E APOIO (SEÇÕES 21, 22 E 23)
+   5. SEÇÕES DE PARCERIA E APOIO (ITENS 21, 22 E 23)
    ============================================================ */
-
 .title-with-select {
     display: flex;
     justify-content: space-between;
@@ -452,49 +448,192 @@ textarea.auto-grow::placeholder {
 }
 
 /* ============================================================
-   6. IMPRESSÃO A4 (EXPANSÃO E IMPRESSÃO SEM CORTES)
+   6. PARTE 4 - QUADRO LÓGICO (ITEM 24)
    ============================================================ */
-.export-container { 
-    position: fixed; 
-    top: 20px; 
-    right: 20px; 
-    z-index: 1000; 
+.tabela-quadro-logico {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
 }
 
-.btn-pdf {
-    background-color: #28a745; 
-    color: white; 
-    border: none;
-    padding: 10px 18px; 
-    border-radius: 4px; 
-    cursor: pointer; 
+.tabela-quadro-logico th,
+.tabela-quadro-logico td {
+    border: 1px solid var(--border-dark);
+    padding: 3px 4px;
+    font-size: 10px;
+    vertical-align: top;
+}
+
+.tabela-quadro-logico th {
     font-weight: bold;
+    text-align: center;
+    background-color: #fff;
+}
+
+.tabela-quadro-logico td textarea.auto-grow {
+    border: none !important;
+    padding: 2px;
+    min-height: 38px;
+    font-size: 10px;
+}
+
+.btn-add-row {
+    background-color: #0056b3;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.btn-add-row:hover {
+    background-color: #003d80;
+}
+
+.btn-remove-row {
+    background: transparent;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px;
+}
+
+.text-center {
+    text-align: center;
 }
 
 /* ============================================================
-   6. IMPRESSÃO A4 (SOLUÇÃO DEFINITIVA SEM BARRAS DE ROLAGEM)
+   7. PARTE 5 - CRONOGRAMA DE ATIVIDADES (ITEM 25)
+   ============================================================ */
+.tabela-cronograma {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    table-layout: fixed;
+}
+
+.tabela-cronograma th,
+.tabela-cronograma td {
+    border: 1px solid var(--border-dark);
+    padding: 2px;
+    font-size: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.tabela-cronograma th {
+    font-weight: bold;
+    background-color: #fff;
+}
+
+.cabecalho-meses th {
+    width: 4.8%;
+}
+
+.tabela-cronograma td textarea.auto-grow {
+    border: none !important;
+    padding: 2px 4px;
+    min-height: 38px;
+    font-size: 10px;
+    text-align: left;
+}
+
+.input-mes {
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    font-weight: bold;
+    background: transparent;
+    text-transform: uppercase;
+}
+
+/* ============================================================
+   8. PARTE 5 (CONT.) E PARTE 6 - SUSTENTABILIDADE E FINAL
+   ============================================================ */
+.redes-contador-container {
+    display: flex;
+    align-items: center;
+    width: 200px;
+    border: 1px solid var(--border-dark);
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.label-redes-num {
+    flex: 7;
+    text-align: center;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 3px;
+    border-right: 1px solid var(--border-dark);
+}
+
+.input-redes-num {
+    flex: 3;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11px;
+    font-weight: bold;
+    background: transparent;
+}
+
+.input-redes-num::-webkit-outer-spin-button,
+.input-redes-num::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input-redes-num[type=number] { 
+    -moz-appearance: textfield; 
+}
+
+/* ============================================================
+   9. PAINEL DE BOTÕES FIXOS NA TELA
    ============================================================ */
 .export-container { 
     position: fixed; 
     top: 20px; 
     right: 20px; 
-    z-index: 1000; 
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.btn-pdf {
-    background-color: #28a745; 
-    color: white; 
+.export-container button {
     border: none;
-    padding: 10px 18px; 
-    border-radius: 4px; 
-    cursor: pointer; 
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
     font-weight: bold;
+    font-size: 12px;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
+.btn-pdf { background-color: #28a745; }
+.btn-save { background-color: #007bff; }
+.btn-open { background-color: #17a2b8; }
+.btn-new { background-color: #dc3545; }
+
+/* ============================================================
+   10. REGRAS DEFINITIVAS PARA IMPRESSÃO (PDF)
+   ============================================================ */
 @media print {
-    .no-print, .export-container { 
+    .no-print, 
+    .export-container, 
+    .btn-remove-row, 
+    .btn-add-row { 
         display: none !important; 
     }
+
     @page {
         margin: 0;
     }
@@ -513,7 +652,6 @@ textarea.auto-grow::placeholder {
         border: none !important;
     }
 
-    /* Libera a altura dos containers */
     .form-table-container,
     .textarea-box,
     .cell {
@@ -522,11 +660,10 @@ textarea.auto-grow::placeholder {
         overflow: visible !important;
     }
 
-    /* Oculta barras de rolagem e permite expansão limpa no PDF */
     textarea,
     textarea.auto-grow,
     .textarea-projeto {
-        overflow: hidden !important; /* Esconde a scrollbar na impressão */
+        overflow: hidden !important;
         resize: none !important;
         white-space: pre-wrap !important;
         word-break: break-word !important;

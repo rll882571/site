@@ -9,12 +9,12 @@
 </head>
 <body>
     <div class="export-container no-print">
-    <button onclick="prepararParaImprimir(); window.print();" class="btn-pdf">📄 Gerar PDF</button>
-    <button onclick="exportarBackup()" class="btn-save">💾 Salvar Backup (JSON)</button>
-    <button onclick="document.getElementById('import-file').click()" class="btn-open">📂 Abrir Backup</button>
-    <button onclick="novoPlano()" class="btn-new">🗑️ Novo Formulário</button>
-    <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
-   </div>
+        <button onclick="prepararParaImprimir(); window.print();" class="btn-pdf">📄 Gerar PDF</button>
+        <button onclick="exportarBackup()" class="btn-save">💾 Salvar Backup (JSON)</button>
+        <button onclick="document.getElementById('import-file').click()" class="btn-open">📂 Abrir Backup</button>
+        <button onclick="novoPlano()" class="btn-new">🗑️ Novo Formulário</button>
+        <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
+    </div>
 
     <div class="a4-page">
         <header class="document-header">
@@ -45,10 +45,10 @@
                             <td class="col-input"><input type="text" placeholder="(Exemplo: Associação ...)"></td>
                         </tr>
                         <tr>
-                          <td class="col-label"><span class="num">3</span> CNPJ:</td>
-                          <td class="col-input">
-                          <input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00">
-                          </td>
+                            <td class="col-label"><span class="num">3</span> CNPJ:</td>
+                            <td class="col-input">
+                                <input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00">
+                            </td>
                         </tr>
                         <tr>
                             <td class="col-label"><span class="num">4</span> Estado :</td>
@@ -144,316 +144,589 @@
                     </div>
                     <textarea class="auto-grow" rows="5" placeholder="(Exemplo: A associação X, foi criada em XXXX e atua no bairro do Jangurussu há X anos focando suas atividades... Possui uma sede que dispõe de ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
-                <!-- CONTINUAÇÃO DA PARTE 2 -->
-<div class="textarea-box" style="border-top: none;">
-    <div class="box-header">
-        <div class="box-title"><span class="num">16</span> Descreva o contexto/realidade em que o Projeto vai atuar</div>
-        <p class="box-instruction">Descreva o contexto, a realidade em que o Projeto vai atuar. Foque nos pontos que serão trabalhados <u>especificamente</u> nesta proposta de Projeto.</p>
-        <div class="box-limit">Número de caracteres permitidos: 3.400</div>
-    </div>
-    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: O Jangurussu, bairro da cidade de Fortaleza, conforme dados do IBGE, tem baixo Índice de Desenvolvimento Humano - IDH, onde o abandono escolar, especialmente entre as adolescentes de sexo feminino de X% e, infelizmente, este índice aumenta entre a população negra ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
-</div>
 
-<!-- PARTE 3: IDENTIFICAÇÃO DO PÚBLICO ALVO -->
-<div class="form-table-container" style="margin-top: 20px;">
-    <div class="table-header-title">PARTE 3: IDENTIFICAÇÃO DO PÚBLICO ALVO</div>
-    
-    <div class="textarea-box">
-        <div class="box-header">
-            <div class="box-title"><span class="num">17</span> Descreva os Beneficiários DIRETOS da proposta de Projeto</div>
-            <p class="box-instruction">
-                Os beneficiários diretos são as pessoas com quem serão desenvolvidas <u>diretamente</u> as atividades do Projeto. (Ex.: Adolescentes e jovens de sexo feminino entre 16 e 25 anos de idade do Bairro do Bom Jardim da Cidade de Fortaleza, que enfrentam o(s) problema(s) X, devido à situação Y ... etc.).
-            </p>
-            <div class="box-limit">Número de caracteres permitidos: 3.400</div>
-        </div>
-        <textarea class="auto-grow" rows="5" placeholder="(Exemplo: As beneficiárias do projeto &quot;Mulheres Empoderadas do Jangurussu&quot; são 30 mulheres negras, entre 18 e 35 anos de Idade, com ensino básico incompleto ou ensino médio incompleto, que não possuem de trabalho formal ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
-    </div>
-</div>
-<div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
-    <div class="box-header">
-        <div class="box-title"><span class="num">18</span> Qual será a distribuição dos beneficiários(as) DIRETOS do Projeto?</div>
-    </div>
-    
-    <table class="tabela-publico">
-        <tbody>
-            <tr>
-                <td class="label-tabela">Feminino</td>
-                <td class="input-tabela">
-                    <input type="number" class="soma-publico" min="0" value="0">
-                </td>
-            </tr>
-            <tr>
-                <td class="label-tabela">Masculino</td>
-                <td class="input-tabela">
-                    <input type="number" class="soma-publico" min="0" value="0">
-                </td>
-            </tr>
-            <tr>
-                <td class="label-tabela">LGBTQIA+</td>
-                <td class="input-tabela">
-                    <input type="number" class="soma-publico" min="0" value="0">
-                </td>
-            </tr>
-            <tr>
-                <td class="label-tabela">Não Informado</td>
-                <td class="input-tabela">
-                    <input type="number" class="soma-publico" min="0" value="0">
-                </td>
-            </tr>
-            <tr class="total-row-publico">
-                <td class="label-tabela"><strong>Total</strong></td>
-                <td class="input-tabela"><strong id="total-publico">0</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<!-- SEÇÃO 19: DISTRIBUIÇÃO POR IDADE -->
-<div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
-    <div class="box-header">
-        <div class="box-title"><span class="num">19</span> Qual é a distribuição dos beneficiários(as) DIRETOS por IDADE?</div>
-        <p class="box-instruction" style="font-weight: normal; margin-top: 5px;">
-            A: Primeira infância; B: Crianças; C: Adolescentes faixa 1; D: Adolescentes faixa 2; E: Jovens; F: Adultos; G: Idosos.
-        </p>
-    </div>
-
-    <!-- TABELA 1: FEMININO E MASCULINO -->
-    <div class="table-scroll-wrapper">
-        <table class="tabela-idades">
-            <thead>
-                <tr>
-                    <th colspan="8">Faixa Etária: Sexo FEMININO</th>
-                    <th colspan="8">Faixa Etária: Sexo MASCULINO</th>
-                    <th rowspan="3" class="header-subtotal">Sub total</th>
-                </tr>
-                <tr class="labels-abc">
-                    <th>A: 00-06 anos</th>
-                    <th>B: 07-11 anos</th>
-                    <th>C: 12-14 anos</th>
-                    <th>D: 15-17 anos</th>
-                    <th>E: 18 - 29 anos</th>
-                    <th>F: 30 - 59 anos</th>
-                    <th>G: 60 e + anos</th>
-                    <th class="col-total">Total</th>
-                    <th>A: 00-06 anos</th>
-                    <th>B: 07-11 anos</th>
-                    <th>C: 12-14 anos</th>
-                    <th>D: 15-17 anos</th>
-                    <th>E: 18 - 29 anos</th>
-                    <th>F: 30 - 59 anos</th>
-                    <th>G: 60 e + anos</th>
-                    <th class="col-total">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                    <td class="res-total" id="total-fem">0</td>
-
-                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                    <td class="res-total" id="total-masc">0</td>
-
-                    <td class="res-subtotal" id="subtotal-1">0</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- TABELA 2: LGBTQIA+ E NÃO INFORMADO -->
-    <div class="table-scroll-wrapper" style="margin-top: 10px;">
-        <table class="tabela-idades">
-            <thead>
-                <tr>
-                    <th colspan="8">Faixa Etária: LGBTQIA+</th>
-                    <th colspan="8">Faixa Etária: Não informado</th>
-                    <th rowspan="3" class="header-subtotal">Sub total</th>
-                </tr>
-                <tr class="labels-abc">
-                    <th>A: 00-06 anos</th>
-                    <th>B: 07-11 anos</th>
-                    <th>C: 12-14 anos</th>
-                    <th>D: 15-17 anos</th>
-                    <th>E: 18 - 29 anos</th>
-                    <th>F: 30 - 59 anos</th>
-                    <th>G: 60 e + anos</th>
-                    <th class="col-total">Total</th>
-                    <th>A: 00-06 anos</th>
-                    <th>B: 07-11 anos</th>
-                    <th>C: 12-14 anos</th>
-                    <th>D: 15-17 anos</th>
-                    <th>E: 18 - 29 anos</th>
-                    <th>F: 30 - 59 anos</th>
-                    <th>G: 60 e + anos</th>
-                    <th class="col-total">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                    <td class="res-total" id="total-lgbt">0</td>
-
-                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                    <td class="res-total" id="total-ni">0</td>
-
-                    <td class="res-subtotal" id="subtotal-2">0</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- RODAPÉ TOTAL GERAL -->
-    <table class="tabela-total-final" style="margin-top: 10px;">
-        <tbody>
-            <tr>
-                <td class="label-final">TOTAL sub total 1 + Sub total 2</td>
-                <td class="valor-final" id="total-geral-idades">0</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<!-- CAMPO 20 -->
-<div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
-    <div class="box-header">
-        <div class="box-title"><span class="num">20</span> Descreva os Beneficiários INDIRETOS <small>(quando for possível, indicar também o número previsto de pessoas que se beneficiarão indiretamente)</small></div>
-        <p class="box-instruction">
-            OS beneficiários <u>INdiretos</u> são as pessoas que <u>NÃO</u> participarão ou se beneficiarão <u>DIRETAMENTE</u> das atividades do Projeto mas que, mesmo assim, se beneficiarão <u>INdiretametne</u> do mesmo. Exemplo: Os familiares do beneficiários DIRETOS, os membros da comunidade, dentre outros.
-        </p>
-        <div class="box-limit">Número de caracteres permitidos: 1.700</div>
-    </div>
-    <textarea class="auto-grow" rows="4" placeholder="(Exemplo: A maioria das beneficiárias diretas do projeto são mãe solteiras com, em média, dois filhos ... Além disso, a comunidade onde serão implementadas as atividades terão um beneficio indireto considerando que ...)&#10;(São permitidas até 45 linhas, ou seja, 1.700 caracteres!)"></textarea>
-</div>
-
-<!-- CAMPO 21 -->
-<div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
-    <div class="box-header">
-        <div class="title-with-select">
-            <div class="box-title"><span class="num">21</span> A COMUNIDADE vai participar da GESTÃO do Projeto? <small>(quando possível, indicar o número de pessoas da comunidade)</small></div>
-            <div class="select-inline-box">
-                <span>Sim/Não</span>
-                <select class="select-sim-nao">
-                    <option value="Sim" selected>Sim</option>
-                    <option value="Não">Não</option>
-                </select>
+                <div class="textarea-box" style="border-top: none;">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">16</span> Descreva o contexto/realidade em que o Projeto vai atuar</div>
+                        <p class="box-instruction">Descreva o contexto, a realidade em que o Projeto vai atuar. Foque nos pontos que serão trabalhados <u>especificamente</u> nesta proposta de Projeto.</p>
+                        <div class="box-limit">Número de caracteres permitidos: 3.400</div>
+                    </div>
+                    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: O Jangurussu, bairro da cidade de Fortaleza, conforme dados do IBGE, tem baixo Índice de Desenvolvimento Humano - IDH, onde o abandono escolar, especialmente entre as adolescentes de sexo feminino de X% e, infelizmente, este índice aumenta entre a população negra ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                </div>
             </div>
-        </div>
-        <p class="box-instruction" style="margin-top: 6px;">Se sim, explique como se dará especificamente e concretamente essa participação nas diferentes fases do Projeto.</p>
-        <div class="box-limit">Número de caracteres permitidos: 3.400</div>
-    </div>
-    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: A comunidade participará indiretamente das ações por meio do processo de repasse de conhecimento organizando oficinas de X ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
-</div>
 
-<!-- CAMPO 22 -->
-<div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
-    <div class="box-header">
-        <div class="box-title"><span class="num">22</span> O Projeto conta com algum tipo de PARCERIA?</div>
-        <p class="box-instruction" style="margin-top: 4px;">Se sim, escolha uma das opções abaixo listadas. Pode indicar uma ou mais opção.</p>
-    </div>
+            <!-- PARTE 3: IDENTIFICAÇÃO DO PÚBLICO ALVO -->
+            <div class="form-table-container" style="margin-top: 20px;">
+                <div class="table-header-title">PARTE 3: IDENTIFICAÇÃO DO PÚBLICO ALVO</div>
+                
+                <div class="textarea-box">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">17</span> Descreva os Beneficiários DIRETOS da proposta de Projeto</div>
+                        <p class="box-instruction">
+                            Os beneficiários diretos são as pessoas com quem serão desenvolvidas <u>diretamente</u> as atividades do Projeto. (Ex.: Adolescentes e jovens de sexo feminino entre 16 e 25 anos de idade do Bairro do Bom Jardim da Cidade de Fortaleza, que enfrentam o(s) problema(s) X, devido à situação Y ... etc.).
+                        </p>
+                        <div class="box-limit">Número de caracteres permitidos: 3.400</div>
+                    </div>
+                    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: As beneficiárias do projeto &quot;Mulheres Empoderadas do Jangurussu&quot; são 30 mulheres negras, entre 18 e 35 anos de Idade, com ensino básico incompleto ou ensino médio incompleto, que não possuem de trabalho formal ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                </div>
 
-    <table class="tabela-parcerias">
-        <tbody>
-            <tr>
-                <td class="col-parceria-desc">1- Técnicas (cooperação para uso de tecnologias, conhecimentos, metodologias etc.)</td>
-                <td class="col-parceria-opt">
-                    <select class="select-sim-nao">
-                        <option value="Sim" selected>Sim</option>
-                        <option value="Não">Não</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-parceria-desc">2- Em recursos humanos (uso de funcionários cedidos por outras organizações, inclusive públicas)</td>
-                <td class="col-parceria-opt">
-                    <select class="select-sim-nao">
-                        <option value="Sim" selected>Sim</option>
-                        <option value="Não">Não</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-parceria-desc">3- Para uso de recursos materiais (estrutura, salas, prédios, veículos etc.)</td>
-                <td class="col-parceria-opt">
-                    <select class="select-sim-nao">
-                        <option value="Sim" selected>Sim</option>
-                        <option value="Não">Não</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-parceria-desc">4- Outras parcerias</td>
-                <td class="col-parceria-opt">
-                    <select class="select-sim-nao">
-                        <option value="Sim">Sim</option>
-                        <option value="Não" selected>Não</option>
-                    </select>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<!-- CAMPO 23: ENTIDADES PARCERIAS PREVISTAS -->
-<div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
-    <div class="box-header">
-        <div class="box-title"><span class="num">23</span> Quais as entidades PARCERIAS PREVISTAS no Projeto?</div>
-    </div>
+                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">18</span> Qual será a distribuição dos beneficiários(as) DIRETOS do Projeto?</div>
+                    </div>
+                    
+                    <table class="tabela-publico">
+                        <tbody>
+                            <tr>
+                                <td class="label-tabela">Feminino</td>
+                                <td class="input-tabela"><input type="number" class="soma-publico" min="0" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-tabela">Masculino</td>
+                                <td class="input-tabela"><input type="number" class="soma-publico" min="0" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-tabela">LGBTQIA+</td>
+                                <td class="input-tabela"><input type="number" class="soma-publico" min="0" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-tabela">Não Informado</td>
+                                <td class="input-tabela"><input type="number" class="soma-publico" min="0" value="0"></td>
+                            </tr>
+                            <tr class="total-row-publico">
+                                <td class="label-tabela"><strong>Total</strong></td>
+                                <td class="input-tabela"><strong id="total-publico">0</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-    <!-- TABELA DE PARCEIROS -->
-    <table class="tabela-entidades-parceiras">
-        <thead>
-            <tr>
-                <th style="width: 30%;">Razão Social do Parceiro</th>
-                <th style="width: 25%;">CNPJ do Parceiro</th>
-                <th style="width: 45%;">Tipo de Apoio</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input type="text" placeholder="Ex: Instituído X"></td>
-                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
-                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
-            </tr>
-            <tr>
-                <td><input type="text" placeholder="Ex: Instituto Y"></td>
-                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
-                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
-            </tr>
-            <tr>
-                <td><input type="text" placeholder="Ex: Fundação Z"></td>
-                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
-                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
-            </tr>
-        </tbody>
-    </table>
+                <!-- SEÇÃO 19: DISTRIBUIÇÃO POR IDADE -->
+                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">19</span> Qual é a distribuição dos beneficiários(as) DIRETOS por IDADE?</div>
+                        <p class="box-instruction" style="font-weight: normal; margin-top: 5px;">
+                            A: Primeira infância; B: Crianças; C: Adolescentes faixa 1; D: Adolescentes faixa 2; E: Jovens; F: Adultos; G: Idosos.
+                        </p>
+                    </div>
 
-    <!-- ÁREA DE COMENTÁRIOS OPCIONAL (PADRÃO ANEXO 1) -->
-    <div class="cell col-12" style="margin-top: 10px; padding: 0;">
-        <label style="font-weight: normal; font-size: 10px; font-family: 'Times New Roman', Times, serif;">Área para comentários (opcional).</label>
-        <p class="limite-caracteres">Número de caracteres permitidos: 1.070</p>
-        <textarea class="auto-grow textarea-projeto" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
-    </div>
-</div>
+                    <div class="table-scroll-wrapper">
+                        <table class="tabela-idades">
+                            <thead>
+                                <tr>
+                                    <th colspan="8">Faixa Etária: Sexo FEMININO</th>
+                                    <th colspan="8">Faixa Etária: Sexo MASCULINO</th>
+                                    <th rowspan="3" class="header-subtotal">Sub total</th>
+                                </tr>
+                                <tr class="labels-abc">
+                                    <th>A: 00-06 anos</th>
+                                    <th>B: 07-11 anos</th>
+                                    <th>C: 12-14 anos</th>
+                                    <th>D: 15-17 anos</th>
+                                    <th>E: 18 - 29 anos</th>
+                                    <th>F: 30 - 59 anos</th>
+                                    <th>G: 60 e + anos</th>
+                                    <th class="col-total">Total</th>
+                                    <th>A: 00-06 anos</th>
+                                    <th>B: 07-11 anos</th>
+                                    <th>C: 12-14 anos</th>
+                                    <th>D: 15-17 anos</th>
+                                    <th>E: 18 - 29 anos</th>
+                                    <th>F: 30 - 59 anos</th>
+                                    <th>G: 60 e + anos</th>
+                                    <th class="col-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td class="res-total" id="total-fem">0</td>
+
+                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td class="res-total" id="total-masc">0</td>
+
+                                    <td class="res-subtotal" id="subtotal-1">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-scroll-wrapper" style="margin-top: 10px;">
+                        <table class="tabela-idades">
+                            <thead>
+                                <tr>
+                                    <th colspan="8">Faixa Etária: LGBTQIA+</th>
+                                    <th colspan="8">Faixa Etária: Não informado</th>
+                                    <th rowspan="3" class="header-subtotal">Sub total</th>
+                                </tr>
+                                <tr class="labels-abc">
+                                    <th>A: 00-06 anos</th>
+                                    <th>B: 07-11 anos</th>
+                                    <th>C: 12-14 anos</th>
+                                    <th>D: 15-17 anos</th>
+                                    <th>E: 18 - 29 anos</th>
+                                    <th>F: 30 - 59 anos</th>
+                                    <th>G: 60 e + anos</th>
+                                    <th class="col-total">Total</th>
+                                    <th>A: 00-06 anos</th>
+                                    <th>B: 07-11 anos</th>
+                                    <th>C: 12-14 anos</th>
+                                    <th>D: 15-17 anos</th>
+                                    <th>E: 18 - 29 anos</th>
+                                    <th>F: 30 - 59 anos</th>
+                                    <th>G: 60 e + anos</th>
+                                    <th class="col-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td class="res-total" id="total-lgbt">0</td>
+
+                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td class="res-total" id="total-ni">0</td>
+
+                                    <td class="res-subtotal" id="subtotal-2">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <table class="tabela-total-final" style="margin-top: 10px;">
+                        <tbody>
+                            <tr>
+                                <td class="label-final">TOTAL sub total 1 + Sub total 2</td>
+                                <td class="valor-final" id="total-geral-idades">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CAMPO 20 -->
+                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">20</span> Descreva os Beneficiários INDIRETOS <small>(quando for possível, indicar também o número previsto de pessoas que se beneficiarão indiretamente)</small></div>
+                        <p class="box-instruction">
+                            OS beneficiários <u>INdiretos</u> são as pessoas que <u>NÃO</u> participarão ou se beneficiarão <u>DIRETAMENTE</u> das atividades do Projeto mas que, mesmo assim, se beneficiarão <u>INdiretametne</u> do mesmo. Exemplo: Os familiares do beneficiários DIRETOS, os membros da comunidade, dentre outros.
+                        </p>
+                        <div class="box-limit">Número de caracteres permitidos: 1.700</div>
+                    </div>
+                    <textarea class="auto-grow" rows="4" placeholder="(Exemplo: A maioria das beneficiárias diretas do projeto são mãe solteiras com, em média, dois filhos ... Além disso, a comunidade onde serão implementadas as atividades terão um beneficio indireto considerando que ...)&#10;(São permitidas até 45 linhas, ou seja, 1.700 caracteres!)"></textarea>
+                </div>
+
+                <!-- CAMPO 21 -->
+                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+                    <div class="box-header">
+                        <div class="title-with-select">
+                            <div class="box-title"><span class="num">21</span> A COMUNIDADE vai participar da GESTÃO do Projeto? <small>(quando possível, indicar o número de pessoas da comunidade)</small></div>
+                            <div class="select-inline-box">
+                                <span>Sim/Não</span>
+                                <select class="select-sim-nao">
+                                    <option value="Sim" selected>Sim</option>
+                                    <option value="Não">Não</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="box-instruction" style="margin-top: 6px;">Se sim, explique como se dará especificamente e concretamente essa participação nas diferentes fases do Projeto.</p>
+                        <div class="box-limit">Número de caracteres permitidos: 3.400</div>
+                    </div>
+                    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: A comunidade participará indiretamente das ações por meio do processo de repasse de conhecimento organizando oficinas de X ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                </div>
+
+                <!-- CAMPO 22 -->
+                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">22</span> O Projeto conta com algum tipo de PARCERIA?</div>
+                        <p class="box-instruction" style="margin-top: 4px;">Se sim, escolha uma das opções abaixo listadas. Pode indicar uma ou mais opção.</p>
+                    </div>
+
+                    <table class="tabela-parcerias">
+                        <tbody>
+                            <tr>
+                                <td class="col-parceria-desc">1- Técnicas (cooperação para uso de tecnologias, conhecimentos, metodologias etc.)</td>
+                                <td class="col-parceria-opt">
+                                    <select class="select-sim-nao">
+                                        <option value="Sim" selected>Sim</option>
+                                        <option value="Não">Não</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-parceria-desc">2- Em recursos humanos (uso de funcionários cedidos por outras organizações, inclusive públicas)</td>
+                                <td class="col-parceria-opt">
+                                    <select class="select-sim-nao">
+                                        <option value="Sim" selected>Sim</option>
+                                        <option value="Não">Não</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-parceria-desc">3- Para uso de recursos materiais (estrutura, salas, prédios, veículos etc.)</td>
+                                <td class="col-parceria-opt">
+                                    <select class="select-sim-nao">
+                                        <option value="Sim" selected>Sim</option>
+                                        <option value="Não">Não</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-parceria-desc">4- Outras parcerias</td>
+                                <td class="col-parceria-opt">
+                                    <select class="select-sim-nao">
+                                        <option value="Sim">Sim</option>
+                                        <option value="Não" selected>Não</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CAMPO 23: ENTIDADES PARCERIAS PREVISTAS -->
+                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">23</span> Quais as entidades PARCERIAS PREVISTAS no Projeto?</div>
+                    </div>
+
+                    <table class="tabela-entidades-parceiras">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Razão Social do Parceiro</th>
+                                <th style="width: 25%;">CNPJ do Parceiro</th>
+                                <th style="width: 45%;">Tipo de Apoio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" placeholder="Ex: Instituído X"></td>
+                                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
+                                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="Ex: Instituto Y"></td>
+                                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
+                                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="Ex: Fundação Z"></td>
+                                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
+                                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="cell col-12" style="margin-top: 10px; padding: 0;">
+                        <label style="font-weight: normal; font-size: 10px; font-family: 'Times New Roman', Times, serif;">Área para comentários (opcional).</label>
+                        <p class="limite-caracteres">Número de caracteres permitidos: 1.070</p>
+                        <textarea class="auto-grow textarea-projeto" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTE 4: LÓGICA DO PROJETO -->
+            <div class="form-table-container" style="margin-top: 20px;">
+                <div class="table-header-title">PARTE 4: LÓGICA DO PROJETO</div>
+
+                <div class="textarea-box">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">24</span> Quadro Lógico</div>
+                        <p class="box-instruction">
+                            Para cada ponto da Lógica de intervenção - Objetivos, Resultados e Atividades, informe por meio de qual INDICADOR será possível medir o alcance/realização do mesmo e, por MEIO de qual(ais) documento(s), será possível verificar os indicadores. Informar também a periodicidade de envio destes documentos para o FDID e quem será o responsável por isso.
+                        </p>
+                    </div>
+
+                    <table class="tabela-quadro-logico" id="tabela-quadro-logico">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Lógica de intervenção:<br><small>Objetivos; Resultados Esperados; Atividades</small></th>
+                                <th style="width: 20%;">Indicadores objetivamente verificáveis<br><small>de alcance de objetivos, resultados e atividades</small></th>
+                                <th style="width: 20%;">Meios de Verificação<br><small>dos indicadores</small></th>
+                                <th style="width: 15%;">Prazo / frequência de envio dos Meios de Verificação ao FDID</th>
+                                <th style="width: 15%;">Responsável/<br><small>Quem vai enviar os meios de verificação ao FDID</small></th>
+                                <th class="no-print" style="width: 30px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Linha 1: Objetivo Geral -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="Objetivo Geral: (Exemplo: Contribuir para o alcance da igualdade de gênero no Bairro do Jangurussu garantindo a independência financeiras e aumentando a renda ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder=""></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder=""></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder=""></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder=""></textarea></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
+                            </tr>
+                            <!-- Linha 2: Objetivo Específico n. 1 -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="Objetivo Específico n. 1: (Exemplo: Aumentar em 40% a renda de 30 mulheres negras, entre 18 e 35 anos de idade, que residem no Bairro do Jangurussu ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Análise do consumo das famílias ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Pesquisas ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: 1 vez, ao final do programa ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
+                            </tr>
+                            <!-- Linha 3: Resultado Esperado n. 1 -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="Resultado Esperado n. 1, do Objetivo Específico 1: (Exemplo: 90% das mulheres beneficiárias do projeto capacitadas em Micro Empreendedorismo ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: % de mulheres beneficiárias do projeto capacitadas em Micro Empreendedorismo ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Certificados final em Micro Empreendedorismo ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Trimestral ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
+                            </tr>
+                            <!-- Linha 4: Atividade n. 1 -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="Atividade n. 1 do Resultado n. 1, do Objetivo Específico 1: (Exemplo: Realização de 01 CURSO DE ADMINISTRAÇÃO GERAL para 30 mulheres beneficiárias do projeto de 40h ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Número de mulheres beneficiárias do Projetos que concluíram positivamente o curso em Administração Geral ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Lista de presença e registro fotográfico ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Mensal ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
+                            </tr>
+                            <!-- Linha 5: Atividade n. 2 -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="Atividade n. 2 do Resultado n. 1, do Objetivo Específico 1: Realização de 01 CURSO BÁSICO DE CONTABILIDADE para 30 mulheres beneficiárias do projeto de 40h"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Número de mulheres beneficiárias do Projetos que concluíram positivamente o curso em Contabilidade básica ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Lista de presença e registro fotográfico ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Mensal ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
+                            </tr>
+                            <!-- Linha 6: Atividade n. 3 -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="Atividade n. 3 do Resultado n. 1, do Objetivo Específico 1: (Exemplo: Realização de 01 CURSO DE MARKETING para 30 mulheres beneficiárias do projeto de 40h ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Número de mulheres beneficiárias do Projetos que concluíram positivamente o curso em Administração Geral ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Lista de presença e registro fotográfico ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Mensal ...)"></textarea></td>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 8px;" class="no-print">
+                        <button type="button" class="btn-add-row" onclick="adicionarLinhaQuadroLogico()">➕ Adicionar Linha ao Quadro Lógico</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTE 5: PLANEJAMENTO DAS ATIVIDADES -->
+            <div class="form-table-container" style="margin-top: 20px;">
+                <div class="table-header-title">PARTE 5: PLANEJAMENTO DAS ATIVIDADES POR RESULTADO ESPERADO</div>
+
+                <div class="textarea-box">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">25</span> Cronograma de Atividades</div>
+                        <p class="box-instruction">
+                            Marque com um <strong>X</strong> os meses de implementação correspondentes a cada atividade prevista no projeto.
+                        </p>
+                    </div>
+
+                    <table class="tabela-cronograma" id="tabela-cronograma">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width: 40%;">Atividades</th>
+                                <th colspan="12">Meses de implementação das atividades do projeto</th>
+                                <th class="no-print" rowspan="2" style="width: 30px;"></th>
+                            </tr>
+                            <tr class="cabecalho-meses">
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                                <th>9</th>
+                                <th>10</th>
+                                <th>11</th>
+                                <th>12</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Linha 1 de Exemplo -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Realização de 01 CURSO DE ADMINISTRAÇÃO GERAL para 30 mulheres beneficiárias do projeto de 40h ...)"></textarea></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaCronograma(this)">❌</button></td>
+                            </tr>
+                            <!-- Linha 2 de Exemplo -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Realização de 01 CURSO BÁSICO DE CONTABILIDADE para 30 mulheres beneficiárias do projeto de 40h ...)"></textarea></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaCronograma(this)">❌</button></td>
+                            </tr>
+                            <!-- Linha 3 de Exemplo -->
+                            <tr>
+                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Realização de 01 CURSO DE MARKETING para 30 mulheres beneficiárias do projeto de 40h ...)"></textarea></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td><input type="text" class="input-mes" maxlength="2" placeholder="X"></td>
+                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaCronograma(this)">❌</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 8px;" class="no-print">
+                        <button type="button" class="btn-add-row" onclick="adicionarLinhaCronograma()">➕ Adicionar Linha ao Cronograma</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTE 5 (CONT.): IMPACTO NAS POLÍTICAS PÚBLICAS & SUSTENTABILIDADE -->
+            <div class="form-table-container" style="margin-top: 20px;">
+                <div class="table-header-title">PARTE 5: IMPACTO NAS POLÍTICAS PÚBLICAS & SUSTENTABILIDADE DO PROJETO</div>
+
+                <!-- CAMPO 26 -->
+                <div class="textarea-box">
+                    <div class="box-header">
+                        <div class="box-title">
+                            <span class="num">26</span> De quantas REDES locais, nacionais ou regionais a sua Organização da Sociedade Civil (OSC) faz parte?
+                        </div>
+                        <p class="box-instruction">
+                            Por REDE se entende um conjunto de instituições que se juntam formalmente visando alcançar objetivos comuns de interesse público.
+                        </p>
+
+                        <div class="redes-contador-container">
+                            <span class="label-redes-num">Nº</span>
+                            <input type="number" class="input-redes-num" min="0" value="0">
+                        </div>
+
+                        <p class="box-instruction" style="margin-top: 10px;">
+                            Se sim, assinale o(os) nome(s) da(s) rede(s) e comente de que forma a Rede contribui na implementação do Projeto:
+                        </p>
+                        <div class="box-limit">Número de caracteres permitidos: 3.400</div>
+                    </div>
+
+                    <textarea class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                </div>
+
+                <!-- CAMPO 27 -->
+                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+                    <div class="box-header">
+                        <div class="title-with-select">
+                            <div class="box-title"><span class="num">27</span> O Projeto é integrado na implementação de algumas POLÍTICAS PÚBLICAS?</div>
+                            <div class="select-inline-box">
+                                <span>Sim/Não</span>
+                                <select class="select-sim-nao">
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não" selected>Não</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="box-instruction" style="margin-top: 6px;">
+                            As Políticas Públicas têm como base um ato formal do Poder Público e têm com o objetivo universalizar o acesso de todos os cidadãos a seus direitos econômicos, sociais, políticos, culturais e ambientais.
+                        </p>
+                        <p class="box-instruction">Se sim, indique de qual Política Pública se trata e comente de que forma se dará esta integração/implementação:</p>
+                        <div class="box-limit">Número de caracteres permitidos: 3.400</div>
+                    </div>
+                    <textarea class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                </div>
+
+                <!-- CAMPO 28 -->
+                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">28</span> O Projeto tem SUSTENTABILIDADE?</div>
+                        <p class="box-instruction">
+                            (Caso a sua proposta seja aprovada pelo FDID) Quando terminar o financiamento do FDID, a sua entidade tem a capacidade de SUSTENTAR as ações aqui propostas por meio de estratégias de mobilização de outros recursos financeiros, parcerias, apoio de outras Entidades Privadas ou de outro Órgãos do Poder Público, dentre outros?
+                        </p>
+                        <p class="box-instruction">Se sim, descreva abaixo como se dará a SUSTENTABILIDADE do Projeto:</p>
+                        <div class="box-limit">Número de caracteres permitidos: 3.400</div>
+                    </div>
+                    <textarea class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                </div>
+            </div>
+
+            <!-- PARTE 6: CONSIDERAÇÕES FINAIS E DADOS DE PREENCHIMENTO -->
+            <div class="form-table-container" style="margin-top: 20px;">
+                <div class="table-header-title">PARTE 6: CONSIDERAÇÕES FINAIS E DADOS DE PREENCHIMENTO DO FORMULÁRIO</div>
+
+                <!-- CAMPO 29 -->
+                <div class="textarea-box">
+                    <div class="box-header">
+                        <div class="box-title"><span class="num">29</span> Caso ache necessário, acrescentar aqui o que não foi possível informar nos outro campos do formulário acerca da sua proposta de Projeto.</div>
+                        <div class="box-limit" style="margin-top: 4px;">Número de caracteres permitidos: 1.070</div>
+                    </div>
+                    <textarea class="auto-grow" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
+                </div>
+
+                <!-- TABELA FINAL: CAMPOS 30 E 31 -->
+                <table class="form-table" style="border-top: 1px solid var(--border-dark);">
+                    <tbody>
+                        <tr>
+                            <td class="col-label" style="width: 38%;"><span class="num">30</span> Data de preenchimento do formulário:</td>
+                            <td class="col-input">
+                                <div class="date-group">
+                                    <input type="text" class="center-text width-day" placeholder="30">
+                                    <input type="text" class="center-text width-month" placeholder="Janeiro">
+                                    <input type="text" class="center-text width-year" placeholder="2021">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-label"><span class="num">31</span> Nome completo do(a) responsável pelo preenchimento do formulário:</td>
+                            <td class="col-input">
+                                <input type="text" class="italic-placeholder" placeholder="(digitar aqui o nome completo)">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
     </div>
