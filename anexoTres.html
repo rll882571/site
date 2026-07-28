@@ -9,10 +9,12 @@
 </head>
 <body>
     <div class="export-container no-print">
-        <button onclick="prepararParaImprimir(); window.print();" class="btn-pdf">
-         📄 Gerar PDF
-        </button>
-    </div>
+    <button onclick="verificarAntesDeImprimir()" class="btn-pdf">📄 Gerar PDF</button>
+    <button onclick="exportarBackup()" class="btn-save">💾 Salvar Backup (JSON)</button>
+    <button onclick="document.getElementById('import-file').click()" class="btn-open">📂 Abrir Backup</button>
+    <button onclick="novoPlano()" class="btn-new">🗑️ Novo Plano</button>
+    <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
+</div>
 
     <div class="a4-page">
         <header class="document-header">

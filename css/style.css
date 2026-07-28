@@ -363,3 +363,90 @@ textarea.auto-grow {
     line-height: 18px;
     padding: 0;
 }
+/* ============================================================
+   ESTILIZAÇÃO DOS BOTÕES DE AÇÃO (GERAR PDF, BACKUP, NOVO PLANO)
+   ============================================================ */
+.export-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(4px);
+}
+
+.export-container button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Botão Gerar PDF */
+.export-container .btn-pdf {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.export-container .btn-pdf:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+/* Botão Salvar Backup (Azul) */
+.export-container .btn-save {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.export-container .btn-save:hover {
+    background-color: #0069d9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+/* Botão Abrir Backup (Amarelo) */
+.export-container .btn-open {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.export-container .btn-open:hover {
+    background-color: #e0a800;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+/* Botão Novo Plano (Vermelho) */
+.export-container .btn-new {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.export-container .btn-new:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+/* Efeito ao Clicar */
+.export-container button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
