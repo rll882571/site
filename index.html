@@ -42,8 +42,8 @@
                     <input type="text">
                 </div>
                 <div class="cell col-4">
-                    <label>CNPJ</label>
-                    <input type="text">
+                <label>CNPJ</label>
+                <input type="text" class="cnpj-input" placeholder="00.000.000/0000-00" maxlength="18">
                 </div>
 
                 <div class="cell col-12">
@@ -56,13 +56,13 @@
                     <input type="text">
                 </div>
                 <div class="cell col-1">
-                    <label>UF</label>
-                    <input type="text" maxlength="2" class="center-text">
-                </div>
+                <label>UF</label>
+                <input type="text" value="CE" readonly class="center-text" style="background-color: #f0f0f0; font-weight: bold;">
+                 </div>
                 <div class="cell col-2">
-                    <label>CEP</label>
-                    <input type="text">
-                </div>
+                  <label>CEP</label>
+                  <input type="text" class="cep-input" placeholder="00000-000" maxlength="9">
+                  </div>
                 <div class="cell col-2">
                     <label>DDD/Telefone</label>
                     <input type="text">
@@ -77,8 +77,8 @@
                     <input type="text">
                 </div>
                 <div class="cell col-3">
-                    <label>CPF</label>
-                    <input type="text">
+                <label>CPF</label>
+                <input type="text" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
                 </div>
 
                 <div class="cell col-3">
@@ -103,17 +103,17 @@
                     <input type="text">
                 </div>
                 <div class="cell col-3">
-                    <label>CEP</label>
-                    <input type="text">
-                </div>
+                  <label>CEP</label>
+                  <input type="text" class="cep-input" placeholder="00000-000" maxlength="9">
+                  </div>
 
                 <div class="cell col-8">
                     <label>Coordenador(a) do Projeto:</label>
                     <input type="text">
                 </div>
                 <div class="cell col-4">
-                    <label>CPF:</label>
-                    <input type="text">
+                <label>CPF</label>
+                <input type="text" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
                 </div>
 
                 <div class="cell col-6">
@@ -145,8 +145,8 @@
                     <input type="text">
                 </div>
                 <div class="cell col-3">
-                    <label>CNPJ:</label>
-                    <input type="text">
+                <label>CNPJ</label>
+                <input type="text" class="cnpj-input" placeholder="00.000.000/0000-00" maxlength="18">
                 </div>
                 <div class="cell col-3">
                     <label>Fone/fax:</label>
@@ -158,8 +158,8 @@
                     <input type="text">
                 </div>
                 <div class="cell col-3">
-                    <label>CPF:</label>
-                    <input type="text">
+                <label>CPF</label>
+                <input type="text" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
                 </div>
 
                 <div class="cell col-6">
@@ -176,9 +176,9 @@
                     <input type="text">
                 </div>
                 <div class="cell col-3">
-                    <label>CEP:</label>
-                    <input type="text">
-                </div>
+                  <label>CEP</label>
+                  <input type="text" class="cep-input" placeholder="00000-000" maxlength="9">
+                  </div>
                 <div class="cell col-3">
                     <label>Fone/fax:</label>
                     <input type="text">
@@ -216,7 +216,7 @@
     <div class="budget-grid">
         <div class="budget-row header-row">
             <span class="label">3.1 – CONCEDENTE/VALOR</span>
-            <div class="value-input">R$: <input type="text" id="resumo-concedente" class="money-input-budget" placeholder="0,00"></div>
+            <div class="value-input">R$: <input type="text" id="resumo-concedente" class="money-input-budget bold-text" readonly placeholder="0,00"></div>
         </div>
         <div class="budget-row">
             <span class="label">Despesas Correntes:</span>
@@ -229,7 +229,7 @@
 
         <div class="budget-row header-row">
             <span class="label">3.2 – PROPONENTE/VALOR (opcional)</span>
-            <div class="value-input">R$: <input type="text" id="resumo-proponente" class="money-input-budget" placeholder="0,00"></div>
+            <div class="value-input">R$: <input type="text" id="resumo-proponente" class="money-input-budget bold-text" readonly placeholder="0,00"></div>
         </div>
         <div class="budget-row">
             <span class="label">Recursos Financeiros (C1)</span>

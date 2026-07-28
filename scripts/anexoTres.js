@@ -39,7 +39,18 @@ document.addEventListener('input', function (event) {
         target.value = target.value.replace(/\D/g, '');
         calcularIdades();
     }
+
+    // SALVAMENTO AUTOMÁTICO AO DIGITAR
+    salvarFormularioAuto();
 }, false);
+
+// MONITOR DE ALTERAÇÕES EM SELECTS (DROPDOWNS)
+document.addEventListener('change', function (event) {
+    if (event.target.tagName === 'SELECT') {
+        salvarFormularioAuto();
+    }
+});
+
 
 // ============================================================
 // 2. FUNÇÕES DE AJUSTE DE ALTURA PARA IMPRESSÃO
@@ -47,7 +58,6 @@ document.addEventListener('input', function (event) {
 
 function ajustarAlturaTextarea(el) {
     el.style.height = 'auto';
-    // Adiciona +8px de folga para prevenir cortes de linha por renderização de fonte na impressão
     el.style.height = (el.scrollHeight + 8) + 'px'; 
 }
 
@@ -57,12 +67,8 @@ function prepararParaImprimir() {
     });
 }
 
-// Dispara a preparação antes de imprimir (via Ctrl+P ou botão)
 window.addEventListener('beforeprint', prepararParaImprimir);
 
-window.addEventListener('DOMContentLoaded', function () {
-    prepararParaImprimir();
-});
 
 // ============================================================
 // 3. MÁSCARAS E CÁLCULOS
@@ -125,3 +131,129 @@ function calcularIdades() {
     if (document.getElementById('subtotal-2')) document.getElementById('subtotal-2').innerText = sub2;
     if (document.getElementById('total-geral-idades')) document.getElementById('total-geral-idades').innerText = sub1 + sub2;
 }
+
+
+// ============================================================
+// 4. MOTOR DE PERSISTÊNCIA (BACKUP JSON E LOCALSTORAGE)
+// ============================================================
+
+function capturarDadosEstruturados() {
+    const backup = {
+        inputsFixos: [],
+        selectsFixos: [],
+        textareasFixas: []
+    };
+
+    document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']").forEach((el, index) => {
+        backup.inputsFixos.push({ index: index, value: el.value });
+    });
+
+    document.querySelectorAll("body select").forEach((el, index) => {
+        backup.selectsFixos.push({ index: index, value: el.value });
+    });
+
+    document.querySelectorAll("body textarea").forEach((el, index) => {
+        backup.textareasFixas.push({ index: index, value: el.value });
+    });
+
+    return backup;
+}
+
+function aplicarDadosEstruturados(dados) {
+    if (!dados) return;
+
+    if (dados.inputsFixos && Array.isArray(dados.inputsFixos)) {
+        const inputsAtuais = document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']");
+        dados.inputsFixos.forEach(item => {
+            if (inputsAtuais[item.index]) {
+                inputsAtuais[item.index].value = item.value;
+            }
+        });
+    }
+
+    if (dados.selectsFixos && Array.isArray(dados.selectsFixos)) {
+        const selectsAtuais = document.querySelectorAll("body select");
+        dados.selectsFixos.forEach(item => {
+            if (selectsAtuais[item.index]) {
+                selectsAtuais[item.index].value = item.value;
+            }
+        });
+    }
+
+    if (dados.textareasFixas && Array.isArray(dados.textareasFixas)) {
+        const textareasAtuais = document.querySelectorAll("body textarea");
+        dados.textareasFixas.forEach(item => {
+            if (textareasAtuais[item.index]) {
+                textareasAtuais[item.index].value = item.value;
+            }
+        });
+    }
+
+    calcularTotalPublico();
+    calcularIdades();
+    prepararParaImprimir();
+}
+
+function salvarFormularioAuto() {
+    const dados = capturarDadosEstruturados();
+    localStorage.setItem("AnexoTresFDID_v1", JSON.stringify(dados));
+}
+
+function carregarFormularioAuto() {
+    const localData = localStorage.getItem("AnexoTresFDID_v1");
+    if (localData) {
+        try {
+            const dados = JSON.parse(localData);
+            aplicarDadosEstruturados(dados);
+        } catch (e) {
+            console.error("Erro ao carregar dados salvos.", e);
+        }
+    }
+}
+
+
+// ============================================================
+// 5. AÇÕES DOS BOTÕES (EXPORTAR, IMPORTAR E RESET)
+// ============================================================
+
+function exportarBackup() {
+    const dados = capturarDadosEstruturados();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "Backup_Anexo_3_FDID.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+function importarBackup(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const dados = JSON.parse(e.target.result);
+            aplicarDadosEstruturados(dados);
+            salvarFormularioAuto();
+            alert("Backup do Anexo 3 carregado com sucesso!");
+        } catch (err) {
+            alert("Erro ao ler o arquivo JSON.");
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
+}
+
+function novoPlano() {
+    if (confirm("Atenção: Deseja limpar todas as informações preenchidas neste formulário?")) {
+        localStorage.removeItem("AnexoTresFDID_v1");
+        window.location.reload();
+    }
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+    prepararParaImprimir();
+    carregarFormularioAuto();
+});
