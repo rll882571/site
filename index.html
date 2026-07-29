@@ -129,9 +129,10 @@
                     <label>Data:</label>
                     <input type="date">
                 </div>
-                <div class="cell col-6">
+                <!-- CAMPO DE ASSINATURA FIXO COM LINHA (NÃO EDITÁVEL) -->
+                <div class="cell col-6" style="display: flex; flex-direction: column; justify-content: flex-end;">
                     <label>Assinatura:</label>
-                    <input type="text" readonly placeholder="Assinatura Digital">
+                    <div style="border-bottom: 1px solid #000; margin-top: 25px; height: 1px;"></div>
                 </div>
             </div>
         </section>
@@ -520,13 +521,55 @@
             </div>
             
             <div class="sig-field">
-                <input type="text" class="sig-name" placeholder="DIGITE O NOME DO REPRESENTANTE">
+                <div style="border-bottom: 1px solid #000; margin-top: 25px; height: 1px;"></div>
                 <label>Assinatura / Nome do Representante</label>
             </div>
         </div>
     </div>
 </section>
     </div>
+<!-- MODAL DE VALIDAÇÃO DA IA -->
+<div id="modal-ia" class="modal-overlay no-print" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-ia-titulo"> Auditoria Automática de Coerência</h3>
+      <button class="btn-fechar-modal" onclick="fecharModalIA()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Indicador de Carregamento -->
+      <div id="modal-ia-loading" style="display: none; text-align: center; padding: 20px;">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; font-weight: bold;">Analisando coerência entre Tópico 4 e Tópico 5...</p>
+      </div>
 
+      <!-- Conteúdo do Resultado -->
+      <div id="modal-ia-resultado" style="display: none;">
+        <div id="status-box" class="status-box">
+          <p id="resumo-ia-texto"></p>
+        </div>
+
+        <div id="container-divergencias" style="margin-top: 15px; display: none;">
+          <h4>⚠️ Divergências Encontradas:</h4>
+          <table class="tabela-divergencias">
+            <thead>
+              <tr>
+                <th>Cronograma (Tópico 4)</th>
+                <th>Detalhamento (Tópico 5)</th>
+                <th>Motivo / Problema</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-divergencias"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button id="btn-prosseguir-print" class="btn-confirmar" style="display: none;" onclick="confirmarImpressaoAposIA()">Imprimir Assim Mesmo</button>
+      <button class="btn-secundario" onclick="fecharModalIA()">Voltar ao Formulário</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

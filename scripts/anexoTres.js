@@ -58,7 +58,12 @@ document.addEventListener('change', function (event) {
 
 function ajustarAlturaTextarea(el) {
     el.style.height = 'auto';
-    el.style.height = (el.scrollHeight + 8) + 'px'; 
+    // Se for um textarea de tabela da Parte 1, mantém a base fina de 16px
+    if (el.classList.contains('input-table-textarea')) {
+        el.style.height = (el.scrollHeight > 16 ? el.scrollHeight : 16) + 'px';
+    } else {
+        el.style.height = (el.scrollHeight + 8) + 'px';
+    }
 }
 
 function prepararParaImprimir() {
@@ -254,6 +259,10 @@ function novoPlano() {
 }
 
 window.addEventListener("DOMContentLoaded", function () {
+    // Ajusta a altura inicial de todos os textareas ao carregar
+    document.querySelectorAll('textarea.auto-grow').forEach(function(el) {
+        ajustarAlturaTextarea(el);
+    });
     prepararParaImprimir();
     carregarFormularioAuto();
 });
@@ -301,106 +310,4 @@ function removerLinhaQuadroLogico(btn) {
     } else {
         alert("O quadro lógico deve conter pelo menos uma linha.");
     }
-}
-// ============================================================
-// FUNÇÕES DO CRONOGRAMA DE ATIVIDADES (ITEM 25)
-// ============================================================
-
-function adicionarLinhaCronograma(dadosLinha = null) {
-    const tbody = document.querySelector('#tabela-cronograma tbody');
-    if (!tbody) return;
-
-    const tr = document.createElement('tr');
-    
-    let tdsMeses = '';
-    for (let i = 1; i <= 12; i++) {
-        tdsMeses += `<td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>`;
-    }
-
-    tr.innerHTML = `
-        <td><textarea class="auto-grow" rows="2" placeholder="Descreva a atividade..."></textarea></td>
-        ${tdsMeses}
-        <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaCronograma(this)">❌</button></td>
-    `;
-
-    tbody.appendChild(tr);
-
-    // Se houver dados (backup / localStorage)
-    if (dadosLinha) {
-        if (dadosLinha.atividade) {
-            const ta = tr.querySelector('textarea');
-            if (ta) ta.value = dadosLinha.atividade;
-        }
-        if (dadosLinha.meses && Array.isArray(dadosLinha.meses)) {
-            const inputs = tr.querySelectorAll('.input-mes');
-            dadosLinha.meses.forEach((val, idx) => {
-                if (inputs[idx]) inputs[idx].value = val;
-            });
-        }
-    }
-
-    tr.querySelectorAll('textarea').forEach(ajustarAlturaTextarea);
-    salvarFormularioAuto();
-}
-
-function removerLinhaCronograma(btn) {
-    const tr = btn.closest('tr');
-    const tbody = tr.parentElement;
-    
-    if (tbody.querySelectorAll('tr').length > 1) {
-        tr.remove();
-        salvarFormularioAuto();
-    } else {
-        alert("O cronograma deve conter pelo menos uma linha.");
-    }
-}
-function extrairDadosParaValidacaoIA() {
-    const dadosTópico4 = [];
-    const dadosTópico5 = [];
-
-    // --- A. Extração do Tópico 4.1 (Cronograma de Execução) ---
-    const linhasTabela4 = document.querySelectorAll('#cronograma-table tbody tr');
-    
-    linhasTabela4.forEach(linha => {
-        const celulas = linha.children;
-        
-        // Pega a div editable ou input correspondente em cada coluna
-        const descricao = celulas[2]?.querySelector('.editable')?.innerText.trim() || '';
-        const unidade = celulas[3]?.querySelector('input')?.value.trim() || '';
-        const quantidade = celulas[4]?.querySelector('input')?.value.trim() || '';
-
-        // Só adiciona se houver descrição preenchida
-        if (descricao) {
-            dadosTópico4.push({
-                descricao: descricao,
-                unidade: unidade,
-                quantidade: quantidade
-            });
-        }
-    });
-
-    // --- B. Extração do Tópico 5 (Detalhamento das Despesas) ---
-    const linhasTabela5 = document.querySelectorAll('#tabela-despesas-unica tbody tr');
-
-    linhasTabela5.forEach(linha => {
-        const celulas = linha.children;
-
-        // Tópico 5: Coluna 1 = Especificação (div.editable), Coluna 2 = Unidade, Coluna 3 = Qtd
-        const especificacao = celulas[1]?.querySelector('.editable')?.innerText.trim() || '';
-        const unidade = celulas[2]?.querySelector('input')?.value.trim() || '';
-        const quantidade = celulas[3]?.querySelector('input')?.value.trim() || '';
-
-        if (especificacao) {
-            dadosTópico5.push({
-                especificacao: especificacao,
-                unidade: unidade,
-                quantidade: quantidade
-            });
-        }
-    });
-
-    return {
-        cronogramaExecucao: dadosTópico4,
-        detalhamentoDespesas: dadosTópico5
-    };
 }

@@ -287,7 +287,7 @@ function calcularIdades() {
 
 
 // ============================================================
-// 4. MOTOR DE PERSISTÊNCIA (BACKUP E AUTO-SAVE - ANEXO 3)
+// 4. MOTOR DE PERSISTÊNCIA (BACKUP E AUTO-SAVE - ANEXO 2)
 // ============================================================
 
 function capturarDadosEstruturados() {
@@ -295,10 +295,33 @@ function capturarDadosEstruturados() {
         inputsFixos: [],
         selectsFixos: [],
         textareasFixas: [],
-        editablesFixos: [] // Adicionado suporte para divs editáveis
+        editablesFixos: [],
+        linhasCronograma: [],
+        linhasDespesas: []
     };
 
-    document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']").forEach((el, index) => {
+    // Captura as linhas criadas dinamicamente no Cronograma (Tópico 4.1)
+    document.querySelectorAll('#cronograma-table tbody tr').forEach(row => {
+        const editables = Array.from(row.querySelectorAll('.editable')).map(e => e.innerHTML);
+        const inputs = Array.from(row.querySelectorAll('input')).map(i => i.value);
+        backup.linhasCronograma.push({ editables, inputs });
+    });
+
+    // Captura as linhas criadas dinamicamente nas Despesas (Tópico 5)
+    document.querySelectorAll('#tabela-despesas-unica tbody tr').forEach(row => {
+        const tipo = row.classList.contains('linha-corrente') ? 'corrente' : 'capital';
+        const codigo = row.querySelector('.input-codigo-despesa')?.value || '';
+        const desc = row.querySelector('.editable')?.innerHTML || '';
+        const unid = row.children[2]?.querySelector('input')?.value || '';
+        const qtd = row.children[3]?.querySelector('input')?.value || '';
+        const vConced = row.querySelector('.valor-conced')?.value || '0,00';
+        const vPropon = row.querySelector('.valor-propon')?.value || '0,00';
+
+        backup.linhasDespesas.push({ tipo, codigo, desc, unid, qtd, vConced, vPropon });
+    });
+
+    // Captura campos fixos
+    document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email'], body input[type='date']").forEach((el, index) => {
         backup.inputsFixos.push({ index: index, value: el.value });
     });
 
@@ -310,7 +333,6 @@ function capturarDadosEstruturados() {
         backup.textareasFixas.push({ index: index, value: el.value });
     });
 
-    // Mapeia todas as divs editáveis do documento
     document.querySelectorAll("body .editable").forEach((el, index) => {
         backup.editablesFixos.push({ index: index, innerHTML: el.innerHTML });
     });
@@ -321,8 +343,47 @@ function capturarDadosEstruturados() {
 function aplicarDadosEstruturados(dados) {
     if (!dados) return;
 
+    // 1. Recria as linhas dinâmicas do Cronograma (Tópico 4.1)
+    if (dados.linhasCronograma && Array.isArray(dados.linhasCronograma)) {
+        const tbodyCrono = document.querySelector('#cronograma-table tbody');
+        if (tbodyCrono) {
+            tbodyCrono.innerHTML = ''; // Limpa antes de re-preencher
+            dados.linhasCronograma.forEach(item => {
+                addRow();
+                const ultimaLinha = tbodyCrono.lastElementChild;
+                if (ultimaLinha) {
+                    const editables = ultimaLinha.querySelectorAll('.editable');
+                    item.editables.forEach((val, idx) => { if (editables[idx]) editables[idx].innerHTML = val; });
+                    const inputs = ultimaLinha.querySelectorAll('input');
+                    item.inputs.forEach((val, idx) => { if (inputs[idx]) inputs[idx].value = val; });
+                }
+            });
+        }
+    }
+
+    // 2. Recria as linhas dinâmicas de Despesas (Tópico 5)
+    if (dados.linhasDespesas && Array.isArray(dados.linhasDespesas)) {
+        const tbodyDesp = document.querySelector('#tabela-despesas-unica tbody');
+        if (tbodyDesp) {
+            tbodyDesp.innerHTML = ''; // Limpa antes de re-preencher
+            dados.linhasDespesas.forEach(item => {
+                addLinhaUnica(item.tipo);
+                const ultimaLinha = tbodyDesp.lastElementChild;
+                if (ultimaLinha) {
+                    if (ultimaLinha.querySelector('.input-codigo-despesa')) ultimaLinha.querySelector('.input-codigo-despesa').value = item.codigo;
+                    if (ultimaLinha.querySelector('.editable')) ultimaLinha.querySelector('.editable').innerHTML = item.desc;
+                    if (ultimaLinha.children[2]?.querySelector('input')) ultimaLinha.children[2].querySelector('input').value = item.unid;
+                    if (ultimaLinha.children[3]?.querySelector('input')) ultimaLinha.children[3].querySelector('input').value = item.qtd;
+                    if (ultimaLinha.querySelector('.valor-conced')) ultimaLinha.querySelector('.valor-conced').value = item.vConced;
+                    if (ultimaLinha.querySelector('.valor-propon')) ultimaLinha.querySelector('.valor-propon').value = item.vPropon;
+                }
+            });
+        }
+    }
+
+    // 3. Aplica valores nos campos fixos
     if (dados.inputsFixos && Array.isArray(dados.inputsFixos)) {
-        const inputsAtuais = document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']");
+        const inputsAtuais = document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email'], body input[type='date']");
         dados.inputsFixos.forEach(item => {
             if (inputsAtuais[item.index]) {
                 inputsAtuais[item.index].value = item.value;
@@ -348,76 +409,25 @@ function aplicarDadosEstruturados(dados) {
         });
     }
 
-    // Restaura o conteúdo das divs editáveis
-    if (dados.editablesFixos && Array.isArray(dados.editablesFixos)) {
-        const editablesAtuais = document.querySelectorAll("body .editable");
-        dados.editablesFixos.forEach(item => {
-            if (editablesAtuais[item.index]) {
-                editablesAtuais[item.index].innerHTML = item.innerHTML;
-            }
-        });
-    }
-
-    calcularTotalPublico();
-    calcularIdades();
+    // 4. Recalcula os totais do Anexo 2
     calcularTotalOrcamentoResumo();
     calcularTotaisTabelaDespesas();
     prepararParaImprimir();
 }
 
-function aplicarDadosEstruturados(dados) {
-    if (!dados) return;
-
-    // Restaura Inputs
-    if (dados.inputsFixos && Array.isArray(dados.inputsFixos)) {
-        const inputsAtuais = document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']");
-        dados.inputsFixos.forEach(item => {
-            if (inputsAtuais[item.index]) {
-                inputsAtuais[item.index].value = item.value;
-            }
-        });
-    }
-
-    // Restaura Selects
-    if (dados.selectsFixos && Array.isArray(dados.selectsFixos)) {
-        const selectsAtuais = document.querySelectorAll("body select");
-        dados.selectsFixos.forEach(item => {
-            if (selectsAtuais[item.index]) {
-                selectsAtuais[item.index].value = item.value;
-            }
-        });
-    }
-
-    // Restaura Textareas
-    if (dados.textareasFixas && Array.isArray(dados.textareasFixas)) {
-        const textareasAtuais = document.querySelectorAll("body textarea");
-        dados.textareasFixas.forEach(item => {
-            if (textareasAtuais[item.index]) {
-                textareasAtuais[item.index].value = item.value;
-            }
-        });
-    }
-
-    // Recalcula totais dinâmicos e alturas de caixa de texto
-    calcularTotalPublico();
-    calcularIdades();
-    calcularTotalOrcamentoResumo();
-    prepararParaImprimir();
-}
-
 function salvarFormularioAuto() {
     const dados = capturarDadosEstruturados();
-    localStorage.setItem("AnexoTresFDID_v1", JSON.stringify(dados));
+    localStorage.setItem("AnexoDoisFDID_v1", JSON.stringify(dados));
 }
 
 function carregarFormularioAuto() {
-    const localData = localStorage.getItem("AnexoTresFDID_v1");
+    const localData = localStorage.getItem("AnexoDoisFDID_v1");
     if (localData) {
         try {
             const dados = JSON.parse(localData);
             aplicarDadosEstruturados(dados);
         } catch (e) {
-            console.error("Erro ao carregar dados salvos do Anexo 3.", e);
+            console.error("Erro ao carregar dados salvos do Anexo 2.", e);
         }
     }
 }
@@ -428,6 +438,9 @@ function carregarFormularioAuto() {
 // ============================================================
 
 function exportarBackup() {
+    if (!validarTotaisFormulario()) {
+        return;
+    }
     const dados = capturarDadosEstruturados();
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -448,7 +461,7 @@ function importarBackup(input) {
             const dados = JSON.parse(e.target.result);
             aplicarDadosEstruturados(dados);
             salvarFormularioAuto();
-            alert("Backup do Anexo 3 carregado com sucesso!");
+            alert("Backup do Anexo 2 carregado com sucesso!"); 
         } catch (err) {
             alert("Erro ao ler arquivo de backup JSON.");
         }
@@ -459,7 +472,7 @@ function importarBackup(input) {
 
 function novoPlano() {
     if (confirm("Atenção: Deseja apagar todos os dados preenchidos neste formulário?")) {
-        localStorage.removeItem("AnexoTresFDID_v1");
+        localStorage.removeItem("AnexoDoisFDID_v1"); 
         window.location.reload();
     }
 }
@@ -473,41 +486,17 @@ window.addEventListener("DOMContentLoaded", function() {
 // POP-UP ORIENTATIVO AO CLICAR NOS CABEÇALHOS DO RESUMO
 document.addEventListener('click', function (event) {
     if (event.target.id === 'resumo-concedente') {
-        alert('Este valor é calculado automaticamente! Por favor, preencha os campos Despesas Correntes e Despesas de Capital logo abaixo.');
+        alert('Este valor é calculated automaticamente! Por favor, preencha os campos Despesas Correntes e Despesas de Capital logo abaixo.');
     }
     
     if (event.target.id === 'resumo-proponente') {
         alert('Este valor é calculado automaticamente! Por favor, preencha os campos Recursos Financeiros (C1) e Bens/Serviços (C2) logo abaixo.');
     }
 });
-// ============================================================
-// 6. GERAÇÃO DE PDF E IMPRESSÃO
-// ============================================================
 
-function verificarAntesDeImprimir() {
-    if (!validarTotaisFormulario()) {
-        return; // Cancela a impressão se o usuário clicar em Cancelar no pop-up
-    }
-    prepararParaImprimir();
-    window.print();
-}
 
-// Substitua no Bloco 5 (Exportar Backup)
-function exportarBackup() {
-    if (!validarTotaisFormulario()) {
-        return; // Cancela o download do JSON se o usuário clicar em Cancelar no pop-up
-    }
-    const dados = capturarDadosEstruturados();
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "Backup_Anexo_3_FDID.json");
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-}
 // ============================================================
-// 7. GERENCIAMENTO DA TABELA DINÂMICA (CRONOGRAMA DE EXECUÇÃO)
+// 6. GERENCIAMENTO DA TABELA DINÂMICA (CRONOGRAMA DE EXECUÇÃO)
 // ============================================================
 
 function addRow() {
@@ -529,8 +518,6 @@ function addRow() {
     `;
 
     tableBody.appendChild(newRow);
-
-    // Salva o estado do formulário após adicionar a linha
     salvarFormularioAuto();
 }
 
@@ -538,12 +525,13 @@ function removeRow(button) {
     const row = button.closest('tr');
     if (row) {
         row.remove();
-        // Salva o estado do formulário após remover a linha
         salvarFormularioAuto();
     }
 }
+
+
 // ============================================================
-// 8. TABELA 5 - DETALHAMENTO DAS DESPESAS (LINHAS DINÂMICAS E TOTAIIS)
+// 7. TABELA 5 - DETALHAMENTO DAS DESPESAS (LINHAS DINÂMICAS E TOTAIS)
 // ============================================================
 
 function addLinhaUnica(tipo) {
@@ -568,7 +556,6 @@ function addLinhaUnica(tipo) {
 
     tableBody.appendChild(newRow);
 
-    // Observa tanto os inputs quanto a div.editable para salvar e recalcular ao digitar
     newRow.querySelectorAll('input, .editable').forEach(el => {
         el.addEventListener('input', function() {
             if (this.classList.contains('money-input-despesa')) {
@@ -607,7 +594,6 @@ function calcularTotaisTabelaDespesas() {
     let totCorrenteConced = 0, totCorrentePropon = 0;
     let totCapitalConced = 0, totCapitalPropon = 0;
 
-    // Recalcula linha por linha (linha = concedente + proponente)
     document.querySelectorAll('#tabela-despesas-unica tbody tr').forEach(row => {
         const inputConced = row.querySelector('.valor-conced');
         const inputPropon = row.querySelector('.valor-propon');
@@ -628,19 +614,16 @@ function calcularTotaisTabelaDespesas() {
         }
     });
 
-    // Subtotais 5.1 (Correntes)
     const totCorrenteGeral = totCorrenteConced + totCorrentePropon;
     if (document.getElementById('total-corrente-geral')) document.getElementById('total-corrente-geral').value = formatarMoeda(totCorrenteGeral);
     if (document.getElementById('total-corrente-conced')) document.getElementById('total-corrente-conced').value = formatarMoeda(totCorrenteConced);
     if (document.getElementById('total-corrente-propon')) document.getElementById('total-corrente-propon').value = formatarMoeda(totCorrentePropon);
 
-    // Subtotais 5.2 (Capital)
     const totCapitalGeral = totCapitalConced + totCapitalPropon;
     if (document.getElementById('total-capital-geral')) document.getElementById('total-capital-geral').value = formatarMoeda(totCapitalGeral);
     if (document.getElementById('total-capital-conced')) document.getElementById('total-capital-conced').value = formatarMoeda(totCapitalConced);
     if (document.getElementById('total-capital-propon')) document.getElementById('total-capital-propon').value = formatarMoeda(totCapitalPropon);
 
-    // Total Geral do Projeto (5.1 + 5.2)
     const totProjetoGeral = totCorrenteGeral + totCapitalGeral;
     const totProjetoConced = totCorrenteConced + totCapitalConced;
     const totProjetoPropon = totCorrentePropon + totCapitalPropon;
@@ -649,6 +632,8 @@ function calcularTotaisTabelaDespesas() {
     if (document.getElementById('total-projeto-conced')) document.getElementById('total-projeto-conced').value = formatarMoeda(totProjetoConced);
     if (document.getElementById('total-projeto-propon')) document.getElementById('total-projeto-propon').value = formatarMoeda(totProjetoPropon);
 }
+
+
 // ============================================================
 // VALIDAÇÃO DE CONFRONTO DE VALORES (POP-UP DE ALERTA)
 // ============================================================
@@ -662,27 +647,23 @@ function validarTotaisFormulario() {
 
     const formatar = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    // 1. Pega os valores da Seção 3 (Resumo)
     const resConcedente = parseVal('resumo-concedente');
     const resProponente = parseVal('resumo-proponente');
     const resTotalGeral = parseVal('resumo-total-projeto');
 
-    // 2. Pega os valores do Rodapé da Seção 5 (Detalhamento)
     const despConcedente = parseVal('total-projeto-conced');
     const despProponente = parseVal('total-projeto-propon');
     const despTotalGeral = parseVal('total-projeto-geral');
 
-    // 3. Soma os meses das tabelas 4.2 (Concedente) e 4.3 (Contrapartida)
     let cronoConcedente = 0;
     let cronoProponente = 0;
 
     const tabelasStatic = document.querySelectorAll('.form-section:has(h4) .static-table');
     
-    // Tabelas 4.2 (Concedente) -> Índice 0 e 1
     if (tabelasStatic.length >= 2) {
         [tabelasStatic[0], tabelasStatic[1]].forEach(tab => {
             tab.querySelectorAll('tbody tr input[type="text"]').forEach((inp, idx) => {
-                if (idx > 0) { // Pula a coluna 'Meta'
+                if (idx > 0) {
                     const v = parseFloat(inp.value.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
                     cronoConcedente += v;
                 }
@@ -690,7 +671,6 @@ function validarTotaisFormulario() {
         });
     }
 
-    // Tabelas 4.3 (Contrapartida) -> Índice 2 e 3
     if (tabelasStatic.length >= 4) {
         [tabelasStatic[2], tabelasStatic[3]].forEach(tab => {
             tab.querySelectorAll('tbody tr input[type="text"]').forEach((inp, idx) => {
@@ -702,44 +682,39 @@ function validarTotaisFormulario() {
         });
     }
 
-    // 4. Mapeia os erros encontrados
     let erros = [];
 
-    // Diferença Concedente (Seção 3 vs Seção 5)
     if (Math.abs(resConcedente - despConcedente) > 0.01) {
         erros.push(`- Concedente: Resumo 3.1 (R$ ${formatar(resConcedente)}) não bate com Detalhamento 5 (R$ ${formatar(despConcedente)})`);
     }
 
-    // Diferença Proponente (Seção 3 vs Seção 5)
     if (Math.abs(resProponente - despProponente) > 0.01) {
         erros.push(`- Proponente: Resumo 3.2 (R$ ${formatar(resProponente)}) não bate com Detalhamento 5 (R$ ${formatar(despProponente)})`);
     }
 
-    // Diferença Total Geral (Seção 3 vs Seção 5)
     if (Math.abs(resTotalGeral - despTotalGeral) > 0.01) {
         erros.push(`- Total do Projeto: Resumo 3.3 (R$ ${formatar(resTotalGeral)}) não bate com Detalhamento 5 (R$ ${formatar(despTotalGeral)})`);
     }
 
-    // Diferença Cronograma Concedente (4.2 vs Seção 5)
     if (cronoConcedente > 0 && Math.abs(cronoConcedente - despConcedente) > 0.01) {
         erros.push(`- Cronograma 4.2 (R$ ${formatar(cronoConcedente)}) não bate com Total Concedente da Seção 5 (R$ ${formatar(despConcedente)})`);
     }
 
-    // Diferença Cronograma Proponente (4.3 vs Seção 5)
     if (cronoProponente > 0 && Math.abs(cronoProponente - despProponente) > 0.01) {
         erros.push(`- Cronograma 4.3 (R$ ${formatar(cronoProponente)}) não bate com Total Proponente da Seção 5 (R$ ${formatar(despProponente)})`);
     }
 
-    // 5. Exibe o Pop-up se houver divergências
     if (erros.length > 0) {
         const mensagem = "⚠️ ATENÇÃO: DIVERGÊNCIA NOS VALORES ENCONTRADA!\n\n" +
                          erros.join("\n") + 
                          "\n\nDeseja prosseguir mesmo assim?";
-        return confirm(mensagem); // Retorna true se clicar OK, false se clicar Cancelar
+        return confirm(mensagem);
     }
 
-    return true; // Sem erros
+    return true;
 }
+
+
 // ============================================================
 // VALIDAÇÃO E MÁSCARA AUTOMÁTICA DE CÓDIGOS DE DESPESAS (FDID)
 // ============================================================
@@ -756,12 +731,11 @@ const CODIGOS_DESPESAS_CAPITAL = [
     "4422.51.00", "4422.52.00"
 ];
 
-// MÁSCARA EM TEMPO REAL AO DIGITAR
 function maskCodigoDespesa(inputEl) {
     const row = inputEl.closest('tr');
     if (!row) return;
 
-    let value = inputEl.value.replace(/\D/g, ""); // Apenas números
+    let value = inputEl.value.replace(/\D/g, "");
     const ehCorrente = row.classList.contains('linha-corrente');
     const ehCapital = row.classList.contains('linha-capital');
 
@@ -786,7 +760,6 @@ function maskCodigoDespesa(inputEl) {
     inputEl.value = value;
 }
 
-// VALIDAÇÃO AO SAIR DO CAMPO (BLUR)
 function validarCodigoDespesaInput(inputEl) {
     const row = inputEl.closest('tr');
     if (!row) return true;
@@ -812,7 +785,6 @@ function validarCodigoDespesaInput(inputEl) {
     return true;
 }
 
-// OUVINTES DE EVENTOS
 document.addEventListener('input', function (event) {
     if (event.target.classList.contains('input-codigo-despesa')) {
         maskCodigoDespesa(event.target);
@@ -824,3 +796,219 @@ document.addEventListener('blur', function (event) {
         validarCodigoDespesaInput(event.target);
     }
 }, true);
+
+
+// ============================================================
+// EXTRAÇÃO E PROMPT DE AUDITORIA
+// ============================================================
+
+window.extrairDadosParaValidacaoIA = function() {
+    const dadosTopico4 = [];
+    const dadosTopico5 = [];
+
+    // --- A. Extração do Tópico 4.1 ---
+    const linhasTabela4 = document.querySelectorAll('#cronograma-table tbody tr');
+    linhasTabela4.forEach(linha => {
+        const celulas = linha.children;
+        const descricao = celulas[2]?.querySelector('.editable')?.innerText.trim() || '';
+        const unidade = celulas[3]?.querySelector('input')?.value.trim() || '';
+        const quantidade = celulas[4]?.querySelector('input')?.value.trim() || '';
+
+        if (descricao) {
+            dadosTopico4.push({ descricao, unidade, quantidade });
+        }
+    });
+
+    // --- B. Extração do Tópico 5 ---
+    const linhasTabela5 = document.querySelectorAll('#tabela-despesas-unica tbody tr');
+    linhasTabela5.forEach(linha => {
+        const celulas = linha.children;
+        const especificacao = celulas[1]?.querySelector('.editable')?.innerText.trim() || '';
+        const unidade = celulas[2]?.querySelector('input')?.value.trim() || '';
+        const quantidade = celulas[3]?.querySelector('input')?.value.trim() || '';
+
+        if (especificacao) {
+            dadosTopico5.push({ especificacao, unidade, quantidade });
+        }
+    });
+
+    return {
+        cronogramaExecucao: dadosTopico4,
+        detalhamentoDespesas: dadosTopico5
+    };
+};
+
+window.gerarPromptValidacao = function(dadosExtraidos) {
+    return `
+Você é um auditor especializado em planos de trabalho de convênios públicos.
+Sua tarefa é analisar e comparar semanticamente dois conjuntos de dados do formulário:
+
+1. "cronogramaExecucao" (Tópico 4.1 - Planejamento)
+2. "detalhamentoDespesas" (Tópico 5 - Orçamento)
+
+--- DADOS PARA ANÁLISE ---
+${JSON.stringify(dadosExtraidos, null, 2)}
+
+--- REGRAS DE AUDITORIA ---
+1. ORDEM INDEPENDENTE: Os itens não precisam estar na mesma linha. Procure correspondência pelo significado.
+2. TOLERÂNCIA TEXTUAL: Considere correspondentes itens que tratam do mesmo produto, mesmo que a descrição não use palavras idênticas.
+3. VERIFICAÇÃO DE UNIDADE E QUANTIDADE: Verifique se a unidade e a quantidade no Tópico 4 são exatamente iguais às do Tópico 5.
+4. ITENS FALTANTES: Apontar itens do Tópico 4 sem correspondente no Tópico 5 e vice-versa.
+
+--- FORMATO DE RESPOSTA OBRIGATÓRIO (JSON PURO) ---
+{
+  "aprovado": true ou false,
+  "resumoGeral": "Texto conciso resumindo a auditoria.",
+  "divergencias": [
+    {
+      "itemTopico4": "Descrição no Tópico 4",
+      "itemTopico5": "Especificação no Tópico 5 (ou 'Não encontrado')",
+      "motivo": "Explicação do problema"
+    }
+  ]
+}
+`;
+};
+
+
+// ============================================================
+// INTEGRAÇÃO COM A API DO GROQ (LLAMA 3.3 70B)
+// ============================================================
+
+const GROQ_API_KEY = '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';
+
+window.analisarCoerenciaComIA = async function(apiKey) {
+    const dados = window.extrairDadosParaValidacaoIA();
+
+    if (dados.cronogramaExecucao.length === 0 && dados.detalhamentoDespesas.length === 0) {
+        return {
+            aprovado: true,
+            resumoGeral: "Nenhum item cadastrado no Cronograma ou no Detalhamento para analisar.",
+            divergencias: []
+        };
+    }
+
+    const promptTexto = window.gerarPromptValidacao(dados);
+
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'Você é um auditor rigoroso de planos de trabalho. Responda APENAS em JSON puro respeitando a estrutura solicitada.'
+                    },
+                    {
+                        role: 'user',
+                        content: promptTexto
+                    }
+                ],
+                temperature: 0.1,
+                response_format: { type: 'json_object' }
+            })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(`Erro Groq (${response.status}): ${errData.error?.message || response.statusText}`);
+        }
+
+        const data = await response.json();
+        return JSON.parse(data.choices[0].message.content);
+
+    } catch (erro) {
+        console.error("Falha na auditoria Groq:", erro);
+        return {
+            aprovado: false,
+            resumoGeral: "Não foi possível realizar a verificação pela IA.",
+            divergencias: [{
+                itemTopico4: "-",
+                itemTopico5: "-",
+                motivo: erro.message
+            }]
+        };
+    }
+};
+
+
+// ============================================================
+// CONTROLE DO MODAL DE AUDITORIA E EVENTO DE IMPRESSÃO
+// ============================================================
+
+function abrirModalIA() {
+    document.getElementById('modal-ia').style.display = 'flex';
+    document.getElementById('modal-ia-loading').style.display = 'block';
+    document.getElementById('modal-ia-resultado').style.display = 'none';
+    document.getElementById('btn-prosseguir-print').style.display = 'none';
+}
+
+function fecharModalIA() {
+    document.getElementById('modal-ia').style.display = 'none';
+}
+
+function exibirResultadoIA(resultado) {
+    document.getElementById('modal-ia-loading').style.display = 'none';
+    document.getElementById('modal-ia-resultado').style.display = 'block';
+
+    const statusBox = document.getElementById('status-box');
+    const resumoTexto = document.getElementById('resumo-ia-texto');
+    const containerDiv = document.getElementById('container-divergencias');
+    const tbody = document.getElementById('tbody-divergencias');
+    const btnPrint = document.getElementById('btn-prosseguir-print');
+
+    resumoTexto.innerText = resultado.resumoGeral;
+    tbody.innerHTML = '';
+
+    if (resultado.aprovado) {
+        statusBox.className = 'status-box aprovado';
+        containerDiv.style.display = 'none';
+        
+        setTimeout(() => {
+            fecharModalIA();
+            prepararParaImprimir();
+            window.print();
+        }, 1500);
+
+    } else {
+        statusBox.className = 'status-box reprovado';
+        btnPrint.style.display = 'inline-block';
+
+        if (resultado.divergencias && resultado.divergencias.length > 0) {
+            containerDiv.style.display = 'block';
+            resultado.divergencias.forEach(div => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${div.itemTopico4 || '-'}</td>
+                    <td>${div.itemTopico5 || '-'}</td>
+                    <td>${div.motivo || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            containerDiv.style.display = 'none';
+        }
+    }
+}
+
+function confirmarImpressaoAposIA() {
+    fecharModalIA();
+    prepararParaImprimir();
+    window.print();
+}
+
+// Disparador principal ao clicar em Imprimir / PDF
+window.verificarAntesDeImprimir = async function() {
+    if (!validarTotaisFormulario()) {
+        return;
+    }
+
+    abrirModalIA();
+    const resultado = await window.analisarCoerenciaComIA(GROQ_API_KEY);
+    exibirResultadoIA(resultado);
+};

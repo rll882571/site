@@ -675,3 +675,18 @@ textarea.auto-grow::placeholder {
         page-break-inside: avoid !important;
     }
 }
+/* Ajusta o textarea da tabela para ter exatamente a mesma altura fina de um input comum */
+.form-table td .input-table-textarea {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 16px;
+    height: 16px;
+    font-size: 10.5px;
+    line-height: 1.2;
+    background: transparent;
+    width: 100%;
+    vertical-align: middle;
+    display: block;
+    box-sizing: border-box;
+}
