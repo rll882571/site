@@ -1,3 +1,4 @@
+
 // ============================================================
 // 1. MOTOR DE EVENTOS
 // ============================================================
@@ -823,12 +824,13 @@ window.extrairDadosParaValidacaoIA = function() {
     const linhasTabela5 = document.querySelectorAll('#tabela-despesas-unica tbody tr');
     linhasTabela5.forEach(linha => {
         const celulas = linha.children;
+        const codigo = celulas[0]?.querySelector('input')?.value.trim() || '';
         const especificacao = celulas[1]?.querySelector('.editable')?.innerText.trim() || '';
         const unidade = celulas[2]?.querySelector('input')?.value.trim() || '';
         const quantidade = celulas[3]?.querySelector('input')?.value.trim() || '';
 
         if (especificacao) {
-            dadosTopico5.push({ especificacao, unidade, quantidade });
+            dadosTopico5.push({ codigo, especificacao, unidade, quantidade });
         }
     });
 
@@ -841,32 +843,65 @@ window.extrairDadosParaValidacaoIA = function() {
 window.gerarPromptValidacao = function(dadosExtraidos) {
     return `
 Você é um auditor sênior especialista em análise crítica de convênios e planos de trabalho públicos.
-Sua missão é emitir um parecer técnico descritivo sobre a coerência entre o Detalhamento de Despesas (Tópico 5) e o Cronograma de Execução (Tópico 4.1).
+Sua missão é emitir um parecer técnico descritivo sobre a coerência entre o Detalhamento de Despesas (Tópico 5) e o Cronograma de Execução (Tópico 4.1), incluindo a classificação orçamentária dos códigos de despesa.
+
+--- CÓDIGOS DE REFERÊNCIA VÁLIDOS PARA O FDID ---
+Despesas Correntes:
+- 33390.04.00 (Contratação por tempo determinado)
+- 33390.14.00 (Diárias - Civil)
+- 33390.18.00 (Auxílio financeiro a estudantes - Bolsa)
+- 33390.30.00 (Material de consumo)
+- 33390.31.00 (Premiações culturais, artísticas, científicas, desportivas e outros)
+- 33390.32.00 (Material, Bens e Serviços para distribuição gratuita)
+- 33390.33.00 (Passagens e despesas com locomoção)
+- 33390.35.00 (Serviços de consultoria)
+- 33390.36.00 (Outros serviços de terceiros – pessoa física)
+- 33390.37.00 (Locação de mão-de-obra)
+- 33390.38.00 (Arrendamento mercantil)
+- 33390.39.00 (Outros serviços de terceiros – pessoa jurídica)
+- 33390.47.00 (Obrigações tributárias e contributivas)
+- 33390.48.00 (Outros auxílios financeiros a pessoa física)
+- 33390.49.00 (Auxílio-transporte)
+- 33390.91.00 (Sentenças Judiciais)
+- 33390.93.00 (Indenizações e restituições)
+- 33390.95.00 (Indenização pela execução trabalhos de campo)
+
+Despesas de Capital:
+- 4422.51.00 (Obras e instalações)
+- 4422.52.00 (Equipamentos e material permanente)
 
 --- DADOS PARA ANÁLISE ---
 ${JSON.stringify(dadosExtraidos, null, 2)}
 
 --- INSTRUÇÕES DE ANÁLISE E ESTILO DE REDAÇÃO ---
 
-1. ANÁLISE CRÍTICA COMPLETA:
-   - Para cada item do Tópico 5, verifique se ele possui correspondência clara no Tópico 4.1.
+1. AUDITORIA DE CLASSIFICAÇÃO ORÇAMENTÁRIA DA DESPESA (REGRA OBRIGATÓRIA):
+   - Para cada item do Tópico 5, verifique se o 'codigo' informado é semanticamente compatível com a 'especificacao' informada.
+   - Se houver divergência (ex: usou '33390.30.00' que é Material de Consumo para contratar palestrante, serviço ou comprar equipamento duradouro), APONTE O ERRO DE CLASSIFICAÇÃO e SUGIRA O CÓDIGO E CATEGORIA CORRETOS com base na lista de referência.
+
+2. AUDITORIA DE EQUIPE TÉCNICA / RECURSOS HUMANOS:
+   - Ao analisar itens de pessoal (ex: "Salários, Encargos e Benefícios da Equipe Técnica", "Equipe de Apoio" ou similares), verifique se há a discriminação dos profissionais.
+   - Se o item mencionar a equipe de forma genérica sem especificar os cargos (ex: assistente social, psicólogo, educador) e as quantidades de cada um, SOLICITE A ESPECIFICAÇÃO COMPLETA dos profissionais e da quantidade individualizada para cada função.
+
+3. ANÁLISE CRÍTICA DE OUTROS ITENS:
+   - Para cada item do Tópico 5, verifique se ele possui correspondência clara de etapas no Tópico 4.1.
    - Analise se a "Unidade" informada é semanticamente adequada (ex: Kit Alimentação como 'serviço' em vez de 'unidade/kit', Combustível como 'verba' em vez de 'litros').
    - Verifique a falta de especificidades (ex: 'Diária' sem detalhar a finalidade ou destino no cronograma).
 
-2. FORMATO DO TEXTO DAS DIVERGÊNCIAS:
+4. FORMATO DO TEXTO DAS DIVERGÊNCIAS:
    - Escreva pareceres individuais fluidos e explicativos em texto corrido para cada inconformidade encontrada.
-   - Exemplo de estilo esperado: 
-     * "Assessoria Pedagógica: Descrita no Tópico 5 (Detalhamento), porém não consta no Cronograma de Execução (Tópico 4.1)."
-     * "Combustível: Foi citado no Detalhamento de Despesas (Tópico 5), mas não está previsto nas etapas do Cronograma (Tópico 4.1), não sendo informado o motivo/destinação para uso desse combustível. Além disso, a unidade foi cadastrada como 'verba' em vez de métrica apropriada (como litros)."
-     * "Kit Alimentação: Foi cadastrado no Tópico 5 como 'serviço', devendo ser corrigido para a unidade de medida adequada (ex: 'unidade' ou 'kit'), além de necessitar de vinculação direta com uma ação no Cronograma (Tópico 4.1)."
+   - Exemplo de estilo para erro de código:
+     * "Serviço de Palestrante: No Tópico 5, o item foi cadastrado com o código '33390.30.00' (Material de Consumo). No entanto, a contratação de palestrante trata-se de prestação de serviços. Sugere-se reclassificar para o código '33390.36.00' (Pessoa Física) ou '33390.39.00' (Pessoa Jurídica)."
+   - Exemplo de estilo para equipe técnica:
+     * "Salários da Equipe Técnica: No Tópico 5, o item foi cadastrado de forma genérica. É necessário especificar quais profissionais serão contratados e informar a quantidade para cada função."
 
-3. CRITÉRIO DE REPROVAÇÃO:
-   - Se houver qualquer incoerência de conteúdo ou métrica, marque "aprovado": false.
+5. CRITÉRIO DE REPROVAÇÃO:
+   - Se houver qualquer erro de código de despesa, falta de especificação ou incoerência, marque "aprovado": false.
 
 --- FORMATO DE RESPOSTA OBRIGATÓRIO (JSON PURO) ---
 {
   "aprovado": true ou false,
-  "resumoGeral": "O Plano de Trabalho foi analisado e apresenta inconsistências no alinhamento entre as despesas orçadas e o cronograma de execução, necessitando de adequações antes da aprovação.",
+  "resumoGeral": "O Plano de Trabalho foi analisado e apresenta inconsistências na classificação orçamentária das despesas ou falta de detalhamento em relação ao cronograma.",
   "divergencias": [
     "Texto descritivo detalhado do item 1...",
     "Texto descritivo detalhado do item 2..."
