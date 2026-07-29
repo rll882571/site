@@ -354,3 +354,53 @@ function removerLinhaCronograma(btn) {
         alert("O cronograma deve conter pelo menos uma linha.");
     }
 }
+function extrairDadosParaValidacaoIA() {
+    const dadosTópico4 = [];
+    const dadosTópico5 = [];
+
+    // --- A. Extração do Tópico 4.1 (Cronograma de Execução) ---
+    const linhasTabela4 = document.querySelectorAll('#cronograma-table tbody tr');
+    
+    linhasTabela4.forEach(linha => {
+        const celulas = linha.children;
+        
+        // Pega a div editable ou input correspondente em cada coluna
+        const descricao = celulas[2]?.querySelector('.editable')?.innerText.trim() || '';
+        const unidade = celulas[3]?.querySelector('input')?.value.trim() || '';
+        const quantidade = celulas[4]?.querySelector('input')?.value.trim() || '';
+
+        // Só adiciona se houver descrição preenchida
+        if (descricao) {
+            dadosTópico4.push({
+                descricao: descricao,
+                unidade: unidade,
+                quantidade: quantidade
+            });
+        }
+    });
+
+    // --- B. Extração do Tópico 5 (Detalhamento das Despesas) ---
+    const linhasTabela5 = document.querySelectorAll('#tabela-despesas-unica tbody tr');
+
+    linhasTabela5.forEach(linha => {
+        const celulas = linha.children;
+
+        // Tópico 5: Coluna 1 = Especificação (div.editable), Coluna 2 = Unidade, Coluna 3 = Qtd
+        const especificacao = celulas[1]?.querySelector('.editable')?.innerText.trim() || '';
+        const unidade = celulas[2]?.querySelector('input')?.value.trim() || '';
+        const quantidade = celulas[3]?.querySelector('input')?.value.trim() || '';
+
+        if (especificacao) {
+            dadosTópico5.push({
+                especificacao: especificacao,
+                unidade: unidade,
+                quantidade: quantidade
+            });
+        }
+    });
+
+    return {
+        cronogramaExecucao: dadosTópico4,
+        detalhamentoDespesas: dadosTópico5
+    };
+}
