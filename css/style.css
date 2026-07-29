@@ -372,29 +372,56 @@ textarea.auto-grow {
     right: 20px;
     z-index: 1000;
     display: flex;
-    gap: 8px;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 8px 12px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(4px);
+    flex-direction: column; /* Empilha os botões na vertical */
+    gap: 10px;               /* Espaçamento entre cada botão */
+    align-items: flex-end;   /* Alinha o bloco à direita da tela */
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
 }
 
 .export-container button {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     font-size: 13px;
     font-weight: 600;
-    padding: 8px 14px;
+    padding: 10px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    width: 200px; /* Garante que todos tenham a mesma largura */
+}
+
+/* Botão Gerar PDF (Verde) */
+.export-container .btn-pdf {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+}
+
+/* Botão Salvar Backup (Azul) */
+.export-container button:nth-child(2) {
+    background-color: #007bff !important;
+    color: #ffffff !important;
+    margin-left: 0 !important;
+}
+
+/* Botão Abrir Backup (Ciano) */
+.export-container button:nth-child(3) {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+    margin-left: 0 !important;
+}
+
+/* Botão Novo Plano (Vermelho) */
+.export-container button:nth-child(4) {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    margin-left: 0 !important;
 }
 
 /* Botão Gerar PDF */
