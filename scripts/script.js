@@ -829,7 +829,7 @@ window.extrairDadosParaValidacaoIA = function() {
         const unidade = celulas[2]?.querySelector('input')?.value.trim() || '';
         const quantidade = celulas[3]?.querySelector('input')?.value.trim() || '';
 
-        if (especificacao) {
+        if (codigo || especificacao) {
             dadosTopico5.push({ codigo, especificacao, unidade, quantidade });
         }
     });
@@ -843,7 +843,7 @@ window.extrairDadosParaValidacaoIA = function() {
 window.gerarPromptValidacao = function(dadosExtraidos) {
     return `
 Você é um auditor sênior especialista em análise crítica de convênios e planos de trabalho públicos.
-Sua missão é emitir um parecer técnico descritivo sobre a coerência entre o Detalhamento de Despesas (Tópico 5) e o Cronograma de Execução (Tópico 4.1), incluindo a classificação orçamentária dos códigos de despesa.
+Sua missão é emitir um parecer técnico minucioso e equilibrado cobrindo TODAS as inconsistências encontradas entre o Detalhamento de Despesas (Tópico 5) e o Cronograma de Execução (Tópico 4.1).
 
 --- CÓDIGOS DE REFERÊNCIA VÁLIDOS PARA O FDID ---
 Despesas Correntes:
@@ -873,38 +873,40 @@ Despesas de Capital:
 --- DADOS PARA ANÁLISE ---
 ${JSON.stringify(dadosExtraidos, null, 2)}
 
---- INSTRUÇÕES DE ANÁLISE E ESTILO DE REDAÇÃO ---
+--- CHECKLIST OBRIGATÓRIO DE AUDITORIA (ANALISE TODOS OS PONTOS COM O MESMO RIGOR) ---
 
-1. AUDITORIA DE CLASSIFICAÇÃO ORÇAMENTÁRIA DA DESPESA (REGRA OBRIGATÓRIA):
-   - Para cada item do Tópico 5, verifique se o 'codigo' informado é semanticamente compatível com a 'especificacao' informada.
-   - Se houver divergência (ex: usou '33390.30.00' que é Material de Consumo para contratar palestrante, serviço ou comprar equipamento duradouro), APONTE O ERRO DE CLASSIFICAÇÃO e SUGIRA O CÓDIGO E CATEGORIA CORRETOS com base na lista de referência.
+1. CLASSIFICAÇÃO ORÇAMENTÁRIA (CÓDIGOS DE DESPESA):
+   - Verifique se o 'codigo' informado consta na lista oficial. Se não constar, aponte como inválido.
+   - Se o 'codigo' for válido mas for incompatível com a 'especificacao', aponte a divergência e SUGIRA O CÓDIGO E CATEGORIA CORRETOS da lista.
+   - Se houver 'codigo' sem 'especificacao', solicite o detalhamento do item.
 
-2. AUDITORIA DE EQUIPE TÉCNICA / RECURSOS HUMANOS:
-   - Ao analisar itens de pessoal (ex: "Salários, Encargos e Benefícios da Equipe Técnica", "Equipe de Apoio" ou similares), verifique se há a discriminação dos profissionais.
-   - Se o item mencionar a equipe de forma genérica sem especificar os cargos (ex: assistente social, psicólogo, educador) e as quantidades de cada um, SOLICITE A ESPECIFICAÇÃO COMPLETA dos profissionais e da quantidade individualizada para cada função.
+2. DETALHAMENTO DE EQUIPE TÉCNICA / RECURSOS HUMANOS:
+   - Se houver despesas relativas a pessoal/equipe (ex: "Equipe Técnica", "Salários", "Monitores", "Coordenadores"), VERIFIQUE SE HÁ A DISCRIMINAÇÃO INDIVIDUAL DE CARGOS E QUANTIDADES.
+   - Se o item for genérico, SOLICITE A ESPECIFICAÇÃO COMPLETA dos profissionais e da quantidade individualizada para cada função.
 
-3. ANÁLISE CRÍTICA DE OUTROS ITENS:
-   - Para cada item do Tópico 5, verifique se ele possui correspondência clara de etapas no Tópico 4.1.
-   - Analise se a "Unidade" informada é semanticamente adequada (ex: Kit Alimentação como 'serviço' em vez de 'unidade/kit', Combustível como 'verba' em vez de 'litros').
-   - Verifique a falta de especificidades (ex: 'Diária' sem detalhar a finalidade ou destino no cronograma).
+3. CORRESPONDÊNCIA COM O CRONOGRAMA DE EXECUÇÃO (TÓPICO 4.1):
+   - Para cada despesa listada no Tópico 5, verifique se existe uma meta/etapa/fase no Tópico 4.1 que a justifique.
+   - Se houver despesa sem ação correspondente no cronograma (ex: compra de combustível ou material sem previsão de atividade), APONTE A FALTA DE VINCULAÇÃO.
 
-4. FORMATO DO TEXTO DAS DIVERGÊNCIAS:
-   - Escreva pareceres individuais fluidos e explicativos em texto corrido para cada inconformidade encontrada.
-   - Exemplo de estilo para erro de código:
-     * "Serviço de Palestrante: No Tópico 5, o item foi cadastrado com o código '33390.30.00' (Material de Consumo). No entanto, a contratação de palestrante trata-se de prestação de serviços. Sugere-se reclassificar para o código '33390.36.00' (Pessoa Física) ou '33390.39.00' (Pessoa Jurídica)."
-   - Exemplo de estilo para equipe técnica:
-     * "Salários da Equipe Técnica: No Tópico 5, o item foi cadastrado de forma genérica. É necessário especificar quais profissionais serão contratados e informar a quantidade para cada função."
+4. ADEQUAÇÃO DAS UNIDADES DE MEDIDA:
+   - Avalie se a 'unidade' é semanticamente adequada para a despesa (ex: combustível deve ser 'litros' e não 'verba'; kit alimentação deve ser 'unidade/kit' e não 'serviço').
 
-5. CRITÉRIO DE REPROVAÇÃO:
-   - Se houver qualquer erro de código de despesa, falta de especificação ou incoerência, marque "aprovado": false.
+--- FORMATO E ESTILO DE REDAÇÃO DAS DIVERGÊNCIAS ---
+- Não seja genérico. Cada divergência deve ser um parecer individual em texto corrido detalhando exatamente o item, o problema e como corrigir.
+- Exemplo 1 (Código): "Serviço de Palestrante: O item utilizou o código '33390.30.00' (Material de Consumo). Por tratar-se de serviço, sugere-se alterar para '33390.36.00' (Pessoa Física) ou '33390.39.00' (Pessoa Jurídica)."
+- Exemplo 2 (Equipe): "Equipe Técnica do Projeto: O item foi cadastrado de forma genérica no Tópico 5. É necessário especificar a quantidade e os cargos de cada profissional (ex: 1 Assistente Social, 2 Educadores)."
+- Exemplo 3 (Cronograma/Unidade): "Combustível: Item presente no Tópico 5 com unidade 'verba', mas sem correspondência nas etapas do Cronograma (Tópico 4.1). Corrija a unidade para 'litros' e vincule o uso a uma meta específica do projeto."
+
+--- CRITÉRIO DE REPROVAÇÃO ---
+Se houver QUALQUER inconsistência (seja de código, de equipe, de unidade ou de cronograma), marque "aprovado": false.
 
 --- FORMATO DE RESPOSTA OBRIGATÓRIO (JSON PURO) ---
 {
   "aprovado": true ou false,
-  "resumoGeral": "O Plano de Trabalho foi analisado e apresenta inconsistências na classificação orçamentária das despesas ou falta de detalhamento em relação ao cronograma.",
+  "resumoGeral": "O Plano de Trabalho apresenta inconsistências no detalhamento de despesas, classificação orçamentária ou falta de vinculação com o cronograma de execução.",
   "divergencias": [
-    "Texto descritivo detalhado do item 1...",
-    "Texto descritivo detalhado do item 2..."
+    "Texto descritivo detalhado do apontamento 1...",
+    "Texto descritivo detalhado do apontamento 2..."
   ]
 }
 `;
