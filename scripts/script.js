@@ -840,31 +840,36 @@ window.extrairDadosParaValidacaoIA = function() {
 
 window.gerarPromptValidacao = function(dadosExtraidos) {
     return `
-Você é um auditor especializado em planos de trabalho de convênios públicos.
-Sua tarefa é analisar e comparar semanticamente dois conjuntos de dados do formulário:
-
-1. "cronogramaExecucao" (Tópico 4.1 - Planejamento)
-2. "detalhamentoDespesas" (Tópico 5 - Orçamento)
+Você é um auditor sênior especialista em análise crítica de convênios e planos de trabalho públicos.
+Sua missão é emitir um parecer técnico descritivo sobre a coerência entre o Detalhamento de Despesas (Tópico 5) e o Cronograma de Execução (Tópico 4.1).
 
 --- DADOS PARA ANÁLISE ---
 ${JSON.stringify(dadosExtraidos, null, 2)}
 
---- REGRAS DE AUDITORIA ---
-1. ORDEM INDEPENDENTE: Os itens não precisam estar na mesma linha. Procure correspondência pelo significado.
-2. TOLERÂNCIA TEXTUAL: Considere correspondentes itens que tratam do mesmo produto, mesmo que a descrição não use palavras idênticas.
-3. VERIFICAÇÃO DE UNIDADE E QUANTIDADE: Verifique se a unidade e a quantidade no Tópico 4 são exatamente iguais às do Tópico 5.
-4. ITENS FALTANTES: Apontar itens do Tópico 4 sem correspondente no Tópico 5 e vice-versa.
+--- INSTRUÇÕES DE ANÁLISE E ESTILO DE REDAÇÃO ---
+
+1. ANÁLISE CRÍTICA COMPLETA:
+   - Para cada item do Tópico 5, verifique se ele possui correspondência clara no Tópico 4.1.
+   - Analise se a "Unidade" informada é semanticamente adequada (ex: Kit Alimentação como 'serviço' em vez de 'unidade/kit', Combustível como 'verba' em vez de 'litros').
+   - Verifique a falta de especificidades (ex: 'Diária' sem detalhar a finalidade ou destino no cronograma).
+
+2. FORMATO DO TEXTO DAS DIVERGÊNCIAS:
+   - Escreva pareceres individuais fluidos e explicativos em texto corrido para cada inconformidade encontrada.
+   - Exemplo de estilo esperado: 
+     * "Assessoria Pedagógica: Descrita no Tópico 5 (Detalhamento), porém não consta no Cronograma de Execução (Tópico 4.1)."
+     * "Combustível: Foi citado no Detalhamento de Despesas (Tópico 5), mas não está previsto nas etapas do Cronograma (Tópico 4.1), não sendo informado o motivo/destinação para uso desse combustível. Além disso, a unidade foi cadastrada como 'verba' em vez de métrica apropriada (como litros)."
+     * "Kit Alimentação: Foi cadastrado no Tópico 5 como 'serviço', devendo ser corrigido para a unidade de medida adequada (ex: 'unidade' ou 'kit'), além de necessitar de vinculação direta com uma ação no Cronograma (Tópico 4.1)."
+
+3. CRITÉRIO DE REPROVAÇÃO:
+   - Se houver qualquer incoerência de conteúdo ou métrica, marque "aprovado": false.
 
 --- FORMATO DE RESPOSTA OBRIGATÓRIO (JSON PURO) ---
 {
   "aprovado": true ou false,
-  "resumoGeral": "Texto conciso resumindo a auditoria.",
+  "resumoGeral": "O Plano de Trabalho foi analisado e apresenta inconsistências no alinhamento entre as despesas orçadas e o cronograma de execução, necessitando de adequações antes da aprovação.",
   "divergencias": [
-    {
-      "itemTopico4": "Descrição no Tópico 4",
-      "itemTopico5": "Especificação no Tópico 5 (ou 'Não encontrado')",
-      "motivo": "Explicação do problema"
-    }
+    "Texto descritivo detalhado do item 1...",
+    "Texto descritivo detalhado do item 2..."
   ]
 }
 `;
@@ -959,11 +964,11 @@ function exibirResultadoIA(resultado) {
     const statusBox = document.getElementById('status-box');
     const resumoTexto = document.getElementById('resumo-ia-texto');
     const containerDiv = document.getElementById('container-divergencias');
-    const tbody = document.getElementById('tbody-divergencias');
+    const listaDivergencias = document.getElementById('lista-divergencias-texto');
     const btnPrint = document.getElementById('btn-prosseguir-print');
 
     resumoTexto.innerText = resultado.resumoGeral;
-    tbody.innerHTML = '';
+    listaDivergencias.innerHTML = '';
 
     if (resultado.aprovado) {
         statusBox.className = 'status-box aprovado';
@@ -981,15 +986,23 @@ function exibirResultadoIA(resultado) {
 
         if (resultado.divergencias && resultado.divergencias.length > 0) {
             containerDiv.style.display = 'block';
-            resultado.divergencias.forEach(div => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${div.itemTopico4 || '-'}</td>
-                    <td>${div.itemTopico5 || '-'}</td>
-                    <td>${div.motivo || '-'}</td>
-                `;
-                tbody.appendChild(tr);
+            
+            // Cria uma lista de tópicos em texto descritivo
+            const ul = document.createElement('ul');
+            ul.style.lineHeight = '1.6';
+            ul.style.paddingLeft = '20px';
+            ul.style.marginTop = '10px';
+
+            resultado.divergencias.forEach(textoMotivo => {
+                const li = document.createElement('li');
+                li.style.marginBottom = '12px';
+                li.style.fontSize = '14px';
+                li.style.color = '#333';
+                li.innerHTML = textoMotivo; // Pode ser retornado em string direta da IA
+                ul.appendChild(li);
             });
+
+            listaDivergencias.appendChild(ul);
         } else {
             containerDiv.style.display = 'none';
         }
