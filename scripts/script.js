@@ -1062,3 +1062,102 @@ window.verificarAntesDeImprimir = async function() {
     const resultado = await window.analisarCoerenciaComIA(GROQ_API_KEY);
     exibirResultadoIA(resultado);
 };
+// ============================================================
+// LÓGICA DE MESCLAGEM DE CÉLULAS DO CRONOGRAMA
+// ============================================================
+
+let modoMesclarAtivo = false;
+let primeiraCelulaSelecao = null;
+
+function alternarModoMesclar() {
+    modoMesclarAtivo = !modoMesclarAtivo;
+    const btn = document.getElementById('btn-modo-mesclar');
+    
+    if (modoMesclarAtivo) {
+        btn.style.backgroundColor = '#dc3545';
+        btn.innerText = '❌ Cancelar Mesclagem';
+        document.body.classList.add('modo-mesclar-ativo');
+    } else {
+        resetarModoMesclar();
+    }
+}
+
+function resetarModoMesclar() {
+    modoMesclarAtivo = false;
+    if (primeiraCelulaSelecao) {
+        primeiraCelulaSelecao.classList.remove('celula-selecionada-mescla');
+        primeiraCelulaSelecao = null;
+    }
+    document.body.classList.remove('modo-mesclar-ativo');
+    const btn = document.getElementById('btn-modo-mesclar');
+    if (btn) {
+        btn.style.backgroundColor = '#6f42c1';
+        btn.innerText = '🔗 Mesclar Células';
+    }
+}
+
+// Evento de clique para capturar as duas células a serem mescladas
+document.addEventListener('click', function(e) {
+    if (!modoMesclarAtivo) return;
+
+    const targetEditable = e.target.closest('#cronograma-table .editable');
+    if (!targetEditable) return;
+
+    const td = targetEditable.closest('td');
+    if (!td) return;
+
+    if (!primeiraCelulaSelecao) {
+        // Clica na PRIMEIRA célula (a de cima)
+        primeiraCelulaSelecao = td;
+        td.classList.add('celula-selecionada-mescla');
+    } else {
+        // Clica na SEGUNDA célula (a de baixo)
+        if (primeiraCelulaSelecao === td) {
+            resetarModoMesclar();
+            return;
+        }
+
+        const tr1 = primeiraCelulaSelecao.parentElement;
+        const tr2 = td.parentElement;
+        const colIndex1 = primeiraCelulaSelecao.cellIndex;
+        const colIndex2 = td.cellIndex;
+
+        // Bloqueia mesclagem horizontal
+        if (colIndex1 !== colIndex2) {
+            alert('Apenas mesclagem vertical na mesma coluna é permitida!');
+            resetarModoMesclar();
+            return;
+        }
+
+       // Considera o rowspan atual da primeira célula para encontrar a linha imediatamente abaixo
+        const rowspanAtual = parseInt(primeiraCelulaSelecao.getAttribute('rowspan') || 1);
+
+        // A próxima célula válida deve estar na linha equivalente à soma (rowIndex + rowspan)
+        if (tr2.rowIndex !== tr1.rowIndex + rowspanAtual) {
+            alert('Você só pode mesclar com a célula imediatamente abaixo!');
+            resetarModoMesclar();
+            return;
+        }
+
+        // Executa a mesclagem vertical (rowspan) reusando a variável já criada
+        primeiraCelulaSelecao.setAttribute('rowspan', rowspanAtual + 1);
+        // Se houver texto na célula de baixo, junta com a de cima
+        const textoSecundario = targetEditable.innerText.trim();
+        if (textoSecundario) {
+            const divPrincipal = primeiraCelulaSelecao.querySelector('.editable');
+            if (divPrincipal.innerText.trim()) {
+                divPrincipal.innerText += '\n' + textoSecundario;
+            } else {
+                divPrincipal.innerText = textoSecundario;
+            }
+        }
+
+        // Remove a célula inferior englobada
+        td.remove();
+
+        resetarModoMesclar();
+        if (typeof salvarFormularioAuto === 'function') {
+            salvarFormularioAuto();
+        }
+    }
+});

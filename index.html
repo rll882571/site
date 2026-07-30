@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plano de Trabalho - FDID</title>
     <link rel="stylesheet" href="css/style.css">   
-<script src="scripts/script.js" defer></script>
+
 <!-- 1. BOTÕES PARA GERAR O PDF, SALVAR O BACKUP , ABRIR O BACKUP E NOVO PLANO -->
 <body>
   <div class="export-container no-print">
     <button onclick="verificarAntesDeImprimir()" class="btn-pdf">📄 Gerar PDF do Plano de Trabalho</button>
     
-    <!-- ADICIONE ESSA LINHA AQUI: -->
     <button onclick="exportarBackup()" style="background-color: #007bff; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">💾 Salvar Backup (JSON)</button>
     
     <button onclick="document.getElementById('import-file').click()" style="background-color: #ffc107; color: #212529; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">📂 Abrir Backup</button>
     <button onclick="novoPlano()" style="background-color: #dc3545; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">🗑️ Novo Plano</button>
+    
+    <!-- NOVO BOTÃO DE MESCLAR -->
+    <button type="button" id="btn-modo-mesclar" onclick="alternarModoMesclar()" style="background-color: #6f42c1; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">🔗 Mesclar Células</button>
+    
     <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
   </div>
 <!-- 2. CABEÇARIO -->
@@ -561,6 +564,7 @@
     </div>
   </div>
 </div>
+<script src="scripts/script.js"></script>
 
 </body>
 </html>
