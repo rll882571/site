@@ -293,9 +293,7 @@ function calcularIdades() {
 
 function capturarDadosEstruturados() {
     const backup = {
-        inputsFixos: [],
-        selectsFixos: [],
-        textareasFixas: [],
+        camposPorId: {},
         editablesFixos: [],
         linhasCronograma: [],
         linhasDespesas: []
@@ -321,20 +319,17 @@ function capturarDadosEstruturados() {
         backup.linhasDespesas.push({ tipo, codigo, desc, unid, qtd, vConced, vPropon });
     });
 
-    // Captura campos fixos
-    document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email'], body input[type='date']").forEach((el, index) => {
-        backup.inputsFixos.push({ index: index, value: el.value });
+    // Captura TODOS os campos fixos com ID (inputs, textareas, selects e checkboxes)
+    document.querySelectorAll("input[id], textarea[id], select[id]").forEach(el => {
+        if (el.type === 'checkbox') {
+            backup.camposPorId[el.id] = el.checked;
+        } else {
+            backup.camposPorId[el.id] = el.value;
+        }
     });
 
-    document.querySelectorAll("body select").forEach((el, index) => {
-        backup.selectsFixos.push({ index: index, value: el.value });
-    });
-
-    document.querySelectorAll("body textarea").forEach((el, index) => {
-        backup.textareasFixas.push({ index: index, value: el.value });
-    });
-
-    document.querySelectorAll("body .editable").forEach((el, index) => {
+    // Captura editables fixos fora de tabelas dinâmicas
+    document.querySelectorAll("body .editable:not(#cronograma-table .editable):not(#tabela-despesas-unica .editable)").forEach((el, index) => {
         backup.editablesFixos.push({ index: index, innerHTML: el.innerHTML });
     });
 
@@ -348,7 +343,7 @@ function aplicarDadosEstruturados(dados) {
     if (dados.linhasCronograma && Array.isArray(dados.linhasCronograma)) {
         const tbodyCrono = document.querySelector('#cronograma-table tbody');
         if (tbodyCrono) {
-            tbodyCrono.innerHTML = ''; // Limpa antes de re-preencher
+            tbodyCrono.innerHTML = ''; 
             dados.linhasCronograma.forEach(item => {
                 addRow();
                 const ultimaLinha = tbodyCrono.lastElementChild;
@@ -366,7 +361,7 @@ function aplicarDadosEstruturados(dados) {
     if (dados.linhasDespesas && Array.isArray(dados.linhasDespesas)) {
         const tbodyDesp = document.querySelector('#tabela-despesas-unica tbody');
         if (tbodyDesp) {
-            tbodyDesp.innerHTML = ''; // Limpa antes de re-preencher
+            tbodyDesp.innerHTML = ''; 
             dados.linhasDespesas.forEach(item => {
                 addLinhaUnica(item.tipo);
                 const ultimaLinha = tbodyDesp.lastElementChild;
@@ -382,30 +377,26 @@ function aplicarDadosEstruturados(dados) {
         }
     }
 
-    // 3. Aplica valores nos campos fixos
-    if (dados.inputsFixos && Array.isArray(dados.inputsFixos)) {
+    // 3. Aplica valores nos campos fixos via ID
+    if (dados.camposPorId) {
+        Object.keys(dados.camposPorId).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                if (el.type === 'checkbox') {
+                    el.checked = dados.camposPorId[id];
+                } else {
+                    el.value = dados.camposPorId[id];
+                }
+            }
+        });
+    }
+
+    // Retrocompatibilidade para backups antigos por índice
+    if (dados.inputsFixos && Array.isArray(dados.inputsFixos) && !dados.camposPorId) {
         const inputsAtuais = document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email'], body input[type='date']");
         dados.inputsFixos.forEach(item => {
             if (inputsAtuais[item.index]) {
                 inputsAtuais[item.index].value = item.value;
-            }
-        });
-    }
-
-    if (dados.selectsFixos && Array.isArray(dados.selectsFixos)) {
-        const selectsAtuais = document.querySelectorAll("body select");
-        dados.selectsFixos.forEach(item => {
-            if (selectsAtuais[item.index]) {
-                selectsAtuais[item.index].value = item.value;
-            }
-        });
-    }
-
-    if (dados.textareasFixas && Array.isArray(dados.textareasFixas)) {
-        const textareasAtuais = document.querySelectorAll("body textarea");
-        dados.textareasFixas.forEach(item => {
-            if (textareasAtuais[item.index]) {
-                textareasAtuais[item.index].value = item.value;
             }
         });
     }
@@ -415,24 +406,6 @@ function aplicarDadosEstruturados(dados) {
     calcularTotaisTabelaDespesas();
     prepararParaImprimir();
 }
-
-function salvarFormularioAuto() {
-    const dados = capturarDadosEstruturados();
-    localStorage.setItem("AnexoDoisFDID_v1", JSON.stringify(dados));
-}
-
-function carregarFormularioAuto() {
-    const localData = localStorage.getItem("AnexoDoisFDID_v1");
-    if (localData) {
-        try {
-            const dados = JSON.parse(localData);
-            aplicarDadosEstruturados(dados);
-        } catch (e) {
-            console.error("Erro ao carregar dados salvos do Anexo 2.", e);
-        }
-    }
-}
-
 
 // ============================================================
 // 5. FUNÇÕES DOS BOTÕES (EXPORTAR, IMPORTAR, NOVO PLANO)
@@ -1063,32 +1036,38 @@ window.verificarAntesDeImprimir = async function() {
     exibirResultadoIA(resultado);
 };
 // ============================================================
-// LÓGICA DE MESCLAGEM DE CÉLULAS DO CRONOGRAMA
+// LÓGICA DE MESCLAGEM POR SELEÇÃO MÚLTIPLA E CONFIRMAÇÃO
 // ============================================================
 
 let modoMesclarAtivo = false;
-let primeiraCelulaSelecao = null;
+let celulasSelecionadas = []; // Guarda a lista de células clicadas
+const historicoMesclagens = []; // Guarda o histórico para a função Desfazer
 
 function alternarModoMesclar() {
-    modoMesclarAtivo = !modoMesclarAtivo;
     const btn = document.getElementById('btn-modo-mesclar');
-    
-    if (modoMesclarAtivo) {
-        btn.style.backgroundColor = '#dc3545';
-        btn.innerText = '❌ Cancelar Mesclagem';
+
+    if (!modoMesclarAtivo) {
+        // ATIVA O MODO DE SELEÇÃO
+        modoMesclarAtivo = true;
+        celulasSelecionadas = [];
+        btn.style.backgroundColor = '#28a745'; // Fica verde indicando que o próximo clique confirma
+        btn.innerText = '✅ Confirmar Mesclagem';
         document.body.classList.add('modo-mesclar-ativo');
     } else {
-        resetarModoMesclar();
+        // SE JÁ ESTAVA ATIVO, O SEGUNDO CLIQUE CONFIRMA E EXECUTA A MESCLAGEM
+        executarMesclagemSelecao();
     }
 }
 
 function resetarModoMesclar() {
     modoMesclarAtivo = false;
-    if (primeiraCelulaSelecao) {
-        primeiraCelulaSelecao.classList.remove('celula-selecionada-mescla');
-        primeiraCelulaSelecao = null;
-    }
+    
+    // Limpa a cor de destaque de todas as células selecionadas
+    celulasSelecionadas.forEach(td => td.classList.remove('celula-selecionada-mescla'));
+    celulasSelecionadas = [];
+
     document.body.classList.remove('modo-mesclar-ativo');
+
     const btn = document.getElementById('btn-modo-mesclar');
     if (btn) {
         btn.style.backgroundColor = '#6f42c1';
@@ -1096,9 +1075,12 @@ function resetarModoMesclar() {
     }
 }
 
-// Evento de clique para capturar as duas células a serem mescladas
+// Evento de clique para ir selecionando / deselecionando células
 document.addEventListener('click', function(e) {
     if (!modoMesclarAtivo) return;
+
+    // Ignora se o clique foi no próprio botão de mesclar (para não interferir no alternarModoMesclar)
+    if (e.target.closest('#btn-modo-mesclar')) return;
 
     const targetEditable = e.target.closest('#cronograma-table .editable');
     if (!targetEditable) return;
@@ -1106,58 +1088,100 @@ document.addEventListener('click', function(e) {
     const td = targetEditable.closest('td');
     if (!td) return;
 
-    if (!primeiraCelulaSelecao) {
-        // Clica na PRIMEIRA célula (a de cima)
-        primeiraCelulaSelecao = td;
-        td.classList.add('celula-selecionada-mescla');
-    } else {
-        // Clica na SEGUNDA célula (a de baixo)
-        if (primeiraCelulaSelecao === td) {
-            resetarModoMesclar();
+    // Se a célula já estiver na lista, remove a seleção ao clicar de novo
+    const indexExistente = celulasSelecionadas.indexOf(td);
+    if (indexExistente !== -1) {
+        td.classList.remove('celula-selecionada-mescla');
+        celulasSelecionadas.splice(indexExistente, 1);
+        return;
+    }
+
+    // Se já houver células selecionadas, valida para permitir seleção APENAS na mesma coluna
+    if (celulasSelecionadas.length > 0) {
+        const primeiraColuna = celulasSelecionadas[0].cellIndex;
+        if (td.cellIndex !== primeiraColuna) {
+            alert('Por favor, selecione células apenas dentro da mesma coluna!');
             return;
         }
+    }
 
-        const tr1 = primeiraCelulaSelecao.parentElement;
-        const tr2 = td.parentElement;
-        const colIndex1 = primeiraCelulaSelecao.cellIndex;
-        const colIndex2 = td.cellIndex;
+    // Adiciona a célula à lista e aplica a cor de destaque
+    td.classList.add('celula-selecionada-mescla');
+    celulasSelecionadas.push(td);
+});
 
-        // Bloqueia mesclagem horizontal
-        if (colIndex1 !== colIndex2) {
-            alert('Apenas mesclagem vertical na mesma coluna é permitida!');
-            resetarModoMesclar();
-            return;
+// Processa a mesclagem das células acumuladas
+function executarMesclagemSelecao() {
+    if (celulasSelecionadas.length < 2) {
+        alert("Selecione pelo menos 2 células para mesclar.");
+        resetarModoMesclar();
+        return;
+    }
+
+    // Ordena as células de cima para baixo de acordo com a posição da linha (rowIndex)
+    celulasSelecionadas.sort((a, b) => a.parentElement.rowIndex - b.parentElement.rowIndex);
+
+    const primeiraCelula = celulasSelecionadas[0];
+    const tbody = primeiraCelula.closest('tbody');
+
+    // Salva o HTML atual antes de alterar (Permite o botão Desfazer funcionar)
+    historicoMesclagens.push(tbody.innerHTML);
+
+    let totalRowspan = 0;
+    let textoAcumulado = '';
+
+    // Calcula a soma dos rowspans e junta os textos das células selecionadas
+    celulasSelecionadas.forEach(td => {
+        const rSpan = parseInt(td.getAttribute('rowspan') || 1, 10);
+        totalRowspan += rSpan;
+
+        const txt = td.querySelector('.editable')?.innerText.trim() || td.innerText.trim();
+        if (txt) {
+            textoAcumulado += (textoAcumulado ? '\n' : '') + txt;
         }
+    });
 
-       // Considera o rowspan atual da primeira célula para encontrar a linha imediatamente abaixo
-        const rowspanAtual = parseInt(primeiraCelulaSelecao.getAttribute('rowspan') || 1);
+    // Aplica o rowspan total na primeira célula
+    primeiraCelula.setAttribute('rowspan', totalRowspan);
+    const divPrincipal = primeiraCelula.querySelector('.editable');
+    if (divPrincipal) {
+        divPrincipal.innerText = textoAcumulado;
+    }
 
-        // A próxima célula válida deve estar na linha equivalente à soma (rowIndex + rowspan)
-        if (tr2.rowIndex !== tr1.rowIndex + rowspanAtual) {
-            alert('Você só pode mesclar com a célula imediatamente abaixo!');
-            resetarModoMesclar();
-            return;
-        }
+    // Remove as demais células englobadas (da segunda em diante)
+    for (let i = 1; i < celulasSelecionadas.length; i++) {
+        celulasSelecionadas[i].remove();
+    }
 
-        // Executa a mesclagem vertical (rowspan) reusando a variável já criada
-        primeiraCelulaSelecao.setAttribute('rowspan', rowspanAtual + 1);
-        // Se houver texto na célula de baixo, junta com a de cima
-        const textoSecundario = targetEditable.innerText.trim();
-        if (textoSecundario) {
-            const divPrincipal = primeiraCelulaSelecao.querySelector('.editable');
-            if (divPrincipal.innerText.trim()) {
-                divPrincipal.innerText += '\n' + textoSecundario;
-            } else {
-                divPrincipal.innerText = textoSecundario;
-            }
-        }
+    resetarModoMesclar();
 
-        // Remove a célula inferior englobada
-        td.remove();
+    if (typeof salvarFormularioAuto === 'function') {
+        salvarFormularioAuto();
+    }
+}
+
+// Função do botão "Desfazer Mesclagem" (Com remoção da classe de cor)
+function desfazerUltimaMesclagem() {
+    if (historicoMesclagens.length === 0) {
+        alert("Nenhuma mesclagem recente para desfazer.");
+        return;
+    }
+
+    const tbody = document.querySelector('#cronograma-table tbody');
+    if (tbody) {
+        // Restaura o HTML anterior
+        tbody.innerHTML = historicoMesclagens.pop();
+
+        // Remove qualquer classe roxa de seleção residual das células restauradas
+        tbody.querySelectorAll('.celula-selecionada-mescla').forEach(td => {
+            td.classList.remove('celula-selecionada-mescla');
+        });
 
         resetarModoMesclar();
+
         if (typeof salvarFormularioAuto === 'function') {
             salvarFormularioAuto();
         }
+        alert("Última mesclagem desfeita com sucesso!");
     }
-});
+}

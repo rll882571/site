@@ -16,8 +16,9 @@
     <button onclick="document.getElementById('import-file').click()" style="background-color: #ffc107; color: #212529; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">📂 Abrir Backup</button>
     <button onclick="novoPlano()" style="background-color: #dc3545; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">🗑️ Novo Plano</button>
     
-    <!-- NOVO BOTÃO DE MESCLAR -->
-    <button type="button" id="btn-modo-mesclar" onclick="alternarModoMesclar()" style="background-color: #6f42c1; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">🔗 Mesclar Células</button>
+    <!-- NOVO BOTÃO DE MESCLAR E DESFAZER -->
+<button type="button" id="btn-modo-mesclar" onclick="alternarModoMesclar()">🔗 Mesclar Células</button>
+<button type="button" id="btn-desfazer-mescla" onclick="desfazerUltimaMesclagem()" style="background-color: #6c757d; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">↩️ Desfazer Mesclagem</button>
     
     <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
   </div>
@@ -35,183 +36,183 @@
             <h2>PLANO DE TRABALHO DO PROJETO</h2>
         </section>
 
-        <section class="form-section">
-            <h3>1- SOBRE A ENTIDADE PROPONENTE</h3>
-            
-            <div class="form-grid">
-                <div class="cell col-8">
-                    <label>Órgão/ Entidade Proponente</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-4">
-                <label>CNPJ</label>
-                <input type="text" class="cnpj-input" placeholder="00.000.000/0000-00" maxlength="18">
-                </div>
+       <section class="form-section">
+    <h3>1- SOBRE A ENTIDADE PROPONENTE</h3>
+    
+    <div class="form-grid">
+        <div class="cell col-8">
+            <label>Órgão/ Entidade Proponente</label>
+            <input type="text" id="prop-entidade">
+        </div>
+        <div class="cell col-4">
+            <label>CNPJ</label>
+            <input type="text" id="prop-cnpj" class="cnpj-input" placeholder="00.000.000/0000-00" maxlength="18">
+        </div>
 
-                <div class="cell col-12">
-                    <label>Endereço</label>
-                    <input type="text">
-                </div>
+        <div class="cell col-12">
+            <label>Endereço</label>
+            <input type="text" id="prop-endereco">
+        </div>
 
-                <div class="cell col-3">
-                    <label>Cidade</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-1">
-                <label>UF</label>
-                <input type="text" value="CE" readonly class="center-text" style="background-color: #f0f0f0; font-weight: bold;">
-                 </div>
-                <div class="cell col-2">
-                  <label>CEP</label>
-                  <input type="text" class="cep-input" placeholder="00000-000" maxlength="9">
-                  </div>
-                <div class="cell col-2">
-                    <label>DDD/Telefone</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-4">
-                    <label>E-mail</label>
-                    <input type="email">
-                </div>
+        <div class="cell col-3">
+            <label>Cidade</label>
+            <input type="text" id="prop-cidade">
+        </div>
+        <div class="cell col-1">
+            <label>UF</label>
+            <input type="text" id="prop-uf" value="CE" readonly class="center-text" style="background-color: #f0f0f0; font-weight: bold;">
+        </div>
+        <div class="cell col-2">
+            <label>CEP</label>
+            <input type="text" id="prop-cep" class="cep-input" placeholder="00000-000" maxlength="9">
+        </div>
+        <div class="cell col-2">
+            <label>DDD/Telefone</label>
+            <input type="text" id="prop-telefone">
+        </div>
+        <div class="cell col-4">
+            <label>E-mail</label>
+            <input type="email" id="prop-email">
+        </div>
 
-                <div class="cell col-9">
-                    <label>Nome do Responsável pela Entidade</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-3">
-                <label>CPF</label>
-                <input type="text" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
-                </div>
+        <div class="cell col-9">
+            <label>Nome do Responsável pela Entidade</label>
+            <input type="text" id="resp-nome">
+        </div>
+        <div class="cell col-3">
+            <label>CPF</label>
+            <input type="text" id="resp-cpf" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
+        </div>
 
-                <div class="cell col-3">
-                    <label>CI/Órgão Exp.</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-3">
-                    <label>Cargo</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-3">
-                    <label>Função</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-3">
-                    <label>Matrícula</label>
-                    <input type="text">
-                </div>
+        <div class="cell col-3">
+            <label>CI/Órgão Exp.</label>
+            <input type="text" id="resp-ci">
+        </div>
+        <div class="cell col-3">
+            <label>Cargo</label>
+            <input type="text" id="resp-cargo">
+        </div>
+        <div class="cell col-3">
+            <label>Função</label>
+            <input type="text" id="resp-funcao">
+        </div>
+        <div class="cell col-3">
+            <label>Matrícula</label>
+            <input type="text" id="resp-matricula">
+        </div>
 
-                <div class="cell col-9">
-                    <label>Endereço (Residencial)</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-3">
-                  <label>CEP</label>
-                  <input type="text" class="cep-input" placeholder="00000-000" maxlength="9">
-                  </div>
+        <div class="cell col-9">
+            <label>Endereço (Residencial)</label>
+            <input type="text" id="resp-endereco-res">
+        </div>
+        <div class="cell col-3">
+            <label>CEP</label>
+            <input type="text" id="resp-cep-res" class="cep-input" placeholder="00000-000" maxlength="9">
+        </div>
 
-                <div class="cell col-8">
-                    <label>Coordenador(a) do Projeto:</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-4">
-                <label>CPF</label>
-                <input type="text" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
-                </div>
+        <div class="cell col-8">
+            <label>Coordenador(a) do Projeto:</label>
+            <input type="text" id="coord-nome">
+        </div>
+        <div class="cell col-4">
+            <label>CPF</label>
+            <input type="text" id="coord-cpf" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
+        </div>
 
-                <div class="cell col-6">
-                    <label>E-mail:</label>
-                    <input type="email">
-                </div>
-                <div class="cell col-6">
-                    <label>Fone/fax:</label>
-                    <input type="text">
-                </div>
+        <div class="cell col-6">
+            <label>E-mail:</label>
+            <input type="email" id="coord-email">
+        </div>
+        <div class="cell col-6">
+            <label>Fone/fax:</label>
+            <input type="text" id="coord-fone">
+        </div>
 
-                <div class="cell col-6">
-                    <label>Data:</label>
-                    <input type="date">
-                </div>
-                <!-- CAMPO DE ASSINATURA FIXO COM LINHA (NÃO EDITÁVEL) -->
-                <div class="cell col-6" style="display: flex; flex-direction: column; justify-content: flex-end;">
-                    <label>Assinatura:</label>
-                    <div style="border-bottom: 1px solid #000; margin-top: 25px; height: 1px;"></div>
-                </div>
+        <div class="cell col-6">
+            <label>Data:</label>
+            <input type="date" id="prop-data">
+        </div>
+        <!-- CAMPO DE ASSINATURA FIXO COM LINHA (NÃO EDITÁVEL) -->
+        <div class="cell col-6" style="display: flex; flex-direction: column; justify-content: flex-end;">
+            <label>Assinatura:</label>
+            <div style="border-bottom: 1px solid #000; margin-top: 25px; height: 1px;"></div>
+        </div>
+    </div>
+</section>
+       <!-- 3. IDENTIFICAÇÃO DA ENTIDADE EXECUTORA NÃO CELEBRANTE DA PARCERIA -->
+<section class="form-section">
+    <h3>2- IDENTIFICAÇÃO DA ENTIDADE EXECUTORA NÃO CELEBRANTE DA PARCERIA</h3>
+    
+    <div class="form-grid">
+        <div class="cell col-6">
+            <label>Entidade Executora:</label>
+            <input type="text" id="exec-entidade">
+        </div>
+        <div class="cell col-3">
+            <label>CNPJ</label>
+            <input type="text" id="exec-cnpj" class="cnpj-input" placeholder="00.000.000/0000-00" maxlength="18">
+        </div>
+        <div class="cell col-3">
+            <label>Fone/fax:</label>
+            <input type="text" id="exec-fone">
+        </div>
+
+        <div class="cell col-9">
+            <label>Representante Legal:</label>
+            <input type="text" id="exec-rep-nome">
+        </div>
+        <div class="cell col-3">
+            <label>CPF</label>
+            <input type="text" id="exec-rep-cpf" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
+        </div>
+
+        <div class="cell col-6">
+            <label>Cargo:</label>
+            <input type="text" id="exec-rep-cargo">
+        </div>
+        <div class="cell col-6">
+            <label>Função:</label>
+            <input type="text" id="exec-rep-funcao">
+        </div>
+
+        <div class="cell col-6">
+            <label>Endereço residencial:</label>
+            <input type="text" id="exec-rep-endereco">
+        </div>
+        <div class="cell col-3">
+            <label>CEP</label>
+            <input type="text" id="exec-rep-cep" class="cep-input" placeholder="00000-000" maxlength="9">
+        </div>
+        <div class="cell col-3">
+            <label>Fone/fax:</label>
+            <input type="text" id="exec-rep-fone">
+        </div>
+
+        <div class="cell col-6">
+            <div class="checkbox-group">
+                <label class="check-item"><input type="checkbox" id="exec-tipo-fed"> Fed.</label>
+                <label class="check-item"><input type="checkbox" id="exec-tipo-est"> Est.</label>
+                <label class="check-item"><input type="checkbox" id="exec-tipo-mun"> Mun.</label>
+                <label class="check-item"><input type="checkbox" id="exec-tipo-ong"> ONG</label>
+                <label class="check-item"><input type="checkbox" id="exec-tipo-outros"> Outros</label>
             </div>
-        </section>
-        <!-- 3. IDENTIFICAÇÃO DA ENTIDADE EXECUTORA NÃO CELEBRANTE DA PARCERIA -->
-        <section class="form-section">
-            <h3>2- IDENTIFICAÇÃO DA ENTIDADE EXECUTORA NÃO CELEBRANTE DA PARCERIA</h3>
-            
-            <div class="form-grid">
-                <div class="cell col-6">
-                    <label>Entidade Executora:</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-3">
-                <label>CNPJ</label>
-                <input type="text" class="cnpj-input" placeholder="00.000.000/0000-00" maxlength="18">
-                </div>
-                <div class="cell col-3">
-                    <label>Fone/fax:</label>
-                    <input type="text">
-                </div>
+        </div>
+        <div class="cell col-6">
+            <label>E-mail:</label>
+            <input type="email" id="exec-email">
+        </div>
 
-                <div class="cell col-9">
-                    <label>Representante Legal:</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-3">
-                <label>CPF</label>
-                <input type="text" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
-                </div>
+        <div class="cell col-12">
+            <label>Natureza da Participação:</label>
+            <input type="text" id="exec-natureza">
+        </div>
 
-                <div class="cell col-6">
-                    <label>Cargo:</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-6">
-                    <label>Função:</label>
-                    <input type="text">
-                </div>
-
-                <div class="cell col-6">
-                    <label>Endereço residencial:</label>
-                    <input type="text">
-                </div>
-                <div class="cell col-3">
-                  <label>CEP</label>
-                  <input type="text" class="cep-input" placeholder="00000-000" maxlength="9">
-                  </div>
-                <div class="cell col-3">
-                    <label>Fone/fax:</label>
-                    <input type="text">
-                </div>
-
-                <div class="cell col-6">
-                    <div class="checkbox-group">
-                        <label class="check-item"><input type="checkbox"> Fed.</label>
-                        <label class="check-item"><input type="checkbox"> Est.</label>
-                        <label class="check-item"><input type="checkbox"> Mun.</label>
-                        <label class="check-item"><input type="checkbox"> ONG</label>
-                        <label class="check-item"><input type="checkbox"> Outros</label>
-                    </div>
-                </div>
-                <div class="cell col-6">
-                    <label>E-mail:</label>
-                    <input type="email">
-                </div>
-
-                <div class="cell col-12">
-                    <label>Natureza da Participação:</label>
-                    <input type="text">
-                </div>
-
-                <div class="cell col-12">
-                    <label>Outras Fontes:</label>
-                    <input type="text">
-                </div>
-            </div>
-        </section>
+        <div class="cell col-12">
+            <label>Outras Fontes:</label>
+            <input type="text" id="exec-outras-fontes">
+        </div>
+    </div>
+</section>
         <section class="form-section">
     <h3>3- ORÇAMENTO</h3>
     <h4>3.1- RESUMO</h4>
