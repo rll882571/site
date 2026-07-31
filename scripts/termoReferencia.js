@@ -138,6 +138,75 @@ function calcularMediaOrcamento() {
 
 
 // ============================================================
+// 3.1. VALIDAÇÃO AUTOMÁTICA DE COTAÇÃO VIA PDF (PDF.js)
+// ============================================================
+
+if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+async function processarPdfCotacao(input) {
+    const file = input.files[0];
+    const statusDiv = document.getElementById('status-validacao-pdf');
+    
+    if (!file) return;
+
+    statusDiv.style.display = "block";
+    statusDiv.innerHTML = "Lendo PDF...";
+    statusDiv.style.color = "#007bff";
+
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let textoCompleto = "";
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const textItems = textContent.items.map(item => item.str);
+            textoCompleto += textItems.join(" ") + " ";
+        }
+
+        const regexMoeda = /(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})/g;
+        let correspondencias;
+        let valoresEncontrados = [];
+
+        while ((correspondencias = regexMoeda.exec(textoCompleto)) !== null) {
+            let valorFloat = parseMoneyToFloat(correspondencias[1]);
+            if (valorFloat > 0 && valorFloat < 100000) {
+                valoresEncontrados.push(valorFloat);
+            }
+        }
+
+        if (valoresEncontrados.length === 0) {
+            statusDiv.innerHTML = "⚠️ Nenhum valor no PDF.";
+            statusDiv.style.color = "#dc3545";
+            return;
+        }
+
+        let valorPdf = Math.max(...valoresEncontrados);
+        const inputsCotacao = document.querySelectorAll('.currency-cotacao');
+        let valoresDigitados = Array.from(inputsCotacao).map(inp => parseMoneyToFloat(inp.value));
+
+        let compativel = valoresDigitados.some(val => Math.abs(val - valorPdf) < 0.01);
+
+        if (compativel) {
+            statusDiv.innerHTML = `✅ Compatível!<br>R$ ${floatToMoney(valorPdf)}`;
+            statusDiv.style.color = "#28a745";
+        } else {
+            statusDiv.innerHTML = `❌ Divergente!<br>PDF indica R$ ${floatToMoney(valorPdf)}`;
+            statusDiv.style.color = "#dc3545";
+        }
+
+    } catch (err) {
+        console.error(err);
+        statusDiv.innerHTML = "❌ Erro ao ler PDF.";
+        statusDiv.style.color = "#dc3545";
+    }
+}
+
+
+// ============================================================
 // 4. MOTOR DE PERSISTÊNCIA (BACKUP JSON E LOCALSTORAGE)
 // ============================================================
 
