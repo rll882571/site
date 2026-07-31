@@ -1,0 +1,377 @@
+/* ============================================================
+   1. CONFIGURAÇÕES GERAIS E FOLHA A4
+   ============================================================ */
+:root {
+    --bg-gray: #f4f4f4;
+    --border-dark: #000;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-gray);
+    font-family: "Times New Roman", Times, serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.a4-page {
+    background: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 15mm 20mm;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* Cabeçalho do Documento */
+.document-header {
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.sub-header { 
+    margin-top: 3px; 
+}
+
+.title-section {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.title-section h1 { 
+    font-size: 14px; 
+    margin: 0; 
+}
+
+.title-section h2 { 
+    font-size: 12px; 
+    margin: 3px 0; 
+}
+
+.form-section { 
+    margin-top: 10px; 
+}
+
+/* ============================================================
+   2. TABELA DE IDENTIFICAÇÃO E DETALHES (TERMO DE REFERÊNCIA)
+   ============================================================ */
+.form-table-container {
+    border: 1.5px solid var(--border-dark);
+    width: 100%;
+}
+
+.table-header-title {
+    font-weight: bold;
+    font-size: 12px;
+    padding: 6px;
+    border-bottom: 1px solid var(--border-dark);
+    text-transform: uppercase;
+    background-color: #fff;
+}
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.bold-text { font-weight: bold; }
+
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10.5px;
+}
+
+.form-table td {
+    border: 1px solid var(--border-dark);
+    padding: 4px 6px;
+    vertical-align: middle;
+}
+
+.col-label {
+    font-weight: bold;
+    color: #000;
+    padding: 6px 8px;
+    background-color: #fff;
+}
+
+.col-label .num {
+    display: inline-block;
+    width: 28px;
+    font-weight: bold;
+}
+
+.col-label .label-text {
+    display: inline;
+}
+
+.col-input input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    background: transparent;
+}
+
+/* Campos de Valor (R$: coladinho no valor, sem caixas/linhas) */
+.currency-line {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    margin-top: 4px;
+    padding-top: 2px;
+    border-top: none;
+}
+
+.currency-symbol {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.currency-line input {
+    text-align: left !important;
+    width: 80px;
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    background: transparent;
+}
+
+/* ============================================================
+   3. BLOCOS DE TEXTAREA (SEM BORDAS OU LINHAS TRACEJADAS)
+   ============================================================ */
+textarea {
+    resize: none !important;
+}
+
+.box-title {
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.box-instruction {
+    font-size: 10px;
+    margin: 4px 0;
+    text-align: justify;
+}
+
+textarea.auto-grow,
+.textarea-projeto,
+.form-table td .input-table-textarea,
+.section-block textarea {
+    width: 100%;
+    border: none !important;
+    background: transparent !important;
+    padding: 4px 0 !important;
+    margin-top: 6px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    outline: none;
+    display: block;
+    line-height: 1.3;
+    resize: none !important;
+    box-shadow: none !important;
+}
+
+textarea.auto-grow::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* Estilos específicos para a Tabela de Orçamento Detalhado */
+.budget-table {
+    table-layout: fixed;
+}
+
+.budget-table th {
+    border: 1px solid var(--border-dark);
+    padding: 5px 6px;
+    background-color: #fff;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.input-table-clean {
+    width: 100%;
+    border: none !important;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.5px;
+    background: transparent;
+    padding: 2px;
+}
+
+.input-table-clean::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* ============================================================
+   4. PAINEL DE BOTÕES FIXOS NA TELA
+   ============================================================ */
+.export-container { 
+    position: fixed; 
+    top: 20px; 
+    right: 20px; 
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.export-container button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 180px;
+    color: #ffffff;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.export-container .btn-pdf { background-color: #28a745; }
+.export-container .btn-save { background-color: #007bff; }
+.export-container .btn-open { background-color: #17a2b8; }
+.export-container .btn-new { background-color: #dc3545; }
+
+.export-container button:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* ============================================================
+   5. REGRAS PARA IMPRESSÃO (PDF)
+   ============================================================ */
+@media print {
+    .no-print, 
+    .export-container { 
+        display: none !important; 
+    }
+
+    @page {
+        margin: 0;
+    }
+    
+    body { 
+        background: white !important; 
+        padding: 0 !important; 
+        margin: 0 !important; 
+    }
+    
+    .a4-page { 
+        box-shadow: none !important; 
+        margin: 0 !important; 
+        width: 100% !important; 
+        padding: 10mm !important; 
+        border: none !important;
+    }
+
+    .form-table-container {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        page-break-inside: avoid !important;
+    }
+
+    textarea,
+    textarea.auto-grow {
+        overflow: hidden !important;
+        resize: none !important;
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        display: block !important;
+        border: none !important;
+        background: transparent !important;
+    }
+
+    /* Oculta placeholders na impressão */
+    textarea::placeholder,
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+}
+
+/* ============================================================
+   6. LINHA DA MÉDIA (COMPACTADA)
+   ============================================================ */
+
+
+
+
+.media-label {
+    text-align: center;
+    font-weight: bold;
+   
+    padding-right: 8px;
+}
+
+.media-value {
+    text-align: center;
+    border: 1px solid var(--border-dark) !important;
+}
+
+.media-value .currency-line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.media-value input {
+    width: 80px;
+    text-align: center;
+}
+
+/* ============================================================
+   BLOCO DA MÉDIA FORA DA TABELA
+   ============================================================ */
+.media-external-container {
+    display: flex;
+    justify-content: flex-end;
+    background: #fff;
+    border-right: 1.5px solid var(--border-dark);
+    border-bottom: 1.5px solid var(--border-dark);
+    border-left: 1.5px solid var(--border-dark);
+    margin-top: -1px; /* Gruda perfeitamente na tabela acima */
+}
+
+.media-external-label {
+    width: 17%; /* Mesma largura da coluna Telefone */
+    padding: 1px;
+    font-weight: bold;
+    text-align: right;
+    font-size: 10.5px;
+    border-right: 1px solid var(--border-dark);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.media-external-value {
+    width: 18%; /* Mesma largura da coluna Cotação (R$) */
+    padding: 6px;
+    text-align: center;
+    font-size: 10.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

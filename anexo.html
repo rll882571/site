@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMO DE REFERÊNCIA DE BENS E/OU SERVIÇOS - FDID (ANEXO 3)</title>
+    <link rel="stylesheet" href="css/termoReferencia.css">
+    <script src="scripts/termoReferencia.js"></script>
+</head>
+<body>
+    <div class="export-container no-print">
+        <button onclick="prepararParaImprimir(); window.print();" class="btn-pdf">📄 Gerar PDF</button>
+        <button onclick="exportarBackup()" class="btn-save">💾 Salvar Backup (JSON)</button>
+        <button onclick="document.getElementById('import-file').click()" class="btn-open">📂 Abrir Backup</button>
+        <button onclick="novoPlano()" class="btn-new">🗑️ Novo Formulário</button>
+        <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
+    </div>
+
+    <div class="a4-page">
+        <header class="document-header">
+            <p>MINISTÉRIO PÚBLICO DO ESTADO DO CEARÁ</p>
+            <p>FUNDO DE DEFESA DOS DIREITOS DIFUSOS</p>
+            <p>CONSELHO ESTADUAL GESTOR</p>
+            <p class="sub-header">CEG/FDID</p>
+        </header>
+
+        <section class="title-section">
+            <h1>ANEXO 3</h1>
+            <h2>TERMO DE REFERÊNCIA DE BENS E/OU SERVIÇOS</h2>
+            <p style="font-size: 10px; font-style: italic; margin-top: 4px;">(Preencher 01 termo de referência por equipamento/serviço a ser adquirido/contratado)</p>
+        </section>
+
+        <section class="form-section">
+           <!-- SEÇÃO 1: DISCRIMINAÇÃO E JUSTIFICATIVA -->
+            <div class="form-table-container" style="border: none !important;">
+                <!-- TÍTULO FORA DA TABELA (Sem retângulo/bordas em volta) -->
+                <div style="font-weight: bold; font-size: 12px; padding: 6px 0px; text-transform: uppercase; background: #fff;">
+                    1. DISCRIMINAÇÃO E JUSTIFICATIVA DA AQUISIÇÃO DE BENS E/OU SERVIÇO
+                </div>
+                
+                <table class="form-table" style="border-top: 1.5px solid var(--border-dark);">
+                    <tbody>
+                        <tr>
+                            <td colspan="3" class="col-label" style="width: 100%;">
+                                <span class="num">1.1</span> Bens / Serviços:
+                                <textarea class="auto-grow input-table-textarea" rows="1" placeholder="(Exemplo: Aquisição de 01 Notebook para gestão do projeto...)"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-label" style="width: 33%;">
+                                <span class="num">1.1.1</span> <span class="label-text">(Opcional) Recursos Contrapartida</span>
+                                <div class="currency-line">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text center-text currency-contrapartida" placeholder="0,00">
+                                </div>
+                            </td>
+                            <td class="col-label" style="width: 33%;">
+                                <span class="num">1.1.2</span> <span class="label-text">Recursos FDID:</span>
+                                <div class="currency-line">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text center-text currency-fdid" placeholder="0,00">
+                                </div>
+                            </td>
+                            <td class="col-label" style="width: 34%;">
+                                <span class="num">1.1.3</span> <span class="label-text">Valor Total:</span>
+                                <div class="currency-line">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text center-text currency-total" placeholder="0,00" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="col-label">
+                                <span class="num">1.1.4</span> Justificativa da aquisição do bem/serviço:
+                                <textarea class="auto-grow input-table-textarea" rows="3" placeholder="(Explique por que este bem ou serviço é essencial para o desenvolvimento das atividades...)"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="col-label">
+                                <span class="num">1.1.5</span> Utilização do bem/serviço nas atividades/Tempo de uso:
+                                <textarea class="auto-grow input-table-textarea" rows="3" placeholder="(Descreva como será utilizado e por quanto tempo...)"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="table-header-title text-left" style="background-color: #fff; border-top: 1px solid var(--border-dark); padding: 4px 8px;">
+                                <strong>1.2 - SUBTOTAL</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-label" style="background-color: #fff;">
+                                Valor Contrapartida (C1):
+                                <div class="currency-line">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text subtotal-c1" placeholder="0,00" readonly>
+                                </div>
+                            </td>
+                            <td class="col-label" style="background-color: #fff;">
+                                Valor FDID:
+                                <div class="currency-line">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text subtotal-fdid" placeholder="0,00" readonly>
+                                </div>
+                            </td>
+                            <td class="col-label" style="background-color: #fff;">
+                                Valor Total:
+                                <div class="currency-line">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text subtotal-geral" placeholder="0,00" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- SEÇÃO 2: ESPECIFICAÇÃO TÉCNICA -->
+            <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
+                <div class="box-title"><span class="num">2</span> ESPECIFICAÇÃO TÉCNICA</div>
+                <p class="box-instruction">Descreva detalhadamente as características técnicas, marcas de referência (se houver), modelo, potência, dimensões ou padrões exigidos para o bem ou serviço.</p>
+                <textarea class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: Processador i5, 8GB RAM, SSD 256GB, Tela 15.6 polegadas...)"></textarea>
+            </div>
+
+            <!-- SEÇÃO 3: REFERÊNCIA DE META E ETAPA NO PROJETO -->
+            <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
+                <div class="box-title"><span class="num">3</span> REFERÊNCIA DE META E ETAPA NO PROJETO</div>
+                <p class="box-instruction">Indique a qual meta, resultado esperado ou etapa do projeto esta aquisição está vinculada.</p>
+                <textarea class="auto-grow input-table-textarea" rows="3" placeholder="(Exemplo: Vinculado ao Objetivo Específico 1, Resultado Esperado 2...)"></textarea>
+            </div>
+
+            <!-- SEÇÃO 4: APLICAÇÃO DO BEM/SERVIÇO -->
+            <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
+                <div class="box-title"><span class="num">4</span> APLICAÇÃO DO BEM/SERVIÇO NO PROJETO E APÓS VIGÊNCIA DO INSTRUMENTO LEGAL</div>
+                <p class="box-instruction">Explique a forma de aplicação durante a execução e qual será o destino/utilização do bem após o encerramento do projeto.</p>
+                <textarea class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: O equipamento continuará sendo utilizado pela associação nas atividades comunitárias...)"></textarea>
+            </div>
+
+            <!-- SEÇÃO 5: METODOLOGIA -->
+            <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
+                <div class="box-title"><span class="num">5</span> METODOLOGIA</div>
+                <p class="box-instruction">Descreva a metodologia de seleção, cotação de preços ou forma de contratação/aquisição adotada.</p>
+                <textarea class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: Serão realizadas pelo menos 3 cotações de preços no mercado local...)"></textarea>
+            </div>
+
+            <!-- SEÇÃO 6: RESPONSÁVEL PELO BEM/SERVIÇO -->
+            <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
+                <div class="box-title"><span class="num">6</span> RESPONSÁVEL PELO BEM/SERVIÇO</div>
+                <p class="box-instruction">Indique o nome, cargo e contato do responsável direto pela guarda, controle e gestão deste bem/serviço.</p>
+                <textarea class="auto-grow input-table-textarea" rows="3" placeholder="(Exemplo: João da Silva - Coordenador Administrativo...)"></textarea>
+            </div>
+
+            <!-- SEÇÃO 7: ORÇAMENTO DETALHADO -->
+            <div class="form-table-container" style="margin-top: 20px;">
+                <div class="table-header-title text-left" style="padding-left: 8px;">7. ORÇAMENTO DETALHADO (preços praticados no mercado)</div>
+                
+                <table class="form-table budget-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%; text-align: center;">Nº</th>
+                            <th style="width: 37%;">Empresa (nome)</th>
+                            <th style="width: 20%; text-align: center;">CNPJ</th>
+                            <th style="width: 17%; text-align: center;">Telefone</th>
+                            <th style="width: 18%; text-align: center;">Cotação (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center bold-text">1</td>
+                            <td><input type="text" class="input-table-clean" placeholder="Nome da empresa 1..."></td>
+                            <td><input type="text" class="input-table-clean center-text" placeholder="00.000.000/0000-00"></td>
+                            <td><input type="text" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
+                            <td>
+                                <div class="currency-line" style="justify-content: center;">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text currency-cotacao" placeholder="0,00" style="width: 80px;">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center bold-text">2</td>
+                            <td><input type="text" class="input-table-clean" placeholder="Nome da empresa 2..."></td>
+                            <td><input type="text" class="input-table-clean center-text" placeholder="00.000.000/0000-00"></td>
+                            <td><input type="text" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
+                            <td>
+                                <div class="currency-line" style="justify-content: center;">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text currency-cotacao" placeholder="0,00" style="width: 80px;">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center bold-text">3</td>
+                            <td><input type="text" class="input-table-clean" placeholder="Nome da empresa 3..."></td>
+                            <td><input type="text" class="input-table-clean center-text" placeholder="00.000.000/0000-00"></td>
+                            <td><input type="text" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
+                            <td>
+                                <div class="currency-line" style="justify-content: center;">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text currency-cotacao" placeholder="0,00" style="width: 80px;">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="media-row">
+                            <td colspan="4" class="media-label">
+                                <strong>Média</strong>
+                            </td>
+                            <td class="media-value">
+                                <div class="currency-line" style="justify-content: center;">
+                                    <span class="currency-symbol">R$:</span>
+                                    <input type="text" class="bold-text currency-media" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <!-- INSTRUÇÕES PARA PREENCHIMENTO -->
+        <section class="form-section" style="margin-bottom: 20px; font-size: 10.5px; line-height: 1.4;">
+            <div style="font-weight: bold; text-transform: uppercase; margin-bottom: 6px;">
+                INSTRUÇÕES PARA PREENCHIMENTO:
+            </div>
+            <p style="margin: 4px 0; text-align: justify;">
+                O item 1 se presta à apresentação dos bens/serviços a serem adquiridos para realização do projeto.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>1.1. Bens/Serviços.</strong> Discrimine os bens/serviços a serem adquiridos.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>1.1.1 Recursos Contrapartida (C1).</strong> Apresente o valor a ser desembolsado pela instituição na aquisição dos bens/serviços, caso haja.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>1.1.2 Recursos FDID.</strong> Apresente o valor solicitado ao FDID para a aquisição dos bens/serviços.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>1.1.3 Valor Total.</strong> Apresente o valor total dos bens/serviços, os quais deverão ser obtidos através de pesquisa de preços junto ao mercado local.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>1.1.4 Justificativa da aquisição do bem/serviço.</strong> Justifique a necessidade da aquisição dos bens/serviços a serem adquiridos.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>1.1.5 Utilização do bem/serviço nas atividades.</strong> Relacione as atividades e os respectivos períodos de tempo em que os bens/serviços serão utilizados.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>1.2. Subtotal Despesas de Capital - Bens/Serviços.</strong> Apresente a soma dos valores a serem utilizados na aquisição de bens/serviços.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>2. ESPECIFICAÇÃO TÉCNICA.</strong> Explanar, detalhadamente, todas as especificações técnicas dos bens a serem adquiridos.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>3. REFERÊNCIA DE META E ETAPA NO PROJETO.</strong> Explanar, detalhadamente, todas as metas, definindo em qual etapa do projeto o bem/serviço será utilizado.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>4. APLICAÇÃO DO BEM/SERVIÇO NO PROJETO E APÓS VIGÊNCIA DO INSTRUMENTO LEGAL.</strong> Explanar, detalhadamente, a aplicação dos bens/serviços, durante a vigência da parceria, assim como sua destinação e utilização após o encerramento do instrumento legal.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>5. METODOLOGIA.</strong> Explicitar forma de aquisição, regulamentos e normas internas e externas a serem seguidas, se haverá assistência técnica para treinamentos, modalidade e tipo de licitação proposta, se alguém acompanhará a execução dos trabalhos, etc., aqui também deve ser relacionado se o próprio órgão realizará o certame ou se outro.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>6. RESPONSÁVEL PELO BEM/SERVIÇO.</strong> Indicar representante responsável pelos bens/serviços adquiridos por meio do projeto.
+            </p>
+            <p style="margin: 4px 0; text-align: justify;">
+                <strong>7. ORÇAMENTO DETALHADO (preços praticados no mercado).</strong> Explanar, detalhadamente, as cotações, objetivando apresentar a média dos valores aplicados no mercado.
+            </p>
+        </section>
+    </div>
+</body>
+</html>
