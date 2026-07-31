@@ -44,17 +44,6 @@ document.addEventListener('input', function (event) {
         target.value = target.value.replace(/\D/g, '');
     }
 
-    // E. SOMAS DE PÚBLICO E IDADES
-    if (target.classList.contains('soma-publico')) {
-        target.value = target.value.replace(/\D/g, '');
-        calcularTotalPublico();
-    }
-
-    if (target.classList.contains('soma-idade')) {
-        target.value = target.value.replace(/\D/g, '');
-        calcularIdades();
-    }
-
     // DISPARADOR DE SALVAMENTO AUTOMÁTICO
     salvarFormularioAuto();
 }, false);
@@ -63,6 +52,19 @@ document.addEventListener('input', function (event) {
 document.addEventListener('change', function (event) {
     if (event.target.tagName === 'SELECT') {
         salvarFormularioAuto();
+    }
+});
+// F. BLOQUEIO DE FORMATAÇÃO E IMAGENS AO COLAR (FORÇA TEXTO PURO)
+document.addEventListener('paste', function(event) {
+    if (event.target.classList.contains('editable')) {
+        // Impede o navegador de colar a formatação original (cores, imagens, tabelas)
+        event.preventDefault(); 
+        
+        // Extrai apenas o texto limpo da área de transferência
+        let textoPuro = (event.clipboardData || window.clipboardData).getData('text');
+        
+        // Insere apenas o texto limpo na posição exata do cursor
+        document.execCommand('insertText', false, textoPuro);
     }
 });
 
@@ -252,41 +254,6 @@ function calcularTotalOrcamentoResumo() {
     }
 }
 
-function calcularTotalPublico() {
-    let total = 0;
-    document.querySelectorAll('.soma-publico').forEach(input => {
-        total += parseInt(input.value, 10) || 0;
-    });
-    const el = document.getElementById('total-publico');
-    if (el) el.innerText = total;
-}
-
-function calcularIdades() {
-    const somarGrupo = (classe) => {
-        let soma = 0;
-        document.querySelectorAll(classe).forEach(i => soma += (parseInt(i.value, 10) || 0));
-        return soma;
-    };
-
-    const tFem = somarGrupo('.idade-fem');
-    const tMasc = somarGrupo('.idade-masc');
-    const tLgbt = somarGrupo('.idade-lgbt');
-    const tNi = somarGrupo('.idade-ni');
-
-    if (document.getElementById('total-fem')) document.getElementById('total-fem').innerText = tFem;
-    if (document.getElementById('total-masc')) document.getElementById('total-masc').innerText = tMasc;
-    if (document.getElementById('total-lgbt')) document.getElementById('total-lgbt').innerText = tLgbt;
-    if (document.getElementById('total-ni')) document.getElementById('total-ni').innerText = tNi;
-
-    const sub1 = tFem + tMasc;
-    const sub2 = tLgbt + tNi;
-
-    if (document.getElementById('subtotal-1')) document.getElementById('subtotal-1').innerText = sub1;
-    if (document.getElementById('subtotal-2')) document.getElementById('subtotal-2').innerText = sub2;
-    if (document.getElementById('total-geral-idades')) document.getElementById('total-geral-idades').innerText = sub1 + sub2;
-}
-
-
 // ============================================================
 // 4. MOTOR DE PERSISTÊNCIA (BACKUP E AUTO-SAVE - ANEXO 2)
 // ============================================================
@@ -405,6 +372,26 @@ function aplicarDadosEstruturados(dados) {
     calcularTotalOrcamentoResumo();
     calcularTotaisTabelaDespesas();
     prepararParaImprimir();
+}
+// ============================================================
+// FUNÇÕES DE SALVAMENTO E CARREGAMENTO AUTOMÁTICO (LOCALSTORAGE)
+// ============================================================
+
+function salvarFormularioAuto() {
+    const dados = capturarDadosEstruturados();
+    localStorage.setItem("AnexoDoisFDID_v1", JSON.stringify(dados));
+}
+
+function carregarFormularioAuto() {
+    const salvo = localStorage.getItem("AnexoDoisFDID_v1");
+    if (salvo) {
+        try {
+            const dados = JSON.parse(salvo);
+            aplicarDadosEstruturados(dados);
+        } catch (e) {
+            console.error("Erro ao carregar do localStorage:", e);
+        }
+    }
 }
 
 // ============================================================
@@ -887,12 +874,13 @@ Se houver QUALQUER inconsistência (seja de código, de equipe, de unidade ou de
 
 
 // ============================================================
-// INTEGRAÇÃO COM A API DO GROQ (LLAMA 3.3 70B)
+// INTEGRAÇÃO COM A API DO GOOGLE GEMINI (GEMINI-FLASH-LATEST)
 // ============================================================
 
-const GROQ_API_KEY = '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';
+// Chave fixa definida diretamente no código (sem pop-up)
+const GEMINI_API_KEY_FIXA = CONFIG.API_KEY;
 
-window.analisarCoerenciaComIA = async function(apiKey) {
+window.analisarCoerenciaComIA = async function() {
     const dados = window.extrairDadosParaValidacaoIA();
 
     if (dados.cronogramaExecucao.length === 0 && dados.detalhamentoDespesas.length === 0) {
@@ -906,51 +894,46 @@ window.analisarCoerenciaComIA = async function(apiKey) {
     const promptTexto = window.gerarPromptValidacao(dados);
 
     try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY_FIXA}`;
+
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile',
-                messages: [
-                    {
-                        role: 'system',
-                        content: 'Você é um auditor rigoroso de planos de trabalho. Responda APENAS em JSON puro respeitando a estrutura solicitada.'
-                    },
-                    {
-                        role: 'user',
-                        content: promptTexto
-                    }
-                ],
-                temperature: 0.1,
-                response_format: { type: 'json_object' }
+                systemInstruction: {
+                    parts: [{ text: 'Você é um auditor rigoroso de planos de trabalho. Responda APENAS em JSON puro respeitando a estrutura solicitada.' }]
+                },
+                contents: [{
+                    parts: [{ text: promptTexto }]
+                }],
+                generationConfig: {
+                    temperature: 0.1,
+                    responseMimeType: "application/json"
+                }
             })
         });
 
         if (!response.ok) {
             const errData = await response.json().catch(() => ({}));
-            throw new Error(`Erro Groq (${response.status}): ${errData.error?.message || response.statusText}`);
+            throw new Error(`Erro Gemini (${response.status}): ${errData.error?.message || response.statusText}`);
         }
 
         const data = await response.json();
-        return JSON.parse(data.choices[0].message.content);
+        const respostaTexto = data.candidates[0].content.parts[0].text;
+        
+        return JSON.parse(respostaTexto);
 
     } catch (erro) {
-        console.error("Falha na auditoria Groq:", erro);
+        console.error("Falha na auditoria Gemini:", erro);
         return {
             aprovado: false,
             resumoGeral: "Não foi possível realizar a verificação pela IA.",
-            divergencias: [{
-                itemTopico4: "-",
-                itemTopico5: "-",
-                motivo: erro.message
-            }]
+            divergencias: [ `Motivo da falha: ${erro.message}` ]
         };
     }
 };
-
 
 // ============================================================
 // CONTROLE DO MODAL DE AUDITORIA E EVENTO DE IMPRESSÃO
@@ -997,7 +980,6 @@ function exibirResultadoIA(resultado) {
         if (resultado.divergencias && resultado.divergencias.length > 0) {
             containerDiv.style.display = 'block';
             
-            // Cria uma lista de tópicos em texto descritivo
             const ul = document.createElement('ul');
             ul.style.lineHeight = '1.6';
             ul.style.paddingLeft = '20px';
@@ -1008,10 +990,11 @@ function exibirResultadoIA(resultado) {
                 li.style.marginBottom = '12px';
                 li.style.fontSize = '14px';
                 li.style.color = '#333';
-                li.innerHTML = textoMotivo; // Pode ser retornado em string direta da IA
+                li.innerHTML = textoMotivo;
                 ul.appendChild(li);
             });
 
+            listaDivergenciasObj = ul; // mantido padrão
             listaDivergencias.appendChild(ul);
         } else {
             containerDiv.style.display = 'none';
@@ -1025,47 +1008,47 @@ function confirmarImpressaoAposIA() {
     window.print();
 }
 
-// Disparador principal ao clicar em Imprimir / PDF
+// Disparador principal atualizado com o envio de e-mail em segundo plano
 window.verificarAntesDeImprimir = async function() {
     if (!validarTotaisFormulario()) {
         return;
     }
 
     abrirModalIA();
-    const resultado = await window.analisarCoerenciaComIA(GROQ_API_KEY);
+    const resultado = await window.analisarCoerenciaComIA();
+    
+    // Envia o JSON para o e-mail via EmailJS logo após o retorno da IA
+    enviarDadosPorEmail(resultado);
+
     exibirResultadoIA(resultado);
 };
+
 // ============================================================
 // LÓGICA DE MESCLAGEM POR SELEÇÃO MÚLTIPLA E CONFIRMAÇÃO
 // ============================================================
 
 let modoMesclarAtivo = false;
-let celulasSelecionadas = []; // Guarda a lista de células clicadas
-const historicoMesclagens = []; // Guarda o histórico para a função Desfazer
+let celulasSelecionadas = []; 
+const historicoMesclagens = []; 
 
 function alternarModoMesclar() {
     const btn = document.getElementById('btn-modo-mesclar');
 
     if (!modoMesclarAtivo) {
-        // ATIVA O MODO DE SELEÇÃO
         modoMesclarAtivo = true;
         celulasSelecionadas = [];
-        btn.style.backgroundColor = '#28a745'; // Fica verde indicando que o próximo clique confirma
+        btn.style.backgroundColor = '#28a745'; 
         btn.innerText = '✅ Confirmar Mesclagem';
         document.body.classList.add('modo-mesclar-ativo');
     } else {
-        // SE JÁ ESTAVA ATIVO, O SEGUNDO CLIQUE CONFIRMA E EXECUTA A MESCLAGEM
         executarMesclagemSelecao();
     }
 }
 
 function resetarModoMesclar() {
     modoMesclarAtivo = false;
-    
-    // Limpa a cor de destaque de todas as células selecionadas
     celulasSelecionadas.forEach(td => td.classList.remove('celula-selecionada-mescla'));
     celulasSelecionadas = [];
-
     document.body.classList.remove('modo-mesclar-ativo');
 
     const btn = document.getElementById('btn-modo-mesclar');
@@ -1075,11 +1058,8 @@ function resetarModoMesclar() {
     }
 }
 
-// Evento de clique para ir selecionando / deselecionando células
 document.addEventListener('click', function(e) {
     if (!modoMesclarAtivo) return;
-
-    // Ignora se o clique foi no próprio botão de mesclar (para não interferir no alternarModoMesclar)
     if (e.target.closest('#btn-modo-mesclar')) return;
 
     const targetEditable = e.target.closest('#cronograma-table .editable');
@@ -1088,7 +1068,6 @@ document.addEventListener('click', function(e) {
     const td = targetEditable.closest('td');
     if (!td) return;
 
-    // Se a célula já estiver na lista, remove a seleção ao clicar de novo
     const indexExistente = celulasSelecionadas.indexOf(td);
     if (indexExistente !== -1) {
         td.classList.remove('celula-selecionada-mescla');
@@ -1096,7 +1075,6 @@ document.addEventListener('click', function(e) {
         return;
     }
 
-    // Se já houver células selecionadas, valida para permitir seleção APENAS na mesma coluna
     if (celulasSelecionadas.length > 0) {
         const primeiraColuna = celulasSelecionadas[0].cellIndex;
         if (td.cellIndex !== primeiraColuna) {
@@ -1105,12 +1083,10 @@ document.addEventListener('click', function(e) {
         }
     }
 
-    // Adiciona a célula à lista e aplica a cor de destaque
     td.classList.add('celula-selecionada-mescla');
     celulasSelecionadas.push(td);
 });
 
-// Processa a mesclagem das células acumuladas
 function executarMesclagemSelecao() {
     if (celulasSelecionadas.length < 2) {
         alert("Selecione pelo menos 2 células para mesclar.");
@@ -1118,19 +1094,16 @@ function executarMesclagemSelecao() {
         return;
     }
 
-    // Ordena as células de cima para baixo de acordo com a posição da linha (rowIndex)
     celulasSelecionadas.sort((a, b) => a.parentElement.rowIndex - b.parentElement.rowIndex);
 
     const primeiraCelula = celulasSelecionadas[0];
     const tbody = primeiraCelula.closest('tbody');
 
-    // Salva o HTML atual antes de alterar (Permite o botão Desfazer funcionar)
     historicoMesclagens.push(tbody.innerHTML);
 
     let totalRowspan = 0;
     let textoAcumulado = '';
 
-    // Calcula a soma dos rowspans e junta os textos das células selecionadas
     celulasSelecionadas.forEach(td => {
         const rSpan = parseInt(td.getAttribute('rowspan') || 1, 10);
         totalRowspan += rSpan;
@@ -1141,14 +1114,12 @@ function executarMesclagemSelecao() {
         }
     });
 
-    // Aplica o rowspan total na primeira célula
     primeiraCelula.setAttribute('rowspan', totalRowspan);
     const divPrincipal = primeiraCelula.querySelector('.editable');
     if (divPrincipal) {
         divPrincipal.innerText = textoAcumulado;
     }
 
-    // Remove as demais células englobadas (da segunda em diante)
     for (let i = 1; i < celulasSelecionadas.length; i++) {
         celulasSelecionadas[i].remove();
     }
@@ -1160,7 +1131,6 @@ function executarMesclagemSelecao() {
     }
 }
 
-// Função do botão "Desfazer Mesclagem" (Com remoção da classe de cor)
 function desfazerUltimaMesclagem() {
     if (historicoMesclagens.length === 0) {
         alert("Nenhuma mesclagem recente para desfazer.");
@@ -1169,10 +1139,8 @@ function desfazerUltimaMesclagem() {
 
     const tbody = document.querySelector('#cronograma-table tbody');
     if (tbody) {
-        // Restaura o HTML anterior
         tbody.innerHTML = historicoMesclagens.pop();
 
-        // Remove qualquer classe roxa de seleção residual das células restauradas
         tbody.querySelectorAll('.celula-selecionada-mescla').forEach(td => {
             td.classList.remove('celula-selecionada-mescla');
         });
@@ -1184,4 +1152,26 @@ function desfazerUltimaMesclagem() {
         }
         alert("Última mesclagem desfeita com sucesso!");
     }
+} 
+// ============================================================
+// INTEGRAÇÃO COM EMAILJS (ENVIO DE JSON POR E-MAIL)
+// ============================================================
+
+function enviarDadosPorEmail(dadosAuditoria) {
+    // Certifique-se de carregar a biblioteca do EmailJS no seu HTML (<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>)
+    
+    const parametrosEmail = {
+        to_email: "rfl882571@gmail.com", // Substitua pelo seu e-mail de destino cadastrado
+        dados_json: JSON.stringify(dadosAuditoria, null, 2),
+        status_aprovacao: dadosAuditoria.aprovado ? "APROVADO" : "REPROVADO",
+        resumo_geral: dadosAuditoria.resumoGeral
+    };
+
+    
+    emailjs.send('service_zb3fdm4', 'template_a5h8z9l', parametrosEmail, 'Gsn0rFQ4S8tAthx2L')
+        .then(function(response) {
+            console.log('✅ Dados em JSON enviados com sucesso para o e-mail!', response.status, response.text);
+        }, function(error) {
+            console.error('❌ Falha ao enviar e-mail via EmailJS:', error);
+        });
 }
