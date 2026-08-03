@@ -1,4 +1,3 @@
-
 // ============================================================
 // 1. MOTOR DE EVENTOS
 // ============================================================
@@ -262,16 +261,15 @@ function capturarDadosEstruturados() {
     const backup = {
         camposPorId: {},
         editablesFixos: [],
-        linhasCronograma: [],
+        tbodyCronogramaHtml: '', // Preserva as mesclagens e rowspans da tabela do cronograma
         linhasDespesas: []
     };
 
-    // Captura as linhas criadas dinamicamente no Cronograma (Tópico 4.1)
-    document.querySelectorAll('#cronograma-table tbody tr').forEach(row => {
-        const editables = Array.from(row.querySelectorAll('.editable')).map(e => e.innerHTML);
-        const inputs = Array.from(row.querySelectorAll('input')).map(i => i.value);
-        backup.linhasCronograma.push({ editables, inputs });
-    });
+    // Salva o HTML completo do tbody do cronograma para manter o layout mesclado
+    const tbodyCrono = document.querySelector('#cronograma-table tbody');
+    if (tbodyCrono) {
+        backup.tbodyCronogramaHtml = tbodyCrono.innerHTML;
+    }
 
     // Captura as linhas criadas dinamicamente nas Despesas (Tópico 5)
     document.querySelectorAll('#tabela-despesas-unica tbody tr').forEach(row => {
@@ -306,10 +304,12 @@ function capturarDadosEstruturados() {
 function aplicarDadosEstruturados(dados) {
     if (!dados) return;
 
-    // 1. Recria as linhas dinâmicas do Cronograma (Tópico 4.1)
-    if (dados.linhasCronograma && Array.isArray(dados.linhasCronograma)) {
-        const tbodyCrono = document.querySelector('#cronograma-table tbody');
-        if (tbodyCrono) {
+    // 1. Restaura o HTML do Cronograma mantendo as mesclagens (rowspan)
+    const tbodyCrono = document.querySelector('#cronograma-table tbody');
+    if (tbodyCrono) {
+        if (dados.tbodyCronogramaHtml) {
+            tbodyCrono.innerHTML = dados.tbodyCronogramaHtml;
+        } else if (dados.linhasCronograma && Array.isArray(dados.linhasCronograma)) {
             tbodyCrono.innerHTML = ''; 
             dados.linhasCronograma.forEach(item => {
                 addRow();
@@ -358,21 +358,12 @@ function aplicarDadosEstruturados(dados) {
         });
     }
 
-    // Retrocompatibilidade para backups antigos por índice
-    if (dados.inputsFixos && Array.isArray(dados.inputsFixos) && !dados.camposPorId) {
-        const inputsAtuais = document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email'], body input[type='date']");
-        dados.inputsFixos.forEach(item => {
-            if (inputsAtuais[item.index]) {
-                inputsAtuais[item.index].value = item.value;
-            }
-        });
-    }
-
     // 4. Recalcula os totais do Anexo 2
     calcularTotalOrcamentoResumo();
     calcularTotaisTabelaDespesas();
     prepararParaImprimir();
 }
+
 // ============================================================
 // FUNÇÕES DE SALVAMENTO E CARREGAMENTO AUTOMÁTICO (LOCALSTORAGE)
 // ============================================================
@@ -447,7 +438,7 @@ window.addEventListener("DOMContentLoaded", function() {
 // POP-UP ORIENTATIVO AO CLICAR NOS CABEÇALHOS DO RESUMO
 document.addEventListener('click', function (event) {
     if (event.target.id === 'resumo-concedente') {
-        alert('Este valor é calculated automaticamente! Por favor, preencha os campos Despesas Correntes e Despesas de Capital logo abaixo.');
+        alert('Este valor é calculado automaticamente! Por favor, preencha os campos Despesas Correntes e Despesas de Capital logo abaixo.');
     }
     
     if (event.target.id === 'resumo-proponente') {
@@ -767,20 +758,38 @@ window.extrairDadosParaValidacaoIA = function() {
     const dadosTopico4 = [];
     const dadosTopico5 = [];
 
-    // --- A. Extração do Tópico 4.1 ---
     const linhasTabela4 = document.querySelectorAll('#cronograma-table tbody tr');
+    let ultimaMeta = '';
+    let ultimaEtapa = '';
+
     linhasTabela4.forEach(linha => {
-        const celulas = linha.children;
-        const descricao = celulas[2]?.querySelector('.editable')?.innerText.trim() || '';
-        const unidade = celulas[3]?.querySelector('input')?.value.trim() || '';
-        const quantidade = celulas[4]?.querySelector('input')?.value.trim() || '';
+        let colMeta = linha.querySelector('td:nth-child(1) .editable');
+        let colEtapa = linha.querySelector('td:nth-child(2) .editable');
+        let colDesc = linha.querySelector('td:nth-child(3) .editable');
+        
+        if (colMeta && colMeta.innerText.trim() !== '') {
+            ultimaMeta = colMeta.innerText.trim();
+        }
+        if (colEtapa && colEtapa.innerText.trim() !== '') {
+            ultimaEtapa = colEtapa.innerText.trim();
+        }
+
+        const descricao = colDesc ? colDesc.innerText.trim() : '';
+        const inputs = linha.querySelectorAll('input');
+        const unidade = inputs[0] ? inputs[0].value.trim() : '';
+        const quantidade = inputs[1] ? inputs[1].value.trim() : '';
 
         if (descricao) {
-            dadosTopico4.push({ descricao, unidade, quantidade });
+            dadosTopico4.push({ 
+                meta: ultimaMeta, 
+                etapa: ultimaEtapa, 
+                descricao, 
+                unidade, 
+                quantidade 
+            });
         }
     });
 
-    // --- B. Extração do Tópico 5 ---
     const linhasTabela5 = document.querySelectorAll('#tabela-despesas-unica tbody tr');
     linhasTabela5.forEach(linha => {
         const celulas = linha.children;
@@ -877,7 +886,6 @@ Se houver QUALQUER inconsistência (seja de código, de equipe, de unidade ou de
 // INTEGRAÇÃO COM A API DO GOOGLE GEMINI (GEMINI-FLASH-LATEST)
 // ============================================================
 
-// Chave fixa definida diretamente no código (sem pop-up)
 const GEMINI_API_KEY_FIXA = CONFIG.API_KEY;
 
 window.analisarCoerenciaComIA = async function() {
@@ -994,7 +1002,6 @@ function exibirResultadoIA(resultado) {
                 ul.appendChild(li);
             });
 
-            listaDivergenciasObj = ul; // mantido padrão
             listaDivergencias.appendChild(ul);
         } else {
             containerDiv.style.display = 'none';
@@ -1008,7 +1015,6 @@ function confirmarImpressaoAposIA() {
     window.print();
 }
 
-// Disparador principal atualizado com o envio de e-mail em segundo plano
 window.verificarAntesDeImprimir = async function() {
     if (!validarTotaisFormulario()) {
         return;
@@ -1017,7 +1023,6 @@ window.verificarAntesDeImprimir = async function() {
     abrirModalIA();
     const resultado = await window.analisarCoerenciaComIA();
     
-    // Envia o JSON para o e-mail via EmailJS logo após o retorno da IA
     enviarDadosPorEmail(resultado);
 
     exibirResultadoIA(resultado);
@@ -1076,8 +1081,11 @@ document.addEventListener('click', function(e) {
     }
 
     if (celulasSelecionadas.length > 0) {
-        const primeiraColuna = celulasSelecionadas[0].cellIndex;
-        if (td.cellIndex !== primeiraColuna) {
+        const primeiraCelula = celulasSelecionadas[0];
+        const ret1 = primeiraCelula.getBoundingClientRect();
+        const ret2 = td.getBoundingClientRect();
+
+        if (Math.abs(ret1.left - ret2.left) > 5) {
             alert('Por favor, selecione células apenas dentro da mesma coluna!');
             return;
         }
@@ -1153,20 +1161,18 @@ function desfazerUltimaMesclagem() {
         alert("Última mesclagem desfeita com sucesso!");
     }
 } 
+
 // ============================================================
 // INTEGRAÇÃO COM EMAILJS (ENVIO DE JSON POR E-MAIL)
 // ============================================================
 
 function enviarDadosPorEmail(dadosAuditoria) {
-    // Certifique-se de carregar a biblioteca do EmailJS no seu HTML (<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>)
-    
     const parametrosEmail = {
-        to_email: "rfl882571@gmail.com", // Substitua pelo seu e-mail de destino cadastrado
+        to_email: "rfl882571@gmail.com",
         dados_json: JSON.stringify(dadosAuditoria, null, 2),
         status_aprovacao: dadosAuditoria.aprovado ? "APROVADO" : "REPROVADO",
         resumo_geral: dadosAuditoria.resumoGeral
     };
-
     
     emailjs.send('service_zb3fdm4', 'template_a5h8z9l', parametrosEmail, 'Gsn0rFQ4S8tAthx2L')
         .then(function(response) {

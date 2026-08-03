@@ -5,23 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TERMO DE REFERÊNCIA DE BENS E/OU SERVIÇOS - FDID (ANEXO 3)</title>
     <link rel="stylesheet" href="css/termoReferencia.css">
+    <script src="scripts/config.js"></script>
     <script src="scripts/termoReferencia.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
-    <div class="export-container no-print">
+    <div class="export-container no-print" style="display: flex; flex-direction: column; gap: 6px;">
+        <!-- BOTÕES ORIGINAIS -->
         <button onclick="prepararParaImprimir(); window.print();" class="btn-pdf">📄 Gerar PDF</button>
         <button onclick="exportarBackup()" class="btn-save">💾 Salvar Backup (JSON)</button>
         <button onclick="document.getElementById('import-file').click()" class="btn-open">📂 Abrir Backup</button>
         
-        <!-- NOVO BOTÃO DE CONFERIR COTAÇÃO POR PDF -->
-        <button onclick="document.getElementById('pdf-upload-cotacao').click()" class="btn-cotacao">📎 Conferir Cotação</button>
-        <input type="file" id="pdf-upload-cotacao" accept=".pdf" onchange="processarPdfCotacao(this)" style="display: none;">
+        <!-- 3 BOTÕES DE UPLOAD PARA CADA ORÇAMENTO -->
+        <button onclick="document.getElementById('pdf-cotacao-1').click()" class="btn-cotacao" style="background-color: #17a2b8; color: white;">📎 1º Orçamento</button>
+        <input type="file" id="pdf-cotacao-1" accept=".pdf" onchange="guardarCotacaoPdf(this, 0)" style="display: none;">
 
+        <button onclick="document.getElementById('pdf-cotacao-2').click()" class="btn-cotacao" style="background-color: #17a2b8; color: white;">📎 2º Orçamento</button>
+        <input type="file" id="pdf-cotacao-2" accept=".pdf" onchange="guardarCotacaoPdf(this, 1)" style="display: none;">
+
+        <button onclick="document.getElementById('pdf-cotacao-3').click()" class="btn-cotacao" style="background-color: #17a2b8; color: white;">📎 3º Orçamento</button>
+        <input type="file" id="pdf-cotacao-3" accept=".pdf" onchange="guardarCotacaoPdf(this, 2)" style="display: none;">
+
+        <!-- BOTÃO DE CONFERÊNCIA DA MÉDIA GERAL -->
+        <button onclick="compararMediaComTabela()" class="btn-cotacao" style="background-color: #6f42c1; color: white;">🔍 Conferir Média Geral</button>
+
+        <!-- BOTÃO DE NOVO FORMULÁRIO -->
         <button onclick="novoPlano()" class="btn-new">🗑️ Novo Formulário</button>
         <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
         
-        <!-- Área onde o resultado da validação vai aparecer discretamente abaixo dos botões -->
+        <!-- Área de status -->
         <div id="status-validacao-pdf" style="font-size: 11px; font-weight: bold; background: #fff; padding: 6px; border-radius: 6px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none;"></div>
     </div>
 
@@ -42,7 +54,6 @@
         <section class="form-section">
            <!-- SEÇÃO 1: DISCRIMINAÇÃO E JUSTIFICATIVA -->
             <div class="form-table-container" style="border: none !important;">
-                <!-- TÍTULO FORA DA TABELA (Sem retângulo/bordas em volta) -->
                 <div style="font-weight: bold; font-size: 12px; padding: 6px 0px; text-transform: uppercase; background: #fff;">
                     1. DISCRIMINAÇÃO E JUSTIFICATIVA DA AQUISIÇÃO DE BENS E/OU SERVIÇO
                 </div>

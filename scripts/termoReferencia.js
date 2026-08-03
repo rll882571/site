@@ -138,69 +138,123 @@ function calcularMediaOrcamento() {
 
 
 // ============================================================
-// 3.1. VALIDAÇÃO AUTOMÁTICA DE COTAÇÃO VIA PDF (PDF.js)
+// 3.1. VALIDAÇÃO AUTOMÁTICA DE COTAÇÕES MÚLTIPLAS (PDF + GEMINI)
 // ============================================================
 
 if (window.pdfjsLib) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 
-async function processarPdfCotacao(input) {
+// Vetor para armazenar os valores extraídos de cada um dos 3 PDFs
+let valoresPdfArmazenados = [0, 0, 0];
+
+// Função que processa o PDF individual e guarda o valor na posição certa (0, 1 ou 2)
+async function guardarCotacaoPdf(input, indice) {
     const file = input.files[0];
     const statusDiv = document.getElementById('status-validacao-pdf');
-    
     if (!file) return;
 
     statusDiv.style.display = "block";
-    statusDiv.innerHTML = "Lendo PDF...";
+    statusDiv.innerHTML = `Lendo Orçamento ${indice + 1}...`;
     statusDiv.style.color = "#007bff";
 
     try {
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        let textoCompleto = "";
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1.5 });
 
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            const textItems = textContent.items.map(item => item.str);
-            textoCompleto += textItems.join(" ") + " ";
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+        const base64Image = canvas.toDataURL('image/png').split(',')[1];
+
+        const apiKey = CONFIG.API_KEY; 
+        // URL ajustada para o modelo correto gemini-1.5-flash
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+        const promptAnalise = `
+Analise esta imagem de um documento de cotação de compras públicas.
+Identifique o PREÇO UNITÁRIO FINAL ou o valor principal do produto em destaque.
+Retorne a resposta EXATAMENTE em formato JSON puro, sem blocos de código markdown, contendo apenas:
+{
+  "valorEncontrado": 0.00
+}
+onde "valorEncontrado" é um número float (ex: 3266.00). Se não identificar, retorne 0.
+`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [
+                        { inline_data: { mime_type: "image/png", data: base64Image } },
+                        { text: promptAnalise }
+                    ]
+                }],
+                generationConfig: { 
+                    temperature: 0.1
+                }
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro na API do Gemini: ${response.status}`);
         }
 
-        const regexMoeda = /(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})/g;
-        let correspondencias;
-        let valoresEncontrados = [];
-
-        while ((correspondencias = regexMoeda.exec(textoCompleto)) !== null) {
-            let valorFloat = parseMoneyToFloat(correspondencias[1]);
-            if (valorFloat > 0 && valorFloat < 100000) {
-                valoresEncontrados.push(valorFloat);
-            }
+        const data = await response.json();
+        
+        if (!data.candidates || data.candidates.length === 0) {
+            throw new Error("A IA não retornou nenhuma resposta válida.");
         }
 
-        if (valoresEncontrados.length === 0) {
-            statusDiv.innerHTML = "⚠️ Nenhum valor no PDF.";
-            statusDiv.style.color = "#dc3545";
-            return;
-        }
+        const textoResposta = data.candidates[0].content.parts[0].text;
+        const jsonLimpo = textoResposta.replace(/```json/g, '').replace(/```/g, '').trim();
+        const resultadoJson = JSON.parse(jsonLimpo);
+        
+        valoresPdfArmazenados[indice] = parseFloat(resultadoJson.valorEncontrado) || 0;
 
-        let valorPdf = Math.max(...valoresEncontrados);
-        const inputsCotacao = document.querySelectorAll('.currency-cotacao');
-        let valoresDigitados = Array.from(inputsCotacao).map(inp => parseMoneyToFloat(inp.value));
-
-        let compativel = valoresDigitados.some(val => Math.abs(val - valorPdf) < 0.01);
-
-        if (compativel) {
-            statusDiv.innerHTML = `✅ Compatível!<br>R$ ${floatToMoney(valorPdf)}`;
-            statusDiv.style.color = "#28a745";
-        } else {
-            statusDiv.innerHTML = `❌ Divergente!<br>PDF indica R$ ${floatToMoney(valorPdf)}`;
-            statusDiv.style.color = "#dc3545";
-        }
+        statusDiv.innerHTML = `✅ Orçamento ${indice + 1} carregado (R$ ${floatToMoney(valoresPdfArmazenados[indice])})`;
+        statusDiv.style.color = "#28a745";
 
     } catch (err) {
         console.error(err);
-        statusDiv.innerHTML = "❌ Erro ao ler PDF.";
+        statusDiv.innerHTML = `❌ Erro ao ler Orçamento ${indice + 1}.`;
+        statusDiv.style.color = "#dc3545";
+    }
+}
+
+// Função disparada pelo botão "Conferir Média Geral"
+function compararMediaComTabela() {
+    const statusDiv = document.getElementById('status-validacao-pdf');
+    statusDiv.style.display = "block";
+
+    // Verifica se os 3 orçamentos foram carregados
+    if (valoresPdfArmazenados.some(val => val <= 0)) {
+        statusDiv.innerHTML = "⚠️ Envie os 3 arquivos de orçamento primeiro!";
+        statusDiv.style.color = "#ffc107";
+        return;
+    }
+
+    // Calcula a média dos 3 valores obtidos pela IA
+    const somaPdfs = valoresPdfArmazenados.reduce((acc, curr) => acc + curr, 0);
+    const mediaPdfs = somaPdfs / 3;
+
+    // Pega o valor da média digitado na tabela do formulário (Seção 7)
+    const inputMediaTabela = document.querySelector('.currency-media');
+    const mediaTabela = parseMoneyToFloat(inputMediaTabela ? inputMediaTabela.value : "0");
+
+    let compativel = Math.abs(mediaTabela - mediaPdfs) < 0.01;
+
+    if (compativel) {
+        statusDiv.innerHTML = `✅ Média Compatível!<br>R$ ${floatToMoney(mediaPdfs)}`;
+        statusDiv.style.color = "#28a745";
+    } else {
+        statusDiv.innerHTML = `❌ Média Divergente!<br>IA indica média de R$ ${floatToMoney(mediaPdfs)}`;
         statusDiv.style.color = "#dc3545";
     }
 }
