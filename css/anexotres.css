@@ -219,7 +219,7 @@ textarea {
 }
 
 .textarea-box {
-    border-top: 1px solid var(--border-dark);
+    
     padding: 6px;
     background: #fff;
 }
@@ -228,33 +228,26 @@ textarea {
     font-weight: bold;
     font-size: 11px;
 }
-
+/* Esse bloco estiliza o aviso de limite de caracteres:*/
 .box-instruction {
-    font-size: 10px;
-    margin: 4px 0;
-    text-align: justify;
+    font-size: 10px; /* Define uma fonte compacta de 10 pixels. */
+    margin: 4px 0; /* Adiciona um espaçamento vertical de 4 pixels acima e abaixo. */
+    text-align: justify; /* Justifica o texto da instrução. */
 }
 
+/* Esse bloco estiliza o limite de caracteres:*/
 .box-limit {
-    text-align: right;
-    font-weight: bold;
-    font-size: 10px;
-    margin-bottom: 4px;
+    text-align: right; /* Alinha o texto à direita. */
+    font-weight: bold; /* Aplica negrito. */
+    font-size: 10px; /* Define uma fonte compacta de 10 pixels. */
+    margin-bottom: 4px; /* Adiciona um espaçamento inferior de 4 pixels. */
 }
 
-.limite-caracteres {
-    font-size: 10px;
-    font-weight: bold;
-    text-align: right;
-    margin-bottom: 5px;
-    margin-top: 2px;
-}
 
 textarea.auto-grow,
 .textarea-projeto {
     width: 100%;
     border: 1px solid var(--border-dark);
-    padding: 6px 8px;
     font-family: "Times New Roman", Times, serif;
     font-size: 10.5px;
     background-color: #fff;
@@ -269,14 +262,10 @@ textarea.auto-grow,
 .tabela-entidades-parceiras td textarea.auto-grow {
     border: none !important;
     padding: 2px;
-    min-height: 22px;
+    min-height: 2px;
 }
 
-.textarea-projeto::placeholder,
-textarea.auto-grow::placeholder {
-    color: #888;
-    font-style: italic;
-}
+
 
 /* ============================================================
    4. TABELAS DE PÚBLICO E IDADES (PARTE 3)
@@ -448,33 +437,45 @@ textarea.auto-grow::placeholder {
 }
 
 /* ============================================================
-   6. PARTE 4 - QUADRO LÓGICO (ITEM 24)
+   6. PARTE 4 - QUADRO LÓGICO (ITEM 24) - AJUSTADO (ESTILO ANEXO 2)
    ============================================================ */
 .tabela-quadro-logico {
     width: 100%;
     border-collapse: collapse;
     margin-top: 8px;
-}
-
-.tabela-quadro-logico th,
-.tabela-quadro-logico td {
-    border: 1px solid var(--border-dark);
-    padding: 3px 4px;
-    font-size: 10px;
-    vertical-align: top;
+    table-layout: fixed !important;
 }
 
 .tabela-quadro-logico th {
-    font-weight: bold;
-    text-align: center;
+    border: 1px solid var(--border-dark);
+    padding: 4px 6px;
+    font-size: 10px;
+    vertical-align: middle;
     background-color: #fff;
 }
 
-.tabela-quadro-logico td textarea.auto-grow {
-    border: none !important;
-    padding: 2px;
-    min-height: 38px;
+.tabela-quadro-logico td {
+    border: 1px solid var(--border-dark);
+    padding: 0 !important;
     font-size: 10px;
+    vertical-align: top !important;
+    word-break: break-word;
+    height: 1px; /* Força a célula a esticar proporcionalmente com o conteúdo */
+}
+
+.tabela-quadro-logico .editable {
+    width: 100%;
+    min-height: 45px;
+    display: block;
+    padding: 6px;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-word;
+    border: none;
+    outline: none;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10px;
+    cursor: text;
 }
 
 .btn-add-row {
@@ -504,7 +505,6 @@ textarea.auto-grow::placeholder {
 .text-center {
     text-align: center;
 }
-
 /* ============================================================
    7. PARTE 5 - CRONOGRAMA DE ATIVIDADES (ITEM 25)
    ============================================================ */
@@ -618,11 +618,11 @@ textarea.auto-grow::placeholder {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     font-size: 13px;
     font-weight: 600;
-    padding: 10px 16px; /* Aumenta o espaçamento interno do botão */
+    padding: 10px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    width: 180px; /* Garante que todos tenham exatamente a mesma largura */
+    width: 180px;
     color: #ffffff;
     transition: all 0.2s ease-in-out;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -642,6 +642,7 @@ textarea.auto-grow::placeholder {
 .export-container button:active {
     transform: translateY(0);
 }
+
 /* ============================================================
    10. REGRAS DEFINITIVAS PARA IMPRESSÃO (PDF)
    ============================================================ */
@@ -694,7 +695,7 @@ textarea.auto-grow::placeholder {
         page-break-inside: avoid !important;
     }
 }
-/* Ajusta o textarea da tabela para ter exatamente a mesma altura fina de um input comum */
+
 .form-table td .input-table-textarea {
     border: none !important;
     padding: 0 !important;
@@ -708,4 +709,25 @@ textarea.auto-grow::placeholder {
     vertical-align: middle;
     display: block;
     box-sizing: border-box;
+}
+/* ============================================================
+   CORREÇÃO PARA QUEBRA DE LINHA NO ITEM 23 (PARCERIAS)
+   ============================================================ */
+#tabela-entidades-parceiras td .editable {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    display: block !important;
+    width: 100% !important;
+}
+#tabela-entidades-parceiras td .editable {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    display: block !important;
+    width: 100% !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }

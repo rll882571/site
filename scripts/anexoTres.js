@@ -58,7 +58,6 @@ document.addEventListener('change', function (event) {
 
 function ajustarAlturaTextarea(el) {
     el.style.height = 'auto';
-    // Se for um textarea de tabela da Parte 1, mantém a base fina de 16px
     if (el.classList.contains('input-table-textarea')) {
         el.style.height = (el.scrollHeight > 16 ? el.scrollHeight : 16) + 'px';
     } else {
@@ -259,13 +258,14 @@ function novoPlano() {
 }
 
 window.addEventListener("DOMContentLoaded", function () {
-    // Ajusta a altura inicial de todos os textareas ao carregar
     document.querySelectorAll('textarea.auto-grow').forEach(function(el) {
         ajustarAlturaTextarea(el);
     });
     prepararParaImprimir();
     carregarFormularioAuto();
 });
+
+
 // ============================================================
 // FUNÇÕES DO QUADRO LÓGICO (ITEM 24)
 // ============================================================
@@ -276,26 +276,23 @@ function adicionarLinhaQuadroLogico(dadosValores = null) {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-        <td><textarea class="auto-grow" rows="2" placeholder="Lógica de intervenção..."></textarea></td>
-        <td><textarea class="auto-grow" rows="2" placeholder="Indicadores..."></textarea></td>
-        <td><textarea class="auto-grow" rows="2" placeholder="Meios de verificação..."></textarea></td>
-        <td><textarea class="auto-grow" rows="2" placeholder="Prazo/frequência..."></textarea></td>
-        <td><textarea class="auto-grow" rows="2" placeholder="Responsável..."></textarea></td>
+        <td><div class="editable" contenteditable="true" data-placeholder="Lógica de intervenção..."></div></td>
+        <td><div class="editable" contenteditable="true" data-placeholder="Indicadores..."></div></td>
+        <td><div class="editable" contenteditable="true" data-placeholder="Meios de verificação..."></div></td>
+        <td><div class="editable" contenteditable="true" data-placeholder="Prazo/frequência..."></div></td>
+        <td><div class="editable" contenteditable="true" data-placeholder="Responsável..."></div></td>
         <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
     `;
 
     tbody.appendChild(tr);
 
-    // Aplica os valores se vierem do backup ou restauração
     if (dadosValores && Array.isArray(dadosValores)) {
-        const textareas = tr.querySelectorAll('textarea');
+        const edits = tr.querySelectorAll('.editable');
         dadosValores.forEach((val, idx) => {
-            if (textareas[idx]) textareas[idx].value = val;
+            if (edits[idx]) edits[idx].innerHTML = val;
         });
     }
 
-    // Recalcula alturas e vincula o autosave
-    tr.querySelectorAll('textarea').forEach(ajustarAlturaTextarea);
     salvarFormularioAuto();
 }
 
@@ -303,7 +300,6 @@ function removerLinhaQuadroLogico(btn) {
     const tr = btn.closest('tr');
     const tbody = tr.parentElement;
     
-    // Mantém pelo menos uma linha visível
     if (tbody.querySelectorAll('tr').length > 1) {
         tr.remove();
         salvarFormularioAuto();
@@ -311,3 +307,113 @@ function removerLinhaQuadroLogico(btn) {
         alert("O quadro lógico deve conter pelo menos uma linha.");
     }
 }
+
+
+// ============================================================
+// FUNÇÕES DAS ENTIDADES PARCEIRAS (ITEM 23)
+// ============================================================
+
+function adicionarLinhaEntidadeParceira(dadosValores = null) {
+    const tbody = document.querySelector('#tabela-entidades-parceiras tbody');
+    if (!tbody) return;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><div class="editable" contenteditable="true" data-placeholder="Ex: Instituição..."></div></td>
+        <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
+        <td><div class="editable" contenteditable="true" data-placeholder="Descreva o tipo de apoio..."></div></td>
+        <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaEntidadeParceira(this)">❌</button></td>
+    `;
+
+    tbody.appendChild(tr);
+
+    if (dadosValores && Array.isArray(dadosValores)) {
+        const edits = tr.querySelectorAll('.editable');
+        const cnpjInput = tr.querySelector('.cnpj-input');
+        if (edits[0] && dadosValores[0]) edits[0].innerHTML = dadosValores[0];
+        if (cnpjInput && dadosValores[1]) cnpjInput.value = dadosValores[1];
+        if (edits[1] && dadosValores[2]) edits[1].innerHTML = dadosValores[2];
+    }
+
+    salvarFormularioAuto();
+}
+
+function removerLinhaEntidadeParceira(btn) {
+    const tr = btn.closest('tr');
+    const tbody = tr.parentElement;
+    
+    if (tbody.querySelectorAll('tr').length > 1) {
+        tr.remove();
+        salvarFormularioAuto();
+    } else {
+        alert("A tabela de parcerias deve conter pelo menos uma linha.");
+    }
+}
+
+
+// ============================================================
+// FUNÇÕES DO CRONOGRAMA DE ATIVIDADES (ITEM 25)
+// ============================================================
+
+function adicionarLinhaCronograma(dadosValores = null) {
+    const tbody = document.querySelector('#tabela-cronograma tbody');
+    if (!tbody) return;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Realização de atividade...)"></textarea></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td><input type="text" class="input-mes" maxlength="2" placeholder=""></td>
+        <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaCronograma(this)">❌</button></td>
+    `;
+
+    tbody.appendChild(tr);
+
+    if (dadosValores && Array.isArray(dadosValores)) {
+        const elementos = tr.querySelectorAll('textarea, .input-mes');
+        dadosValores.forEach((val, idx) => {
+            if (elementos[idx]) {
+                elementos[idx].value = val;
+            }
+        });
+    }
+
+    tr.querySelectorAll('textarea').forEach(ajustarAlturaTextarea);
+    salvarFormularioAuto();
+}
+
+function removerLinhaCronograma(btn) {
+    const tr = btn.closest('tr');
+    const tbody = tr.parentElement;
+    
+    if (tbody.querySelectorAll('tr').length > 1) {
+        tr.remove();
+        salvarFormularioAuto();
+    } else {
+        alert("O cronograma deve conter pelo menos uma linha.");
+    }
+}
+
+
+// ============================================================
+// FIX: GARANTIR QUE AS FUNÇÕES ESTEJAM NO ESCOPO GLOBAL
+// ============================================================
+
+window.adicionarLinhaCronograma = adicionarLinhaCronograma;
+window.removerLinhaCronograma = removerLinhaCronograma;
+window.adicionarLinhaQuadroLogico = adicionarLinhaQuadroLogico;
+window.removerLinhaQuadroLogico = removerLinhaQuadroLogico;
+window.adicionarLinhaEntidadeParceira = adicionarLinhaEntidadeParceira;
+window.removerLinhaEntidadeParceira = removerLinhaEntidadeParceira;
+
+console.log('✅ Todas as funções globais registradas com sucesso!');

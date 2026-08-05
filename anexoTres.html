@@ -406,46 +406,41 @@
                     </table>
                 </div>
 
-                <!-- CAMPO 23: ENTIDADES PARCERIAS PREVISTAS -->
-                <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
-                    <div class="box-header">
-                        <div class="box-title"><span class="num">23</span> Quais as entidades PARCERIAS PREVISTAS no Projeto?</div>
-                    </div>
+               <!-- CAMPO 23: ENTIDADES PARCERIAS PREVISTAS -->
+<div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
+    <div class="box-header">
+        <div class="box-title"><span class="num">23</span> Quais as entidades PARCERIAS PREVISTAS no Projeto?</div>
+    </div>
 
-                    <table class="tabela-entidades-parceiras">
-                        <thead>
-                            <tr>
-                                <th style="width: 30%;">Razão Social do Parceiro</th>
-                                <th style="width: 25%;">CNPJ do Parceiro</th>
-                                <th style="width: 45%;">Tipo de Apoio</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><input type="text" placeholder="Ex: Instituído X"></td>
-                                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
-                                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" placeholder="Ex: Instituto Y"></td>
-                                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
-                                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" placeholder="Ex: Fundação Z"></td>
-                                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
-                                <td><textarea class="auto-grow" rows="1" placeholder="Descreva o tipo de apoio..."></textarea></td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <table class="tabela-entidades-parceiras" id="tabela-entidades-parceiras">
+        <thead>
+            <tr>
+                <th style="width: 35%;">Razão Social do Parceiro</th>
+                <th style="width: 25%;">CNPJ do Parceiro</th>
+                <th style="width: 38%;">Tipo de Apoio</th>
+                <th class="no-print" style="width: 25px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><div class="editable" contenteditable="true" data-placeholder="Ex: Instituição X"></div></td>
+                <td><input type="text" class="cnpj-input" maxlength="18" placeholder="00.000.000/0000-00"></td>
+                <td><div class="editable" contenteditable="true" data-placeholder="Descreva o tipo de apoio..."></div></td>
+                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaEntidadeParceira(this)">❌</button></td>
+            </tr>
+        </tbody>
+    </table>
 
-                    <div class="cell col-12" style="margin-top: 10px; padding: 0;">
-                        <label style="font-weight: normal; font-size: 10px; font-family: 'Times New Roman', Times, serif;">Área para comentários (opcional).</label>
-                        <p class="limite-caracteres">Número de caracteres permitidos: 1.070</p>
-                        <textarea class="auto-grow textarea-projeto" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
-                    </div>
-                </div>
-            </div>
+    <div style="margin-top: 8px;" class="no-print">
+        <button type="button" class="btn-add-row" onclick="adicionarLinhaEntidadeParceira()">➕ Adicionar Linha de Parceria</button>
+    </div>
+
+    <div class="cell col-12" style="margin-top: 10px; padding: 0;">
+        <label style="font-weight: normal; font-size: 10px; font-family: 'Times New Roman', Times, serif;">Área para comentários (opcional).</label>
+        <div class="box-limit">Número de caracteres permitidos: 1.070</div>
+        <textarea class="auto-grow textarea-projeto" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
+    </div>
+</div>
 
             <!-- PARTE 4: LÓGICA DO PROJETO -->
             <div class="form-table-container" style="margin-top: 20px;">
@@ -473,56 +468,20 @@
                         <tbody>
                             <!-- Linha 1: Objetivo Geral -->
                             <tr>
-                                <td><textarea class="auto-grow" rows="2" placeholder="Objetivo Geral: (Exemplo: Contribuir para o alcance da igualdade de gênero no Bairro do Jangurussu garantindo a independência financeiras e aumentando a renda ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder=""></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder=""></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder=""></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder=""></textarea></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder="Objetivo Geral: (Exemplo: Contribuir para o alcance da igualdade...)"></div></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder=""></div></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder=""></div></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder=""></div></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder=""></div></td>
                                 <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
                             </tr>
                             <!-- Linha 2: Objetivo Específico n. 1 -->
                             <tr>
-                                <td><textarea class="auto-grow" rows="2" placeholder="Objetivo Específico n. 1: (Exemplo: Aumentar em 40% a renda de 30 mulheres negras, entre 18 e 35 anos de idade, que residem no Bairro do Jangurussu ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Análise do consumo das famílias ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Pesquisas ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: 1 vez, ao final do programa ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
-                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
-                            </tr>
-                            <!-- Linha 3: Resultado Esperado n. 1 -->
-                            <tr>
-                                <td><textarea class="auto-grow" rows="2" placeholder="Resultado Esperado n. 1, do Objetivo Específico 1: (Exemplo: 90% das mulheres beneficiárias do projeto capacitadas em Micro Empreendedorismo ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: % de mulheres beneficiárias do projeto capacitadas em Micro Empreendedorismo ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Certificados final em Micro Empreendedorismo ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Trimestral ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
-                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
-                            </tr>
-                            <!-- Linha 4: Atividade n. 1 -->
-                            <tr>
-                                <td><textarea class="auto-grow" rows="2" placeholder="Atividade n. 1 do Resultado n. 1, do Objetivo Específico 1: (Exemplo: Realização de 01 CURSO DE ADMINISTRAÇÃO GERAL para 30 mulheres beneficiárias do projeto de 40h ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Número de mulheres beneficiárias do Projetos que concluíram positivamente o curso em Administração Geral ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Lista de presença e registro fotográfico ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Mensal ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
-                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
-                            </tr>
-                            <!-- Linha 5: Atividade n. 2 -->
-                            <tr>
-                                <td><textarea class="auto-grow" rows="2" placeholder="Atividade n. 2 do Resultado n. 1, do Objetivo Específico 1: Realização de 01 CURSO BÁSICO DE CONTABILIDADE para 30 mulheres beneficiárias do projeto de 40h"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Número de mulheres beneficiárias do Projetos que concluíram positivamente o curso em Contabilidade básica ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Lista de presença e registro fotográfico ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Mensal ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
-                                <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
-                            </tr>
-                            <!-- Linha 6: Atividade n. 3 -->
-                            <tr>
-                                <td><textarea class="auto-grow" rows="2" placeholder="Atividade n. 3 do Resultado n. 1, do Objetivo Específico 1: (Exemplo: Realização de 01 CURSO DE MARKETING para 30 mulheres beneficiárias do projeto de 40h ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Número de mulheres beneficiárias do Projetos que concluíram positivamente o curso em Administração Geral ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Lista de presença e registro fotográfico ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Mensal ...)"></textarea></td>
-                                <td><textarea class="auto-grow" rows="2" placeholder="(Exemplo: Coordenador de Projeto ...)"></textarea></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder="Objetivo Específico n. 1..."></div></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder="(Exemplo: Análise do consumo...)"></div></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder="(Exemplo: Pesquisas...)"></div></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder="(Exemplo: 1 vez...)"></div></td>
+                                <td><div class="editable" contenteditable="true" data-placeholder="(Exemplo: Coordenador...)"></div></td>
                                 <td class="no-print text-center"><button type="button" class="btn-remove-row" onclick="removerLinhaQuadroLogico(this)">❌</button></td>
                             </tr>
                         </tbody>
@@ -533,7 +492,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- PARTE 5: PLANEJAMENTO DAS ATIVIDADES -->
             <div class="form-table-container" style="margin-top: 20px;">
                 <div class="table-header-title">PARTE 5: PLANEJAMENTO DAS ATIVIDADES POR RESULTADO ESPERADO</div>
