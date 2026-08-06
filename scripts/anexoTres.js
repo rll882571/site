@@ -145,7 +145,8 @@ function capturarDadosEstruturados() {
     const backup = {
         inputsFixos: [],
         selectsFixos: [],
-        textareasFixas: []
+        textareasFixas: [],
+        tbodyQuadroLogicoHtml: document.querySelector('#tabela-quadro-logico tbody') ? document.querySelector('#tabela-quadro-logico tbody').innerHTML : ''
     };
 
     document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']").forEach((el, index) => {
@@ -165,6 +166,10 @@ function capturarDadosEstruturados() {
 
 function aplicarDadosEstruturados(dados) {
     if (!dados) return;
+
+    if (dados.tbodyQuadroLogicoHtml && document.querySelector('#tabela-quadro-logico tbody')) {
+        document.querySelector('#tabela-quadro-logico tbody').innerHTML = dados.tbodyQuadroLogicoHtml;
+    }
 
     if (dados.inputsFixos && Array.isArray(dados.inputsFixos)) {
         const inputsAtuais = document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']");

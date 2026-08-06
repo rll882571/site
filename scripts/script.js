@@ -324,7 +324,7 @@ function aplicarDadosEstruturados(dados) {
         }
     }
 
-    // 2. Recria as linhas dinâmicas de Despesas (Tópico 5)
+    // 2. Recria as linhas dinâmicas de Despesas (Tópico 5) PRIMEIRO
     if (dados.linhasDespesas && Array.isArray(dados.linhasDespesas)) {
         const tbodyDesp = document.querySelector('#tabela-despesas-unica tbody');
         if (tbodyDesp) {
@@ -333,18 +333,27 @@ function aplicarDadosEstruturados(dados) {
                 addLinhaUnica(item.tipo);
                 const ultimaLinha = tbodyDesp.lastElementChild;
                 if (ultimaLinha) {
-                    if (ultimaLinha.querySelector('.input-codigo-despesa')) ultimaLinha.querySelector('.input-codigo-despesa').value = item.codigo;
-                    if (ultimaLinha.querySelector('.editable')) ultimaLinha.querySelector('.editable').innerHTML = item.desc;
-                    if (ultimaLinha.children[2]?.querySelector('input')) ultimaLinha.children[2].querySelector('input').value = item.unid;
-                    if (ultimaLinha.children[3]?.querySelector('input')) ultimaLinha.children[3].querySelector('input').value = item.qtd;
-                    if (ultimaLinha.querySelector('.valor-conced')) ultimaLinha.querySelector('.valor-conced').value = item.vConced;
-                    if (ultimaLinha.querySelector('.valor-propon')) ultimaLinha.querySelector('.valor-propon').value = item.vPropon;
+                    if (ultimaLinha.querySelector('.input-codigo-despesa')) {
+                        ultimaLinha.querySelector('.input-codigo-despesa').value = item.codigo;
+                    }
+                    if (ultimaLinha.querySelector('.editable')) {
+                        ultimaLinha.querySelector('.editable').innerHTML = item.desc;
+                    }
+                    const inputs = ultimaLinha.querySelectorAll('input');
+                    if (inputs[2]) inputs[2].value = item.unid;
+                    if (inputs[3]) inputs[3].value = item.qtd;
+                    
+                    const inputConced = ultimaLinha.querySelector('.valor-conced');
+                    if (inputConced) inputConced.value = item.vConced;
+
+                    const inputPropon = ultimaLinha.querySelector('.valor-propon');
+                    if (inputPropon) inputPropon.value = item.vPropon;
                 }
             });
         }
     }
 
-    // 3. Aplica valores nos campos fixos via ID
+    // 3. Aplica valores nos campos fixos via ID (Entidade, Responsável, etc.)
     if (dados.camposPorId) {
         Object.keys(dados.camposPorId).forEach(id => {
             const el = document.getElementById(id);
@@ -358,9 +367,9 @@ function aplicarDadosEstruturados(dados) {
         });
     }
 
-    // 4. Recalcula os totais do Anexo 2
-    calcularTotalOrcamentoResumo();
+    // 4. Recalcula todos os totais da Seção 5 e o Resumo da Seção 3
     calcularTotaisTabelaDespesas();
+    calcularTotalOrcamentoResumo();
     prepararParaImprimir();
 }
 
