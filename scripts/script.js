@@ -1,5 +1,5 @@
 // ============================================================
-// 1. MOTOR DE EVENTOS
+// 1. MOTOR DE EVENTOS.
 // ============================================================
 document.addEventListener('input', function (event) {
     const target = event.target;
