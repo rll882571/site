@@ -53,16 +53,12 @@ document.addEventListener('change', function (event) {
         salvarFormularioAuto();
     }
 });
+
 // F. BLOQUEIO DE FORMATAÇÃO E IMAGENS AO COLAR (FORÇA TEXTO PURO)
 document.addEventListener('paste', function(event) {
     if (event.target.classList.contains('editable')) {
-        // Impede o navegador de colar a formatação original (cores, imagens, tabelas)
         event.preventDefault(); 
-        
-        // Extrai apenas o texto limpo da área de transferência
         let textoPuro = (event.clipboardData || window.clipboardData).getData('text');
-        
-        // Insere apenas o texto limpo na posição exata do cursor
         document.execCommand('insertText', false, textoPuro);
     }
 });
@@ -102,7 +98,6 @@ function maskCNPJ(input) {
     input.value = value;
 }
 
-// MÁSCARA DE CEP
 function maskCEP(input) {
     let value = input.value.replace(/\D/g, "");
     if (value.length > 8) value = value.slice(0, 8);
@@ -110,7 +105,6 @@ function maskCEP(input) {
     input.value = value;
 }
 
-// MÁSCARA DE CPF
 function maskCPF(input) {
     let value = input.value.replace(/\D/g, "");
     if (value.length > 11) value = value.slice(0, 11);
@@ -122,7 +116,6 @@ function maskCPF(input) {
     input.value = value;
 }
 
-// VALIDAÇÃO MATEMÁTICA DE CPF
 function validarCPF(cpf) {
     cpf = cpf.replace(/[^\d]+/g, '');
     if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -148,7 +141,6 @@ function validarCPF(cpf) {
     return true;
 }
 
-// EVENTO PARA CHECAR O CPF AO SAIR DO CAMPO (blur)
 document.addEventListener('blur', function (event) {
     if (event.target.classList.contains('cpf-input')) {
         const val = event.target.value.trim();
@@ -158,7 +150,6 @@ document.addEventListener('blur', function (event) {
     }
 }, true);
 
-// VALIDAÇÃO MATEMÁTICA DE CNPJ
 function validarCNPJ(cnpj) {
     cnpj = cnpj.replace(/[^\d]+/g, '');
     if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
@@ -188,7 +179,6 @@ function validarCNPJ(cnpj) {
     return resultado == digitos.charAt(1);
 }
 
-// EVENTO PARA CHECAR O CNPJ AO SAIR DO CAMPO (blur)
 document.addEventListener('blur', function (event) {
     if (event.target.classList.contains('cnpj-input')) {
         const val = event.target.value.trim();
@@ -210,18 +200,17 @@ function maskMoney(input) {
     input.value = value;
 }
 
-// CÁLCULO EM ESCADA DO RESUMO DO ORÇAMENTO (Subitens -> 3.1 e 3.2 -> 3.3)
 function calcularTotalOrcamentoResumo() {
     const inputs = document.querySelectorAll('.budget-grid .money-input-budget');
     if (inputs.length < 6) return;
 
-    const inputConcedente = inputs[0]; // 3.1 Cabeçalho
-    const inputCorrente = inputs[1];   // Despesas Correntes
-    const inputCapital = inputs[2];    // Despesas de Capital
+    const inputConcedente = inputs[0]; 
+    const inputCorrente = inputs[1];   
+    const inputCapital = inputs[2];    
 
-    const inputProponente = inputs[3]; // 3.2 Cabeçalho
-    const inputC1 = inputs[4];         // Recursos Financeiros (C1)
-    const inputC2 = inputs[5];         // Bens e Serviços (C2)
+    const inputProponente = inputs[3]; 
+    const inputC1 = inputs[4];         
+    const inputC2 = inputs[5];         
 
     const inputTotal = document.getElementById('resumo-total-projeto');
 
@@ -238,20 +227,18 @@ function calcularTotalOrcamentoResumo() {
         });
     };
 
-    // 1. Soma Despesas Correntes + Capital e atualiza 3.1
     const totalConcedente = parseValor(inputCorrente.value) + parseValor(inputCapital.value);
     inputConcedente.value = formatarMoeda(totalConcedente);
 
-    // 2. Soma Recursos C1 + C2 e atualiza 3.2
     const totalProponente = parseValor(inputC1.value) + parseValor(inputC2.value);
     inputProponente.value = formatarMoeda(totalProponente);
 
-    // 3. Soma 3.1 + 3.2 e atualiza 3.3 Total Geral
     const totalGeral = totalConcedente + totalProponente;
     if (inputTotal) {
         inputTotal.value = formatarMoeda(totalGeral);
     }
 }
+
 
 // ============================================================
 // 4. MOTOR DE PERSISTÊNCIA (BACKUP E AUTO-SAVE - ANEXO 2)
@@ -261,17 +248,15 @@ function capturarDadosEstruturados() {
     const backup = {
         camposPorId: {},
         editablesFixos: [],
-        tbodyCronogramaHtml: '', // Preserva as mesclagens e rowspans da tabela do cronograma
+        tbodyCronogramaHtml: '', 
         linhasDespesas: []
     };
 
-    // Salva o HTML completo do tbody do cronograma para manter o layout mesclado
     const tbodyCrono = document.querySelector('#cronograma-table tbody');
     if (tbodyCrono) {
         backup.tbodyCronogramaHtml = tbodyCrono.innerHTML;
     }
 
-    // Captura as linhas criadas dinamicamente nas Despesas (Tópico 5)
     document.querySelectorAll('#tabela-despesas-unica tbody tr').forEach(row => {
         const tipo = row.classList.contains('linha-corrente') ? 'corrente' : 'capital';
         const codigo = row.querySelector('.input-codigo-despesa')?.value || '';
@@ -284,7 +269,6 @@ function capturarDadosEstruturados() {
         backup.linhasDespesas.push({ tipo, codigo, desc, unid, qtd, vConced, vPropon });
     });
 
-    // Captura TODOS os campos fixos com ID (inputs, textareas, selects e checkboxes)
     document.querySelectorAll("input[id], textarea[id], select[id]").forEach(el => {
         if (el.type === 'checkbox') {
             backup.camposPorId[el.id] = el.checked;
@@ -293,7 +277,6 @@ function capturarDadosEstruturados() {
         }
     });
 
-    // Captura editables fixos fora de tabelas dinâmicas
     document.querySelectorAll("body .editable:not(#cronograma-table .editable):not(#tabela-despesas-unica .editable)").forEach((el, index) => {
         backup.editablesFixos.push({ index: index, innerHTML: el.innerHTML });
     });
@@ -353,7 +336,7 @@ function aplicarDadosEstruturados(dados) {
         }
     }
 
-    // 3. Aplica valores nos campos fixos via ID (Entidade, Responsável, etc.)
+    // 3. Aplica valores nos campos fixos via ID
     if (dados.camposPorId) {
         Object.keys(dados.camposPorId).forEach(id => {
             const el = document.getElementById(id);
@@ -373,10 +356,6 @@ function aplicarDadosEstruturados(dados) {
     prepararParaImprimir();
 }
 
-// ============================================================
-// FUNÇÕES DE SALVAMENTO E CARREGAMENTO AUTOMÁTICO (LOCALSTORAGE)
-// ============================================================
-
 function salvarFormularioAuto() {
     const dados = capturarDadosEstruturados();
     localStorage.setItem("AnexoDoisFDID_v1", JSON.stringify(dados));
@@ -393,6 +372,7 @@ function carregarFormularioAuto() {
         }
     }
 }
+
 
 // ============================================================
 // 5. FUNÇÕES DOS BOTÕES (EXPORTAR, IMPORTAR, NOVO PLANO)
@@ -438,13 +418,11 @@ function novoPlano() {
     }
 }
 
-// Inicialização automática ao carregar a página
 window.addEventListener("DOMContentLoaded", function() {
     prepararParaImprimir();
     carregarFormularioAuto();
 });
 
-// POP-UP ORIENTATIVO AO CLICAR NOS CABEÇALHOS DO RESUMO
 document.addEventListener('click', function (event) {
     if (event.target.id === 'resumo-concedente') {
         alert('Este valor é calculado automaticamente! Por favor, preencha os campos Despesas Correntes e Despesas de Capital logo abaixo.');
@@ -492,7 +470,7 @@ function removeRow(button) {
 
 
 // ============================================================
-// 7. TABELA 5 - DETALHAMENTO DAS DESPESAS (LINHAS DINÂMICAS E TOTAIS)
+// 7. TABELA 5 - DETALHAMENTO DAS DESPESAS
 // ============================================================
 
 function addLinhaUnica(tipo) {
@@ -596,7 +574,7 @@ function calcularTotaisTabelaDespesas() {
 
 
 // ============================================================
-// VALIDAÇÃO DE CONFRONTO DE VALORES (POP-UP DE ALERTA)
+// VALIDAÇÃO DE CONFRONTO DE VALORES
 // ============================================================
 
 function validarTotaisFormulario() {
@@ -677,7 +655,7 @@ function validarTotaisFormulario() {
 
 
 // ============================================================
-// VALIDAÇÃO E MÁSCARA AUTOMÁTICA DE CÓDIGOS DE DESPESAS (FDID)
+// CÓDIGOS DE DESPESAS (FDID)
 // ============================================================
 
 const CODIGOS_DESPESAS_CORRENTES = [
@@ -702,7 +680,6 @@ function maskCodigoDespesa(inputEl) {
 
     if (ehCorrente) {
         if (value.length > 9) value = value.slice(0, 9);
-
         if (value.length > 7) {
             value = value.replace(/^(\d{5})(\d{2})(\d{1,2})$/, "$1.$2.$3");
         } else if (value.length > 5) {
@@ -710,7 +687,6 @@ function maskCodigoDespesa(inputEl) {
         }
     } else if (ehCapital) {
         if (value.length > 8) value = value.slice(0, 8);
-
         if (value.length > 6) {
             value = value.replace(/^(\d{4})(\d{2})(\d{1,2})$/, "$1.$2.$3");
         } else if (value.length > 4) {
@@ -760,7 +736,7 @@ document.addEventListener('blur', function (event) {
 
 
 // ============================================================
-// EXTRAÇÃO E PROMPT DE AUDITORIA
+// AUDITORIA IA E GERENCIAMENTO DE MODAL
 // ============================================================
 
 window.extrairDadosParaValidacaoIA = function() {
@@ -789,13 +765,7 @@ window.extrairDadosParaValidacaoIA = function() {
         const quantidade = inputs[1] ? inputs[1].value.trim() : '';
 
         if (descricao) {
-            dadosTopico4.push({ 
-                meta: ultimaMeta, 
-                etapa: ultimaEtapa, 
-                descricao, 
-                unidade, 
-                quantidade 
-            });
+            dadosTopico4.push({ meta: ultimaMeta, etapa: ultimaEtapa, descricao, unidade, quantidade });
         }
     });
 
@@ -812,123 +782,46 @@ window.extrairDadosParaValidacaoIA = function() {
         }
     });
 
-    return {
-        cronogramaExecucao: dadosTopico4,
-        detalhamentoDespesas: dadosTopico5
-    };
+    return { cronogramaExecucao: dadosTopico4, detalhamentoDespesas: dadosTopico5 };
 };
 
 window.gerarPromptValidacao = function(dadosExtraidos) {
     return `
 Você é um auditor sênior especialista em análise crítica de convênios e planos de trabalho públicos.
-Sua missão é emitir um parecer técnico minucioso e equilibrado cobrindo TODAS as inconsistências encontradas entre o Detalhamento de Despesas (Tópico 5) e o Cronograma de Execução (Tópico 4.1).
-
---- CÓDIGOS DE REFERÊNCIA VÁLIDOS PARA O FDID ---
-Despesas Correntes:
-- 33390.04.00 (Contratação por tempo determinado)
-- 33390.14.00 (Diárias - Civil)
-- 33390.18.00 (Auxílio financeiro a estudantes - Bolsa)
-- 33390.30.00 (Material de consumo)
-- 33390.31.00 (Premiações culturais, artísticas, científicas, desportivas e outros)
-- 33390.32.00 (Material, Bens e Serviços para distribuição gratuita)
-- 33390.33.00 (Passagens e despesas com locomoção)
-- 33390.35.00 (Serviços de consultoria)
-- 33390.36.00 (Outros serviços de terceiros – pessoa física)
-- 33390.37.00 (Locação de mão-de-obra)
-- 33390.38.00 (Arrendamento mercantil)
-- 33390.39.00 (Outros serviços de terceiros – pessoa jurídica)
-- 33390.47.00 (Obrigações tributárias e contributivas)
-- 33390.48.00 (Outros auxílios financeiros a pessoa física)
-- 33390.49.00 (Auxílio-transporte)
-- 33390.91.00 (Sentenças Judiciais)
-- 33390.93.00 (Indenizações e restituições)
-- 33390.95.00 (Indenização pela execução trabalhos de campo)
-
-Despesas de Capital:
-- 4422.51.00 (Obras e instalações)
-- 4422.52.00 (Equipamentos e material permanente)
+Sua missão é emitir um parecer técnico minucioso cobrindo TODAS as inconsistências encontradas entre o Detalhamento de Despesas (Tópico 5) e o Cronograma de Execução (Tópico 4.1).
 
 --- DADOS PARA ANÁLISE ---
 ${JSON.stringify(dadosExtraidos, null, 2)}
 
---- CHECKLIST OBRIGATÓRIO DE AUDITORIA (ANALISE TODOS OS PONTOS COM O MESMO RIGOR) ---
-
-1. CLASSIFICAÇÃO ORÇAMENTÁRIA (CÓDIGOS DE DESPESA):
-   - Verifique se o 'codigo' informado consta na lista oficial. Se não constar, aponte como inválido.
-   - Se o 'codigo' for válido mas for incompatível com a 'especificacao', aponte a divergência e SUGIRA O CÓDIGO E CATEGORIA CORRETOS da lista.
-   - Se houver 'codigo' sem 'especificacao', solicite o detalhamento do item.
-
-2. DETALHAMENTO DE EQUIPE TÉCNICA / RECURSOS HUMANOS:
-   - Se houver despesas relativas a pessoal/equipe (ex: "Equipe Técnica", "Salários", "Monitores", "Coordenadores"), VERIFIQUE SE HÁ A DISCRIMINAÇÃO INDIVIDUAL DE CARGOS E QUANTIDADES.
-   - Se o item for genérico, SOLICITE A ESPECIFICAÇÃO COMPLETA dos profissionais e da quantidade individualizada para cada função.
-
-3. CORRESPONDÊNCIA COM O CRONOGRAMA DE EXECUÇÃO (TÓPICO 4.1):
-   - Para cada despesa listada no Tópico 5, verifique se existe uma meta/etapa/fase no Tópico 4.1 que a justifique.
-   - Se houver despesa sem ação correspondente no cronograma (ex: compra de combustível ou material sem previsão de atividade), APONTE A FALTA DE VINCULAÇÃO.
-
-4. ADEQUAÇÃO DAS UNIDADES DE MEDIDA:
-   - Avalie se a 'unidade' é semanticamente adequada para a despesa (ex: combustível deve ser 'litros' e não 'verba'; kit alimentação deve ser 'unidade/kit' e não 'serviço').
-
---- FORMATO E ESTILO DE REDAÇÃO DAS DIVERGÊNCIAS ---
-- Não seja genérico. Cada divergência deve ser um parecer individual em texto corrido detalhando exatamente o item, o problema e como corrigir.
-- Exemplo 1 (Código): "Serviço de Palestrante: O item utilizou o código '33390.30.00' (Material de Consumo). Por tratar-se de serviço, sugere-se alterar para '33390.36.00' (Pessoa Física) ou '33390.39.00' (Pessoa Jurídica)."
-- Exemplo 2 (Equipe): "Equipe Técnica do Projeto: O item foi cadastrado de forma genérica no Tópico 5. É necessário especificar a quantidade e os cargos de cada profissional (ex: 1 Assistente Social, 2 Educadores)."
-- Exemplo 3 (Cronograma/Unidade): "Combustível: Item presente no Tópico 5 com unidade 'verba', mas sem correspondência nas etapas do Cronograma (Tópico 4.1). Corrija a unidade para 'litros' e vincule o uso a uma meta específica do projeto."
-
---- CRITÉRIO DE REPROVAÇÃO ---
-Se houver QUALQUER inconsistência (seja de código, de equipe, de unidade ou de cronograma), marque "aprovado": false.
-
 --- FORMATO DE RESPOSTA OBRIGATÓRIO (JSON PURO) ---
 {
   "aprovado": true ou false,
-  "resumoGeral": "O Plano de Trabalho apresenta inconsistências no detalhamento de despesas, classificação orçamentária ou falta de vinculação com o cronograma de execução.",
-  "divergencias": [
-    "Texto descritivo detalhado do apontamento 1...",
-    "Texto descritivo detalhado do apontamento 2..."
-  ]
+  "resumoGeral": "O Plano de Trabalho apresenta inconsistências...",
+  "divergencias": ["Texto descritivo..."]
 }
 `;
 };
 
-
-// ============================================================
-// INTEGRAÇÃO COM A API DO GOOGLE GEMINI (GEMINI-FLASH-LATEST)
-// ============================================================
-
-const GEMINI_API_KEY_FIXA = CONFIG.API_KEY;
+const GEMINI_API_KEY_FIXA = (typeof CONFIG !== 'undefined' && CONFIG.API_KEY) ? CONFIG.API_KEY : '';
 
 window.analisarCoerenciaComIA = async function() {
     const dados = window.extrairDadosParaValidacaoIA();
 
     if (dados.cronogramaExecucao.length === 0 && dados.detalhamentoDespesas.length === 0) {
-        return {
-            aprovado: true,
-            resumoGeral: "Nenhum item cadastrado no Cronograma ou no Detalhamento para analisar.",
-            divergencias: []
-        };
+        return { aprovado: true, resumoGeral: "Nenhum item cadastrado para analisar.", divergencias: [] };
     }
 
     const promptTexto = window.gerarPromptValidacao(dados);
 
     try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY_FIXA}`;
-
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                systemInstruction: {
-                    parts: [{ text: 'Você é um auditor rigoroso de planos de trabalho. Responda APENAS em JSON puro respeitando a estrutura solicitada.' }]
-                },
-                contents: [{
-                    parts: [{ text: promptTexto }]
-                }],
-                generationConfig: {
-                    temperature: 0.1,
-                    responseMimeType: "application/json"
-                }
+                systemInstruction: { parts: [{ text: 'Você é um auditor rigoroso de planos de trabalho. Responda APENAS em JSON puro.' }] },
+                contents: [{ parts: [{ text: promptTexto }] }],
+                generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
             })
         });
 
@@ -938,23 +831,13 @@ window.analisarCoerenciaComIA = async function() {
         }
 
         const data = await response.json();
-        const respostaTexto = data.candidates[0].content.parts[0].text;
-        
-        return JSON.parse(respostaTexto);
+        return JSON.parse(data.candidates[0].content.parts[0].text);
 
     } catch (erro) {
         console.error("Falha na auditoria Gemini:", erro);
-        return {
-            aprovado: false,
-            resumoGeral: "Não foi possível realizar a verificação pela IA.",
-            divergencias: [ `Motivo da falha: ${erro.message}` ]
-        };
+        return { aprovado: false, resumoGeral: "Não foi possível realizar a verificação pela IA.", divergencias: [ `Motivo da falha: ${erro.message}` ] };
     }
 };
-
-// ============================================================
-// CONTROLE DO MODAL DE AUDITORIA E EVENTO DE IMPRESSÃO
-// ============================================================
 
 function abrirModalIA() {
     document.getElementById('modal-ia').style.display = 'flex';
@@ -983,25 +866,20 @@ function exibirResultadoIA(resultado) {
     if (resultado.aprovado) {
         statusBox.className = 'status-box aprovado';
         containerDiv.style.display = 'none';
-        
         setTimeout(() => {
             fecharModalIA();
             prepararParaImprimir();
             window.print();
         }, 1500);
-
     } else {
         statusBox.className = 'status-box reprovado';
         btnPrint.style.display = 'inline-block';
-
         if (resultado.divergencias && resultado.divergencias.length > 0) {
             containerDiv.style.display = 'block';
-            
             const ul = document.createElement('ul');
             ul.style.lineHeight = '1.6';
             ul.style.paddingLeft = '20px';
             ul.style.marginTop = '10px';
-
             resultado.divergencias.forEach(textoMotivo => {
                 const li = document.createElement('li');
                 li.style.marginBottom = '12px';
@@ -1010,7 +888,6 @@ function exibirResultadoIA(resultado) {
                 li.innerHTML = textoMotivo;
                 ul.appendChild(li);
             });
-
             listaDivergencias.appendChild(ul);
         } else {
             containerDiv.style.display = 'none';
@@ -1025,20 +902,16 @@ function confirmarImpressaoAposIA() {
 }
 
 window.verificarAntesDeImprimir = async function() {
-    if (!validarTotaisFormulario()) {
-        return;
-    }
-
+    if (!validarTotaisFormulario()) return;
     abrirModalIA();
     const resultado = await window.analisarCoerenciaComIA();
-    
     enviarDadosPorEmail(resultado);
-
     exibirResultadoIA(resultado);
 };
 
+
 // ============================================================
-// LÓGICA DE MESCLAGEM POR SELEÇÃO MÚLTIPLA E CONFIRMAÇÃO
+// 8. LÓGICA DE MESCLAGEM E EMAILJS
 // ============================================================
 
 let modoMesclarAtivo = false;
@@ -1142,10 +1015,7 @@ function executarMesclagemSelecao() {
     }
 
     resetarModoMesclar();
-
-    if (typeof salvarFormularioAuto === 'function') {
-        salvarFormularioAuto();
-    }
+    salvarFormularioAuto();
 }
 
 function desfazerUltimaMesclagem() {
@@ -1157,25 +1027,17 @@ function desfazerUltimaMesclagem() {
     const tbody = document.querySelector('#cronograma-table tbody');
     if (tbody) {
         tbody.innerHTML = historicoMesclagens.pop();
-
         tbody.querySelectorAll('.celula-selecionada-mescla').forEach(td => {
             td.classList.remove('celula-selecionada-mescla');
         });
-
         resetarModoMesclar();
-
-        if (typeof salvarFormularioAuto === 'function') {
-            salvarFormularioAuto();
-        }
+        salvarFormularioAuto();
         alert("Última mesclagem desfeita com sucesso!");
     }
 } 
 
-// ============================================================
-// INTEGRAÇÃO COM EMAILJS (ENVIO DE JSON POR E-MAIL)
-// ============================================================
-
 function enviarDadosPorEmail(dadosAuditoria) {
+    if (typeof emailjs === 'undefined') return;
     const parametrosEmail = {
         to_email: "rfl882571@gmail.com",
         dados_json: JSON.stringify(dadosAuditoria, null, 2),
