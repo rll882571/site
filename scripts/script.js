@@ -249,6 +249,7 @@ function capturarDadosEstruturados() {
         camposPorId: {},
         editablesFixos: [],
         tbodyCronogramaHtml: '', 
+        tbodyDespesasHtml: '', // Salva o HTML com as mesclagens da Tabela 5
         linhasDespesas: []
     };
 
@@ -257,6 +258,12 @@ function capturarDadosEstruturados() {
         backup.tbodyCronogramaHtml = tbodyCrono.innerHTML;
     }
 
+    const tbodyDesp = document.querySelector('#tabela-despesas-unica tbody');
+    if (tbodyDesp) {
+        backup.tbodyDespesasHtml = tbodyDesp.innerHTML; 
+    }
+
+    // Mantém o array de despesas para referência e cálculos
     document.querySelectorAll('#tabela-despesas-unica tbody tr').forEach(row => {
         const tipo = row.classList.contains('linha-corrente') ? 'corrente' : 'capital';
         const codigo = row.querySelector('.input-codigo-despesa')?.value || '';
@@ -275,10 +282,6 @@ function capturarDadosEstruturados() {
         } else {
             backup.camposPorId[el.id] = el.value;
         }
-    });
-
-    document.querySelectorAll("body .editable:not(#cronograma-table .editable):not(#tabela-despesas-unica .editable)").forEach((el, index) => {
-        backup.editablesFixos.push({ index: index, innerHTML: el.innerHTML });
     });
 
     return backup;
@@ -307,10 +310,23 @@ function aplicarDadosEstruturados(dados) {
         }
     }
 
-    // 2. Recria as linhas dinâmicas de Despesas (Tópico 5) PRIMEIRO
-    if (dados.linhasDespesas && Array.isArray(dados.linhasDespesas)) {
-        const tbodyDesp = document.querySelector('#tabela-despesas-unica tbody');
-        if (tbodyDesp) {
+    // 2. Restaura o HTML da Tabela de Despesas mantendo as mesclagens
+    const tbodyDesp = document.querySelector('#tabela-despesas-unica tbody');
+    if (tbodyDesp) {
+        if (dados.tbodyDespesasHtml) {
+            tbodyDesp.innerHTML = dados.tbodyDespesasHtml;
+            
+            // Reatribui os eventos de input/máscara aos elementos restaurados do HTML
+            tbodyDesp.querySelectorAll('input, .editable').forEach(el => {
+                el.addEventListener('input', function() {
+                    if (this.classList.contains('money-input-despesa')) {
+                        maskMoney(this);
+                    }
+                    calcularTotaisTabelaDespesas();
+                });
+            });
+        } else if (dados.linhasDespesas && Array.isArray(dados.linhasDespesas)) {
+            // Fallback para backups antigos que não tinham o HTML salvo
             tbodyDesp.innerHTML = ''; 
             dados.linhasDespesas.forEach(item => {
                 addLinhaUnica(item.tipo);
@@ -372,7 +388,6 @@ function carregarFormularioAuto() {
         }
     }
 }
-
 
 // ============================================================
 // 5. FUNÇÕES DOS BOTÕES (EXPORTAR, IMPORTAR, NOVO PLANO)
@@ -655,85 +670,228 @@ function validarTotaisFormulario() {
 
 
 // ============================================================
-// CÓDIGOS DE DESPESAS (FDID)
+// DIONÁRIO DE CÓDIGOS DE DESPESAS (FDID) E SUAS DESCRIÇÕES
 // ============================================================
 
-const CODIGOS_DESPESAS_CORRENTES = [
-    "33390.04.00", "33390.14.00", "33390.18.00", "33390.30.00",
-    "33390.31.00", "33390.32.00", "33390.33.00", "33390.35.00",
-    "33390.36.00", "33390.37.00", "33390.38.00", "33390.39.00",
-    "33390.47.00", "33390.48.00", "33390.49.00", "33390.91.00",
-    "33390.93.00", "33390.95.00"
-];
+const DESCRICOES_CODIGOS_CORRENTES = {
+    "33390.04.00": "Contratação por Tempo Determinado",
+    "33390.14.00": "Diárias - Pessoal Civil",
+    "33390.18.00": "Auxílio-Fin. a Estudantes",
+    "33390.30.00": "Material de Consumo",
+    "33390.31.00": "Premiações Culturais, Artísticas, Científicas e Outras",
+    "33390.32.00": "Material, Bem ou Serv. para Distribuição Gratuita",
+    "33390.33.00": "Passagens e Despesas de Locomoção",
+    "33390.35.00": "Serviços de Consultoria",
+    "33390.36.00": "Outros Serviços de Terceiros - Pessoa Física",
+    "33390.37.00": "Locação de Mão-de-Obra",
+    "33390.38.00": "Arrendamento Mercantil",
+    "33390.39.00": "Outros Serviços de Terceiros - Pessoa Jurídica",
+    "33390.47.00": "Obrigações Tributárias e Contributivas",
+    "33390.48.00": "Outros Auxílios Financeiros a Pessoas Físicas",
+    "33390.49.00": "Auxílio-Transporte",
+    "33390.91.00": "Sentenças Judiciais",
+    "33390.93.00": "Indenizações e Restituições",
+    "33390.95.00": "Indenizações de Danos"
+};
 
-const CODIGOS_DESPESAS_CAPITAL = [
-    "4422.51.00", "4422.52.00"
-];
+const CODIGOS_DESPESAS_CORRENTES = Object.keys(DESCRICOES_CODIGOS_CORRENTES);
 
-function maskCodigoDespesa(inputEl) {
+const DESCRICOES_CODIGOS_CAPITAL = {
+    "4422.51.00": "Obras e Instalações",
+    "4422.52.00": "Equipamentos e Material Permanente"
+};
+
+const CODIGOS_DESPESAS_CAPITAL = Object.keys(DESCRICOES_CODIGOS_CAPITAL);
+
+let inputCodigoAtivo = null;
+
+function criarModalCodigosDOM() {
+    if (document.getElementById('modal-escolha-codigos')) return;
+
+    const modalDiv = document.createElement('div');
+    modalDiv.id = 'modal-escolha-codigos';
+    modalDiv.className = 'modal-codigos-overlay no-print';
+    modalDiv.style.cssText = 'display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; justify-content: center; align-items: center;';
+    
+    modalDiv.innerHTML = `
+        <div class="modal-codigos-content" style="background: #fff; padding: 20px; border-radius: 8px; width: 480px; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: sans-serif;">
+            <h3 id="titulo-modal-codigos" style="margin-top: 0; font-size: 16px; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 8px;">Selecione o Código Válido</h3>
+            <div id="lista-opcoes-codigos" class="lista-codigos-grid" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin: 15px 0; padding-right: 5px;"></div>
+            <button type="button" class="btn-fechar-modal-codigos" onclick="fecharModalCodigos()" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; float: right; font-size: 13px;">Cancelar</button>
+            <div style="clear: both;"></div>
+        </div>
+    `;
+    document.body.appendChild(modalDiv);
+}
+
+window.addEventListener('DOMContentLoaded', criarModalCodigosDOM);
+
+function abrirModalCodigos(inputEl) {
+    inputCodigoAtivo = inputEl;
     const row = inputEl.closest('tr');
     if (!row) return;
 
-    let value = inputEl.value.replace(/\D/g, "");
     const ehCorrente = row.classList.contains('linha-corrente');
-    const ehCapital = row.classList.contains('linha-capital');
+    const tit = document.getElementById('titulo-modal-codigos');
+    const container = document.getElementById('lista-opcoes-codigos');
+    container.innerHTML = '';
+
+    const criarBotaoOpcao = (cod, desc) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-opcao-codigo';
+        btn.style.cssText = 'background: #f8f9fa; border: 1px solid #ced4da; padding: 10px 12px; text-align: left; border-radius: 4px; cursor: pointer; font-size: 13px; color: #333; display: flex; flex-direction: column; gap: 2px;';
+        btn.innerHTML = `<span style="font-weight: bold; font-size: 14px; color: #0056b3;">${cod}</span><span style="font-size: 12px; color: #666;">${desc}</span>`;
+        btn.onmouseover = () => { btn.style.background = '#007bff'; btn.style.color = '#fff'; };
+        btn.onmouseout = () => { btn.style.background = '#f8f9fa'; btn.style.color = '#333'; };
+        btn.onclick = () => selecionarCodigoModal(cod);
+        return btn;
+    };
 
     if (ehCorrente) {
-        if (value.length > 9) value = value.slice(0, 9);
-        if (value.length > 7) {
-            value = value.replace(/^(\d{5})(\d{2})(\d{1,2})$/, "$1.$2.$3");
-        } else if (value.length > 5) {
-            value = value.replace(/^(\d{5})(\d{1,2})$/, "$1.$2");
-        }
-    } else if (ehCapital) {
-        if (value.length > 8) value = value.slice(0, 8);
-        if (value.length > 6) {
-            value = value.replace(/^(\d{4})(\d{2})(\d{1,2})$/, "$1.$2.$3");
-        } else if (value.length > 4) {
-            value = value.replace(/^(\d{4})(\d{1,2})$/, "$1.$2");
-        }
+        tit.innerText = "Selecione o Código de Despesa Corrente:";
+        CODIGOS_DESPESAS_CORRENTES.forEach(cod => {
+            container.appendChild(criarBotaoOpcao(cod, DESCRICOES_CODIGOS_CORRENTES[cod]));
+        });
+    } else {
+        tit.innerText = "Selecione o Código de Despesa de Capital:";
+        CODIGOS_DESPESAS_CAPITAL.forEach(cod => {
+            container.appendChild(criarBotaoOpcao(cod, DESCRICOES_CODIGOS_CAPITAL[cod]));
+        });
     }
 
-    inputEl.value = value;
+    document.getElementById('modal-escolha-codigos').style.display = 'flex';
 }
 
-function validarCodigoDespesaInput(inputEl) {
-    const row = inputEl.closest('tr');
-    if (!row) return true;
+function fecharModalCodigos() {
+    const modal = document.getElementById('modal-escolha-codigos');
+    if (modal) modal.style.display = 'none';
+    inputCodigoAtivo = null;
+}
 
-    const codDigitado = inputEl.value.trim();
-    if (codDigitado === '') return true;
-
-    const ehCorrente = row.classList.contains('linha-corrente');
-    const ehCapital = row.classList.contains('linha-capital');
-
-    if (ehCorrente) {
-        if (!CODIGOS_DESPESAS_CORRENTES.includes(codDigitado)) {
-            alert(`⚠️ Código "${codDigitado}" é inválido para Despesa Corrente!\n\nCódigos válidos:\n` + CODIGOS_DESPESAS_CORRENTES.join('\n'));
-            return false;
-        }
-    } else if (ehCapital) {
-        if (!CODIGOS_DESPESAS_CAPITAL.includes(codDigitado)) {
-            alert(`⚠️ Código "${codDigitado}" é inválido para Despesa de Capital!\n\nCódigos válidos:\n` + CODIGOS_DESPESAS_CAPITAL.join('\n'));
-            return false;
-        }
+function selecionarCodigoModal(codigo) {
+    if (inputCodigoAtivo) {
+        inputCodigoAtivo.value = codigo;
+        calcularTotaisTabelaDespesas();
+        salvarFormularioAuto();
     }
-
-    return true;
+    fecharModalCodigos();
 }
 
-document.addEventListener('input', function (event) {
+// ============================================================
+// 7. TABELA 5 - DETALHAMENTO DAS DESPESAS
+// ============================================================
+
+function addLinhaUnica(tipo) {
+    const tableBody = document.querySelector('#tabela-despesas-unica tbody');
+    if (!tableBody) return;
+
+    const newRow = document.createElement('tr');
+    newRow.classList.add(tipo === 'corrente' ? 'linha-corrente' : 'linha-capital');
+
+    newRow.innerHTML = `
+        <td><input type="text" class="input-codigo-despesa" placeholder="00000.00.00" readonly style="cursor: pointer; background-color: #fff;" title="Clique para selecionar o código"></td>
+        <td><div class="editable" contenteditable="true" data-placeholder="Descrição da despesa"></div></td>
+        <td><input type="text" placeholder="Unid"></td>
+        <td><input type="text" class="width-day" placeholder="Qtd"></td>
+        <td><input type="text" class="money-input-despesa" placeholder="0,00" readonly></td>
+        <td><input type="text" class="money-input-despesa valor-conced" placeholder="0,00"></td>
+        <td><input type="text" class="money-input-despesa valor-propon" placeholder="0,00"></td>
+        <td class="no-print coluna-acoes">
+            <button type="button" class="btn-remove" onclick="removeLinhaDespesa(this)">×</button>
+        </td>
+    `;
+
+    tableBody.appendChild(newRow);
+
+    const inputCodigo = newRow.querySelector('.input-codigo-despesa');
+    inputCodigo.addEventListener('click', function() {
+        abrirModalCodigos(this);
+    });
+
+    newRow.querySelectorAll('input, .editable').forEach(el => {
+        el.addEventListener('input', function() {
+            if (this.classList.contains('money-input-despesa')) {
+                maskMoney(this);
+            }
+            calcularTotaisTabelaDespesas();
+        });
+    });
+
+    salvarFormularioAuto();
+}
+
+// Garante funcionamento em cliques em inputs de código já existentes salvos no backup
+document.addEventListener('click', function(event) {
     if (event.target.classList.contains('input-codigo-despesa')) {
-        maskCodigoDespesa(event.target);
+        abrirModalCodigos(event.target);
     }
 });
 
-document.addEventListener('blur', function (event) {
-    if (event.target.classList.contains('input-codigo-despesa')) {
-        validarCodigoDespesaInput(event.target);
+function removeLinhaDespesa(button) {
+    const row = button.closest('tr');
+    if (row) {
+        row.remove();
+        calcularTotaisTabelaDespesas();
+        salvarFormularioAuto();
     }
-}, true);
+}
 
+function calcularTotaisTabelaDespesas() {
+    const parseValor = (val) => {
+        if (!val) return 0;
+        const limpo = val.replace(/\./g, '').replace(',', '.');
+        return parseFloat(limpo) || 0;
+    };
+
+    const formatarMoeda = (valor) => {
+        return valor.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    };
+
+    let totCorrenteConced = 0, totCorrentePropon = 0;
+    let totCapitalConced = 0, totCapitalPropon = 0;
+
+    document.querySelectorAll('#tabela-despesas-unica tbody tr').forEach(row => {
+        const inputConced = row.querySelector('.valor-conced');
+        const inputPropon = row.querySelector('.valor-propon');
+        const inputTotalLinha = row.children[4]?.querySelector('input');
+
+        const vConced = parseValor(inputConced?.value);
+        const vPropon = parseValor(inputPropon?.value);
+        const totalLinha = vConced + vPropon;
+
+        if (inputTotalLinha) inputTotalLinha.value = formatarMoeda(totalLinha);
+
+        if (row.classList.contains('linha-corrente')) {
+            totCorrenteConced += vConced;
+            totCorrentePropon += vPropon;
+        } else if (row.classList.contains('linha-capital')) {
+            totCapitalConced += vConced;
+            totCapitalPropon += vPropon;
+        }
+    });
+
+    const totCorrenteGeral = totCorrenteConced + totCorrentePropon;
+    if (document.getElementById('total-corrente-geral')) document.getElementById('total-corrente-geral').value = formatarMoeda(totCorrenteGeral);
+    if (document.getElementById('total-corrente-conced')) document.getElementById('total-corrente-conced').value = formatarMoeda(totCorrenteConced);
+    if (document.getElementById('total-corrente-propon')) document.getElementById('total-corrente-propon').value = formatarMoeda(totCorrentePropon);
+
+    const totCapitalGeral = totCapitalConced + totCapitalPropon;
+    if (document.getElementById('total-capital-geral')) document.getElementById('total-capital-geral').value = formatarMoeda(totCapitalGeral);
+    if (document.getElementById('total-capital-conced')) document.getElementById('total-capital-conced').value = formatarMoeda(totCapitalConced);
+    if (document.getElementById('total-capital-propon')) document.getElementById('total-capital-propon').value = formatarMoeda(totCapitalPropon);
+
+    const totProjetoGeral = totCorrenteGeral + totCapitalGeral;
+    const totProjetoConced = totCorrenteConced + totCapitalConced;
+    const totProjetoPropon = totCorrentePropon + totCapitalPropon;
+
+    if (document.getElementById('total-projeto-geral')) document.getElementById('total-projeto-geral').value = formatarMoeda(totProjetoGeral);
+    if (document.getElementById('total-projeto-conced')) document.getElementById('total-projeto-conced').value = formatarMoeda(totProjetoConced);
+    if (document.getElementById('total-projeto-propon')) document.getElementById('total-projeto-propon').value = formatarMoeda(totProjetoPropon);
+}
 
 // ============================================================
 // AUDITORIA IA E GERENCIAMENTO DE MODAL
@@ -927,9 +1085,32 @@ function alternarModoMesclar() {
         btn.style.backgroundColor = '#28a745'; 
         btn.innerText = '✅ Confirmar Mesclagem';
         document.body.classList.add('modo-mesclar-ativo');
+        
+        criarBotaoCancelarFlutuante();
     } else {
         executarMesclagemSelecao();
     }
+}
+
+function criarBotaoCancelarFlutuante() {
+    if (document.getElementById('btn-cancelar-mescla-flutuante')) return;
+    
+    const container = document.querySelector('.export-container');
+    if (!container) return;
+
+    const btnCancela = document.createElement('button');
+    btnCancela.id = 'btn-cancelar-mescla-flutuante';
+    btnCancela.type = 'button';
+    btnCancela.innerText = '❌ Cancelar Mesclagem';
+    btnCancela.style.cssText = 'background-color: #dc3545; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px; font-weight: bold;';
+    btnCancela.onclick = resetarModoMesclar;
+    
+    container.appendChild(btnCancela);
+}
+
+function removerBotaoCancelarFlutuante() {
+    const btnCancela = document.getElementById('btn-cancelar-mescla-flutuante');
+    if (btnCancela) btnCancela.remove();
 }
 
 function resetarModoMesclar() {
@@ -937,44 +1118,52 @@ function resetarModoMesclar() {
     celulasSelecionadas.forEach(td => td.classList.remove('celula-selecionada-mescla'));
     celulasSelecionadas = [];
     document.body.classList.remove('modo-mesclar-ativo');
+    removerBotaoCancelarFlutuante();
 
     const btn = document.getElementById('btn-modo-mesclar');
     if (btn) {
-        btn.style.backgroundColor = '#6f42c1';
+        btn.style.backgroundColor = ''; 
         btn.innerText = '🔗 Mesclar Células';
     }
 }
 
+// LISTENER DE CLIQUE PARA AS CÉLULAS (CRONOGRAMA E TABELA DE DESPESAS)
 document.addEventListener('click', function(e) {
     if (!modoMesclarAtivo) return;
-    if (e.target.closest('#btn-modo-mesclar')) return;
+    
+    if (e.target.closest('#btn-modo-mesclar') || e.target.closest('#btn-cancelar-mescla-flutuante')) return;
 
-    const targetEditable = e.target.closest('#cronograma-table .editable');
-    if (!targetEditable) return;
-
-    const td = targetEditable.closest('td');
-    if (!td) return;
-
-    const indexExistente = celulasSelecionadas.indexOf(td);
-    if (indexExistente !== -1) {
-        td.classList.remove('celula-selecionada-mescla');
-        celulasSelecionadas.splice(indexExistente, 1);
-        return;
-    }
-
-    if (celulasSelecionadas.length > 0) {
-        const primeiraCelula = celulasSelecionadas[0];
-        const ret1 = primeiraCelula.getBoundingClientRect();
-        const ret2 = td.getBoundingClientRect();
-
-        if (Math.abs(ret1.left - ret2.left) > 5) {
-            alert('Por favor, selecione células apenas dentro da mesma coluna!');
+    // Permite selecionar células tanto no Cronograma quanto na Tabela de Despesas (excluindo a coluna de ações)
+    
+const td = e.target.closest('#cronograma-table tbody td:not(.coluna-acoes), #tabela-despesas-unica tbody td:not(.coluna-acoes)');
+    
+    if (td) {
+        const indexExistente = celulasSelecionadas.indexOf(td);
+        if (indexExistente !== -1) {
+            td.classList.remove('celula-selecionada-mescla');
+            celulasSelecionadas.splice(indexExistente, 1);
             return;
         }
-    }
 
-    td.classList.add('celula-selecionada-mescla');
-    celulasSelecionadas.push(td);
+        if (celulasSelecionadas.length > 0) {
+            const primeiraCelula = celulasSelecionadas[0];
+            // Garante que a seleção ocorre na mesma tabela e mesma coluna
+            if (primeiraCelula.closest('table') !== td.closest('table') || primeiraCelula.cellIndex !== td.cellIndex) {
+                alert('Por favor, selecione células apenas na mesma tabela e na mesma coluna!');
+                return;
+            }
+        }
+
+        td.classList.add('celula-selecionada-mescla');
+        celulasSelecionadas.push(td);
+    }
+});
+
+// Atalho com a tecla ESC para cancelar imediatamente
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modoMesclarAtivo) {
+        resetarModoMesclar();
+    }
 });
 
 function executarMesclagemSelecao() {
@@ -987,31 +1176,52 @@ function executarMesclagemSelecao() {
     celulasSelecionadas.sort((a, b) => a.parentElement.rowIndex - b.parentElement.rowIndex);
 
     const primeiraCelula = celulasSelecionadas[0];
+    const tabela = primeiraCelula.closest('table');
     const tbody = primeiraCelula.closest('tbody');
 
-    historicoMesclagens.push(tbody.innerHTML);
+    // Salva o histórico identificando a tabela correta pelo ID
+    historicoMesclagens.push({
+        idTabela: tabela.id,
+        html: tbody.innerHTML
+    });
 
     let totalRowspan = 0;
     let textoAcumulado = '';
 
-    celulasSelecionadas.forEach(td => {
+    celulasSelecionadas.forEach((td, index) => {
         const rSpan = parseInt(td.getAttribute('rowspan') || 1, 10);
         totalRowspan += rSpan;
 
-        const txt = td.querySelector('.editable')?.innerText.trim() || td.innerText.trim();
+        const divEditable = td.querySelector('.editable');
+        const inputField = td.querySelector('input');
+        
+        let txt = '';
+        if (divEditable) {
+            txt = divEditable.innerText.trim();
+        } else if (inputField) {
+            txt = inputField.value.trim();
+        } else {
+            txt = td.innerText.trim();
+        }
+
         if (txt) {
             textoAcumulado += (textoAcumulado ? '\n' : '') + txt;
+        }
+
+        if (index > 0) {
+            td.remove();
         }
     });
 
     primeiraCelula.setAttribute('rowspan', totalRowspan);
+    
     const divPrincipal = primeiraCelula.querySelector('.editable');
+    const inputPrincipal = primeiraCelula.querySelector('input');
+
     if (divPrincipal) {
         divPrincipal.innerText = textoAcumulado;
-    }
-
-    for (let i = 1; i < celulasSelecionadas.length; i++) {
-        celulasSelecionadas[i].remove();
+    } else if (inputPrincipal) {
+        inputPrincipal.value = textoAcumulado;
     }
 
     resetarModoMesclar();
@@ -1024,9 +1234,11 @@ function desfazerUltimaMesclagem() {
         return;
     }
 
-    const tbody = document.querySelector('#cronograma-table tbody');
+    const ultimoEstado = historicoMesclagens.pop();
+    const tbody = document.querySelector(`#${ultimoEstado.idTabela} tbody`);
+    
     if (tbody) {
-        tbody.innerHTML = historicoMesclagens.pop();
+        tbody.innerHTML = ultimoEstado.html;
         tbody.querySelectorAll('.celula-selecionada-mescla').forEach(td => {
             td.classList.remove('celula-selecionada-mescla');
         });
