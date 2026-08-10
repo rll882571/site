@@ -677,7 +677,8 @@ textarea.auto-grow {
 }
 
 /* Destaque visual nas células editáveis quando o modo estiver ativo */
-body.modo-mesclar-ativo #cronograma-table .editable {
+body.modo-mesclar-ativo #cronograma-table .editable,
+body.modo-mesclar-ativo #tabela-despesas-unica .editable {
     cursor: pointer !important;
     outline: 2px dashed #6f42c1 !important;
     background-color: #f8f5fc;
@@ -687,4 +688,104 @@ body.modo-mesclar-ativo #cronograma-table .editable {
 .celula-selecionada-mescla {
     background-color: #e2d9f3 !important;
     outline: 3px solid #6f42c1 !important;
+}
+/* Estilos do Modal de Seleção de Códigos */
+.modal-codigos-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-codigos-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 480px;
+    max-width: 90%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-family: sans-serif;
+}
+
+.modal-codigos-content h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+}
+
+.lista-codigos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 15px 0;
+    padding-right: 5px;
+}
+
+.btn-opcao-codigo {
+    background: #f8f9fa;
+    border: 1px solid #ced4da;
+    padding: 10px 12px;
+    text-align: left;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: background 0.2s;
+}
+
+.btn-opcao-codigo:hover {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.btn-opcao-codigo:hover .codigo-destaque {
+    color: #fff;
+}
+
+.btn-opcao-codigo:hover .descricao-destaque {
+    color: #e2e8f0;
+}
+
+.codigo-destaque {
+    font-weight: bold;
+    font-size: 14px;
+    color: #0056b3;
+}
+
+.descricao-destaque {
+    font-size: 12px;
+    color: #666;
+}
+
+.btn-fechar-modal-codigos {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+    font-size: 13px;
+}
+/* REMOVE FUNDO BRANCO E BORDA DOS INPUTS NAS TABELAS DE DESPESAS */
+#tabela-despesas-unica input.input-codigo-despesa,
+#tabela-despesas-unica input.money-input-despesa,
+#tabela-despesas-unica input[type="text"] {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }

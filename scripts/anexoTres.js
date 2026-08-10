@@ -51,6 +51,15 @@ document.addEventListener('change', function (event) {
     }
 });
 
+// BLOQUEIO DE FORMATAÇÃO E IMAGENS AO COLAR EM CÉLULAS EDITÁVEIS
+document.addEventListener('paste', function(event) {
+    if (event.target.classList.contains('editable')) {
+        event.preventDefault(); 
+        let textoPuro = (event.clipboardData || window.clipboardData).getData('text');
+        document.execCommand('insertText', false, textoPuro);
+    }
+});
+
 
 // ============================================================
 // 2. FUNÇÕES DE AJUSTE DE ALTURA PARA IMPRESSÃO
@@ -138,64 +147,121 @@ function calcularIdades() {
 
 
 // ============================================================
-// 4. MOTOR DE PERSISTÊNCIA (BACKUP JSON E LOCALSTORAGE)
+// 4. MOTOR DE PERSISTÊNCIA ESTRUTURADA (CHAVE-VALOR E TABELAS)
 // ============================================================
 
 function capturarDadosEstruturados() {
-    const backup = {
-        inputsFixos: [],
-        selectsFixos: [],
-        textareasFixas: [],
-        tbodyQuadroLogicoHtml: document.querySelector('#tabela-quadro-logico tbody') ? document.querySelector('#tabela-quadro-logico tbody').innerHTML : ''
+    const dadosFormulario = {};
+
+    // 1. Captura todos os inputs, selects e textareas que possuem ID
+    document.querySelectorAll("body input[id], body select[id], body textarea[id]").forEach(el => {
+        if (el.id) {
+            dadosFormulario[el.id] = el.value;
+        }
+    });
+
+    // 2. Captura Quadro Lógico (Item 24)
+    const dadosQuadroLogico = [];
+    document.querySelectorAll('#tabela-quadro-logico tbody tr').forEach(tr => {
+        const edits = tr.querySelectorAll('.editable');
+        if (edits.length >= 5) {
+            dadosQuadroLogico.push({
+                intervencao: edits[0].innerHTML,
+                indicadores: edits[1].innerHTML,
+                meios: edits[2].innerHTML,
+                prazo: edits[3].innerHTML,
+                responsavel: edits[4].innerHTML
+            });
+        }
+    });
+
+    // 3. Captura Entidades Parceiras (Item 23)
+    const dadosEntidadesParceiras = [];
+    document.querySelectorAll('#tabela-entidades-parceiras tbody tr').forEach(tr => {
+        const edits = tr.querySelectorAll('.editable');
+        const cnpjInput = tr.querySelector('.cnpj-input');
+        dadosEntidadesParceiras.push({
+            razaoSocial: edits[0] ? edits[0].innerHTML : '',
+            cnpj: cnpjInput ? cnpjInput.value : '',
+            tipoApoio: edits[1] ? edits[1].innerHTML : ''
+        });
+    });
+
+    // 4. Captura Cronograma de Atividades (Item 25)
+    const dadosCronograma = [];
+    document.querySelectorAll('#tabela-cronograma tbody tr').forEach(tr => {
+        const textarea = tr.querySelector('textarea');
+        const inputsMes = tr.querySelectorAll('.input-mes');
+        const mesesValores = Array.from(inputsMes).map(inp => inp.value);
+        dadosCronograma.push({
+            atividade: textarea ? textarea.value : '',
+            meses: mesesValores
+        });
+    });
+
+    return {
+        camposFixos: dadosFormulario,
+        quadroLogico: dadosQuadroLogico,
+        entidadesParceiras: dadosEntidadesParceiras,
+        cronograma: dadosCronograma
     };
-
-    document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']").forEach((el, index) => {
-        backup.inputsFixos.push({ index: index, value: el.value });
-    });
-
-    document.querySelectorAll("body select").forEach((el, index) => {
-        backup.selectsFixos.push({ index: index, value: el.value });
-    });
-
-    document.querySelectorAll("body textarea").forEach((el, index) => {
-        backup.textareasFixas.push({ index: index, value: el.value });
-    });
-
-    return backup;
 }
 
 function aplicarDadosEstruturados(dados) {
     if (!dados) return;
 
-    if (dados.tbodyQuadroLogicoHtml && document.querySelector('#tabela-quadro-logico tbody')) {
-        document.querySelector('#tabela-quadro-logico tbody').innerHTML = dados.tbodyQuadroLogicoHtml;
+    // 1. Restaura campos fixos por ID
+    if (dados.camposFixos) {
+        for (const [id, valor] of Object.entries(dados.camposFixos)) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = valor;
+            }
+        }
     }
 
-    if (dados.inputsFixos && Array.isArray(dados.inputsFixos)) {
-        const inputsAtuais = document.querySelectorAll("body input[type='text'], body input[type='number'], body input[type='email']");
-        dados.inputsFixos.forEach(item => {
-            if (inputsAtuais[item.index]) {
-                inputsAtuais[item.index].value = item.value;
-            }
-        });
+    // 2. Restaura Quadro Lógico
+    if (dados.quadroLogico && Array.isArray(dados.quadroLogico)) {
+        const tbody = document.querySelector('#tabela-quadro-logico tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            dados.quadroLogico.forEach(item => {
+                adicionarLinhaQuadroLogico([
+                    item.intervencao,
+                    item.indicadores,
+                    item.meios,
+                    item.prazo,
+                    item.responsavel
+                ]);
+            });
+        }
     }
 
-    if (dados.selectsFixos && Array.isArray(dados.selectsFixos)) {
-        const selectsAtuais = document.querySelectorAll("body select");
-        dados.selectsFixos.forEach(item => {
-            if (selectsAtuais[item.index]) {
-                selectsAtuais[item.index].value = item.value;
-            }
-        });
+    // 3. Restaura Entidades Parceiras
+    if (dados.entidadesParceiras && Array.isArray(dados.entidadesParceiras)) {
+        const tbody = document.querySelector('#tabela-entidades-parceiras tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            dados.entidadesParceiras.forEach(item => {
+                adicionarLinhaEntidadeParceira([
+                    item.razaoSocial,
+                    item.cnpj,
+                    item.tipoApoio
+                ]);
+            });
+        }
     }
 
-    if (dados.textareasFixas && Array.isArray(dados.textareasFixas)) {
-        const textareasAtuais = document.querySelectorAll("body textarea");
-        dados.textareasFixas.forEach(item => {
-            if (textareasAtuais[item.index]) {
-                textareasAtuais[item.index].value = item.value;
-            }
-        });
+    // 4. Restaura Cronograma
+    if (dados.cronograma && Array.isArray(dados.cronograma)) {
+        const tbody = document.querySelector('#tabela-cronograma tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            dados.cronograma.forEach(item => {
+                const valoresLinha = [item.atividade, ...item.meses];
+                adicionarLinhaCronograma(valoresLinha);
+            });
+        }
     }
 
     calcularTotalPublico();
@@ -205,11 +271,11 @@ function aplicarDadosEstruturados(dados) {
 
 function salvarFormularioAuto() {
     const dados = capturarDadosEstruturados();
-    localStorage.setItem("AnexoTresFDID_v1", JSON.stringify(dados));
+    localStorage.setItem("AnexoTresFDID_v2", JSON.stringify(dados));
 }
 
 function carregarFormularioAuto() {
-    const localData = localStorage.getItem("AnexoTresFDID_v1");
+    const localData = localStorage.getItem("AnexoTresFDID_v2");
     if (localData) {
         try {
             const dados = JSON.parse(localData);
@@ -257,7 +323,7 @@ function importarBackup(input) {
 
 function novoPlano() {
     if (confirm("Atenção: Deseja limpar todas as informações preenchidas neste formulário?")) {
-        localStorage.removeItem("AnexoTresFDID_v1");
+        localStorage.removeItem("AnexoTresFDID_v2");
         window.location.reload();
     }
 }

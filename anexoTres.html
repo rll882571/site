@@ -133,7 +133,7 @@
                         <p class="box-instruction">Descreva de forma sintética e objetiva a sua proposta: Qual tema ou problema quer enfrentar por meio deste Projeto e quais os benefícios para o público alvo.</p>
                         <div class="box-limit">Número de caracteres permitidos: 3.400</div>
                     </div>
-                    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: A presente proposta de projeto busca melhorar as condições de vida das mulheres negras do Bairro do Jangurussu, que se encontram ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                    <textarea id="detalhes-sintese" class="auto-grow" rows="5" placeholder="(Exemplo: A presente proposta de projeto busca melhorar as condições de vida das mulheres negras do Bairro do Jangurussu, que se encontram ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
 
                 <div class="textarea-box" style="border-top: none;">
@@ -142,7 +142,7 @@
                         <p class="box-instruction">Fale da sua entidade: Breve histórico e que tipo de trabalho desenvolve.</p>
                         <div class="box-limit">Número de caracteres permitidos: 3.400</div>
                     </div>
-                    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: A associação X, foi criada em XXXX e atua no bairro do Jangurussu há X anos focando suas atividades... Possui uma sede que dispõe de ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                    <textarea id="detalhes-entidade" class="auto-grow" rows="5" placeholder="(Exemplo: A associação X, foi criada em XXXX e atua no bairro do Jangurussu há X anos focando suas atividades... Possui uma sede que dispõe de ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
 
                 <div class="textarea-box" style="border-top: none;">
@@ -151,7 +151,7 @@
                         <p class="box-instruction">Descreva o contexto, a realidade em que o Projeto vai atuar. Foque nos pontos que serão trabalhados <u>especificamente</u> nesta proposta de Projeto.</p>
                         <div class="box-limit">Número de caracteres permitidos: 3.400</div>
                     </div>
-                    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: O Jangurussu, bairro da cidade de Fortaleza, conforme dados do IBGE, tem baixo Índice de Desenvolvimento Humano - IDH, onde o abandono escolar, especialmente entre as adolescentes de sexo feminino de X% e, infelizmente, este índice aumenta entre a população negra ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                    <textarea id="detalhes-contexto" class="auto-grow" rows="5" placeholder="(Exemplo: O Jangurussu, bairro da cidade de Fortaleza, conforme dados do IBGE, tem baixo Índice de Desenvolvimento Humano - IDH, onde o abandono escolar, especialmente entre as adolescentes de sexo feminino de X% e, infelizmente, este índice aumenta entre a população negra ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
             </div>
 
@@ -167,7 +167,7 @@
                         </p>
                         <div class="box-limit">Número de caracteres permitidos: 3.400</div>
                     </div>
-                    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: As beneficiárias do projeto &quot;Mulheres Empoderadas do Jangurussu&quot; são 30 mulheres negras, entre 18 e 35 anos de Idade, com ensino básico incompleto ou ensino médio incompleto, que não possuem de trabalho formal ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                    <textarea id="publico-direto-desc" class="auto-grow" rows="5" placeholder="(Exemplo: As beneficiárias do projeto &quot;Mulheres Empoderadas do Jangurussu&quot; são 30 mulheres negras, entre 18 e 35 anos de Idade, com ensino básico incompleto ou ensino médio incompleto, que não possuem de trabalho formal ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
 
                 <div class="textarea-box" style="border-top: 1px solid var(--border-dark);">
@@ -179,19 +179,19 @@
                         <tbody>
                             <tr>
                                 <td class="label-tabela">Feminino</td>
-                                <td class="input-tabela"><input type="number" class="soma-publico" min="0" value="0"></td>
+                                <td class="input-tabela"><input type="number" id="publico-fem" class="soma-publico" min="0" value="0"></td>
                             </tr>
                             <tr>
                                 <td class="label-tabela">Masculino</td>
-                                <td class="input-tabela"><input type="number" class="soma-publico" min="0" value="0"></td>
+                                <td class="input-tabela"><input type="number" id="publico-masc" class="soma-publico" min="0" value="0"></td>
                             </tr>
                             <tr>
                                 <td class="label-tabela">LGBTQIA+</td>
-                                <td class="input-tabela"><input type="number" class="soma-publico" min="0" value="0"></td>
+                                <td class="input-tabela"><input type="number" id="publico-lgbt" class="soma-publico" min="0" value="0"></td>
                             </tr>
                             <tr>
                                 <td class="label-tabela">Não Informado</td>
-                                <td class="input-tabela"><input type="number" class="soma-publico" min="0" value="0"></td>
+                                <td class="input-tabela"><input type="number" id="publico-ni" class="soma-publico" min="0" value="0"></td>
                             </tr>
                             <tr class="total-row-publico">
                                 <td class="label-tabela"><strong>Total</strong></td>
@@ -239,22 +239,22 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-fem-0" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-fem-1" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-fem-2" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-fem-3" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-fem-4" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-fem-5" class="soma-idade idade-fem" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-fem-6" class="soma-idade idade-fem" value="0" min="0"></td>
                                     <td class="res-total" id="total-fem">0</td>
 
-                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-masc-0" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-masc-1" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-masc-2" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-masc-3" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-masc-4" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-masc-5" class="soma-idade idade-masc" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-masc-6" class="soma-idade idade-masc" value="0" min="0"></td>
                                     <td class="res-total" id="total-masc">0</td>
 
                                     <td class="res-subtotal" id="subtotal-1">0</td>
@@ -292,22 +292,22 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-lgbt-0" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-lgbt-1" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-lgbt-2" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-lgbt-3" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-lgbt-4" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-lgbt-5" class="soma-idade idade-lgbt" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-lgbt-6" class="soma-idade idade-lgbt" value="0" min="0"></td>
                                     <td class="res-total" id="total-lgbt">0</td>
 
-                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
-                                    <td><input type="number" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-ni-0" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-ni-1" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-ni-2" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-ni-3" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-ni-4" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-ni-5" class="soma-idade idade-ni" value="0" min="0"></td>
+                                    <td><input type="number" id="idade-ni-6" class="soma-idade idade-ni" value="0" min="0"></td>
                                     <td class="res-total" id="total-ni">0</td>
 
                                     <td class="res-subtotal" id="subtotal-2">0</td>
@@ -335,7 +335,7 @@
                         </p>
                         <div class="box-limit">Número de caracteres permitidos: 1.700</div>
                     </div>
-                    <textarea class="auto-grow" rows="4" placeholder="(Exemplo: A maioria das beneficiárias diretas do projeto são mãe solteiras com, em média, dois filhos ... Além disso, a comunidade onde serão implementadas as atividades terão um beneficio indireto considerando que ...)&#10;(São permitidas até 45 linhas, ou seja, 1.700 caracteres!)"></textarea>
+                    <textarea id="beneficiarios-indiretos" class="auto-grow" rows="4" placeholder="(Exemplo: A maioria das beneficiárias diretas do projeto são mãe solteiras com, em média, dois filhos ... Além disso, a comunidade onde serão implementadas as atividades terão um beneficio indireto considerando que ...)&#10;(São permitidas até 45 linhas, ou seja, 1.700 caracteres!)"></textarea>
                 </div>
 
                 <!-- CAMPO 21 -->
@@ -345,7 +345,7 @@
                             <div class="box-title"><span class="num">21</span> A COMUNIDADE vai participar da GESTÃO do Projeto? <small>(quando possível, indicar o número de pessoas da comunidade)</small></div>
                             <div class="select-inline-box">
                                 <span>Sim/Não</span>
-                                <select class="select-sim-nao">
+                                <select id="comunidade-gestao-select" class="select-sim-nao">
                                     <option value="Sim" selected>Sim</option>
                                     <option value="Não">Não</option>
                                 </select>
@@ -354,7 +354,7 @@
                         <p class="box-instruction" style="margin-top: 6px;">Se sim, explique como se dará especificamente e concretamente essa participação nas diferentes fases do Projeto.</p>
                         <div class="box-limit">Número de caracteres permitidos: 3.400</div>
                     </div>
-                    <textarea class="auto-grow" rows="5" placeholder="(Exemplo: A comunidade participará indiretamente das ações por meio do processo de repasse de conhecimento organizando oficinas de X ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                    <textarea id="comunidade-gestao-desc" class="auto-grow" rows="5" placeholder="(Exemplo: A comunidade participará indiretamente das ações por meio do processo de repasse de conhecimento organizando oficinas de X ...)&#10;(São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
 
                 <!-- CAMPO 22 -->
@@ -369,7 +369,7 @@
                             <tr>
                                 <td class="col-parceria-desc">1- Técnicas (cooperação para uso de tecnologias, conhecimentos, metodologias etc.)</td>
                                 <td class="col-parceria-opt">
-                                    <select class="select-sim-nao">
+                                    <select id="parceria-tecnica" class="select-sim-nao">
                                         <option value="Sim" selected>Sim</option>
                                         <option value="Não">Não</option>
                                     </select>
@@ -378,7 +378,7 @@
                             <tr>
                                 <td class="col-parceria-desc">2- Em recursos humanos (uso de funcionários cedidos por outras organizações, inclusive públicas)</td>
                                 <td class="col-parceria-opt">
-                                    <select class="select-sim-nao">
+                                    <select id="parceria-rh" class="select-sim-nao">
                                         <option value="Sim" selected>Sim</option>
                                         <option value="Não">Não</option>
                                     </select>
@@ -387,7 +387,7 @@
                             <tr>
                                 <td class="col-parceria-desc">3- Para uso de recursos materiais (estrutura, salas, prédios, veículos etc.)</td>
                                 <td class="col-parceria-opt">
-                                    <select class="select-sim-nao">
+                                    <select id="parceria-materiais" class="select-sim-nao">
                                         <option value="Sim" selected>Sim</option>
                                         <option value="Não">Não</option>
                                     </select>
@@ -396,7 +396,7 @@
                             <tr>
                                 <td class="col-parceria-desc">4- Outras parcerias</td>
                                 <td class="col-parceria-opt">
-                                    <select class="select-sim-nao">
+                                    <select id="parceria-outras" class="select-sim-nao">
                                         <option value="Sim">Sim</option>
                                         <option value="Não" selected>Não</option>
                                     </select>
@@ -438,7 +438,7 @@
     <div class="cell col-12" style="margin-top: 10px; padding: 0;">
         <label style="font-weight: normal; font-size: 10px; font-family: 'Times New Roman', Times, serif;">Área para comentários (opcional).</label>
         <div class="box-limit">Número de caracteres permitidos: 1.070</div>
-        <textarea class="auto-grow textarea-projeto" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
+        <textarea id="comentarios-parcerias" class="auto-grow textarea-projeto" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
     </div>
 </div>
 
@@ -603,7 +603,7 @@
 
                         <div class="redes-contador-container">
                             <span class="label-redes-num">Nº</span>
-                            <input type="number" class="input-redes-num" min="0" value="0">
+                            <input type="number" id="num-redes" class="input-redes-num" min="0" value="0">
                         </div>
 
                         <p class="box-instruction" style="margin-top: 10px;">
@@ -612,7 +612,7 @@
                         <div class="box-limit">Número de caracteres permitidos: 3.400</div>
                     </div>
 
-                    <textarea class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                    <textarea id="redes-comentario" class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
 
                 <!-- CAMPO 27 -->
@@ -622,7 +622,7 @@
                             <div class="box-title"><span class="num">27</span> O Projeto é integrado na implementação de algumas POLÍTICAS PÚBLICAS?</div>
                             <div class="select-inline-box">
                                 <span>Sim/Não</span>
-                                <select class="select-sim-nao">
+                                <select id="politicas-publicas-select" class="select-sim-nao">
                                     <option value="Sim">Sim</option>
                                     <option value="Não" selected>Não</option>
                                 </select>
@@ -634,7 +634,7 @@
                         <p class="box-instruction">Se sim, indique de qual Política Pública se trata e comente de que forma se dará esta integração/implementação:</p>
                         <div class="box-limit">Número de caracteres permitidos: 3.400</div>
                     </div>
-                    <textarea class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                    <textarea id="politicas-publicas-desc" class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
 
                 <!-- CAMPO 28 -->
@@ -647,7 +647,7 @@
                         <p class="box-instruction">Se sim, descreva abaixo como se dará a SUSTENTABILIDADE do Projeto:</p>
                         <div class="box-limit">Número de caracteres permitidos: 3.400</div>
                     </div>
-                    <textarea class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
+                    <textarea id="sustentabilidade-desc" class="auto-grow" rows="5" placeholder="(escrever aqui. São permitidas até 45 linhas, ou seja, 3.400 caracteres!)"></textarea>
                 </div>
             </div>
 
@@ -661,7 +661,7 @@
                         <div class="box-title"><span class="num">29</span> Caso ache necessário, acrescentar aqui o que não foi possível informar nos outro campos do formulário acerca da sua proposta de Projeto.</div>
                         <div class="box-limit" style="margin-top: 4px;">Número de caracteres permitidos: 1.070</div>
                     </div>
-                    <textarea class="auto-grow" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
+                    <textarea id="consideracoes-finais" class="auto-grow" rows="3" placeholder="(escrever aqui. São permitidas até 08 linhas, ou seja, 1.070 caracteres!)"></textarea>
                 </div>
 
                 <!-- TABELA FINAL: CAMPOS 30 E 31 -->
@@ -671,16 +671,16 @@
                             <td class="col-label" style="width: 38%;"><span class="num">30</span> Data de preenchimento do formulário:</td>
                             <td class="col-input">
                                 <div class="date-group">
-                                    <input type="text" class="center-text width-day" placeholder="30">
-                                    <input type="text" class="center-text width-month" placeholder="Janeiro">
-                                    <input type="text" class="center-text width-year" placeholder="2021">
+                                    <input type="text" id="preenchimento-dia" class="center-text width-day" placeholder="30">
+                                    <input type="text" id="preenchimento-mes" class="center-text width-month" placeholder="Janeiro">
+                                    <input type="text" id="preenchimento-ano" class="center-text width-year" placeholder="2021">
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td class="col-label"><span class="num">31</span> Nome completo do(a) responsável pelo preenchimento do formulário:</td>
                             <td class="col-input">
-                                <input type="text" class="italic-placeholder" placeholder="(digitar aqui o nome completo)">
+                                <input type="text" id="preenchimento-responsavel" class="italic-placeholder" placeholder="(digitar aqui o nome completo)">
                             </td>
                         </tr>
                     </tbody>

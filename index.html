@@ -11,16 +11,19 @@
   <div class="export-container no-print">
     <button onclick="verificarAntesDeImprimir()" class="btn-pdf">📄 Gerar PDF do Plano de Trabalho</button>
     
-    <button onclick="exportarBackup()" style="background-color: #007bff; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">💾 Salvar Backup (JSON)</button>
+    <button type="button" class="btn-sql" onclick="exportarBackup()" style="background-color: #6f42c1; color: #ffffff; border: none; padding: 10px; cursor: pointer; border-radius: 4px; font-weight: bold;">
+    💾 Salvar Backup
+</button>
     
-    <button onclick="document.getElementById('import-file').click()" style="background-color: #ffc107; color: #212529; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">📂 Abrir Backup</button>
-    <button onclick="novoPlano()" style="background-color: #dc3545; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; margin-left: 5px;">🗑️ Novo Plano</button>
-    
-    <!-- NOVO BOTÃO DE MESCLAR E DESFAZER -->
-<button type="button" id="btn-modo-mesclar" onclick="alternarModoMesclar()">🔗 Mesclar Células</button>
-<button type="button" id="btn-desfazer-mescla" onclick="desfazerUltimaMesclagem()" style="background-color: #6c757d; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">↩️ Desfazer Mesclagem</button>
-    
+    <!-- BOTÃO E INPUT PARA ABRIR BACKUP ANTIGO -->
+    <button onclick="document.getElementById('import-file').click()" style="background-color: #ffc107; color: #212529; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">📂 Abrir Backup</button>
     <input type="file" id="import-file" accept=".json" onchange="importarBackup(this)" style="display: none;">
+
+    <button onclick="novoPlano()" style="background-color: #dc3545; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">🗑️ Novo Plano</button>
+    
+    <!-- BOTÕES DE MESCLAGEM -->
+    <button type="button" id="btn-modo-mesclar" onclick="alternarModoMesclar()">🔗 Mesclar Células</button>
+    <button type="button" id="btn-desfazer-mescla" onclick="desfazerUltimaMesclagem()" style="background-color: #6c757d; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">↩️ Desfazer Mesclagem</button>
   </div>
 <!-- 2. CABEÇARIO -->
     <div class="a4-page">
@@ -223,13 +226,13 @@
             <div class="value-input">R$: <input type="text" id="resumo-concedente" class="money-input-budget bold-text" readonly placeholder="0,00"></div>
         </div>
         <div class="budget-row">
-            <span class="label">Despesas Correntes:</span>
-            <div class="value-input">R$: <input type="text" class="money-input-budget" placeholder="0,00"></div>
-        </div>
-        <div class="budget-row">
-            <span class="label">Despesas de Capital:</span>
-            <div class="value-input">R$: <input type="text" class="money-input-budget" placeholder="0,00"></div>
-        </div>
+    <span class="label">Despesas Correntes:</span>
+    <div class="value-input">R$: <input type="text" id="resumo-despesas-correntes" class="money-input-budget" placeholder="0,00"></div>
+</div>
+<div class="budget-row">
+    <span class="label">Despesas de Capital:</span>
+    <div class="value-input">R$: <input type="text" id="resumo-despesas-capital" class="money-input-budget" placeholder="0,00"></div>
+</div>
 
         <div class="budget-row header-row">
             <span class="label">3.2 – PROPONENTE/VALOR (opcional)</span>
@@ -565,8 +568,18 @@
     </div>
   </div>
 </div>
+
+<!-- SCRIPTS MODULARIZADOS -->
 <script src="scripts/config.js"></script>
+<script src="scripts/constants.js"></script>
+<script src="scripts/masks.js"></script>
+<script src="js/sql-generator.js"></script>
+<script src="scripts/budget.js"></script>
+<script src="scripts/storage.js"></script>
+<script src="scripts/modals.js"></script>
 <script src="scripts/script.js"></script>
+
+<!-- EMAILJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
 </body>
