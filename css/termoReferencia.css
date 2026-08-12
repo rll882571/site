@@ -119,15 +119,13 @@ body {
     background: transparent;
 }
 
-/* Campos de Valor (R$: coladinho no valor, sem caixas/linhas) */
+/* Bloco de Moeda Preciso (R$ alinhado à esquerda da célula e número grudado à direita) */
 .currency-line {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 6px;
-    margin-top: 4px;
-    padding-top: 2px;
-    border-top: none;
+    justify-content: space-between; /* Joga o R$ para a esquerda e o número para a direita da célula */
+    width: 100%;
+    padding: 0 4px;
 }
 
 .currency-symbol {
@@ -135,14 +133,17 @@ body {
     white-space: nowrap;
 }
 
-.currency-line input {
-    text-align: left !important;
-    width: 80px;
-    border: none;
+.currency-line input,
+.budget-table .currency-cotacao,
+.media-value input,
+.media-external-value input {
+    text-align: right !important;
+    border: none !important;
     outline: none;
     font-family: "Times New Roman", Times, serif;
     font-size: 10.5px;
-    background: transparent;
+    background: transparent !important;
+    width: 70px;
 }
 
 /* ============================================================
@@ -311,36 +312,33 @@ textarea.auto-grow::placeholder {
 }
 
 /* ============================================================
-   6. LINHA DA MÉDIA (COMPACTADA)
+   6. LINHA DA MÉDIA (CORRIGIDA)
    ============================================================ */
-
-
-
 
 .media-label {
     text-align: center;
     font-weight: bold;
-   
     padding-right: 8px;
 }
 
 .media-value {
-    text-align: center;
+    text-align: right;
+    padding-right: 8px;
     border: 1px solid var(--border-dark) !important;
 }
 
 .media-value .currency-line {
-    display: flex;
-    justify-content: center;
+    display: inline-flex;
+    justify-content: flex-start;
     align-items: center;
     gap: 4px;
+    width: auto;
 }
 
 .media-value input {
-    width: 80px;
-    text-align: center;
+    width: 50px;
+    text-align: right;
 }
-
 /* ============================================================
    BLOCO DA MÉDIA FORA DA TABELA
    ============================================================ */
@@ -351,11 +349,11 @@ textarea.auto-grow::placeholder {
     border-right: 1.5px solid var(--border-dark);
     border-bottom: 1.5px solid var(--border-dark);
     border-left: 1.5px solid var(--border-dark);
-    margin-top: -1px; /* Gruda perfeitamente na tabela acima */
+    margin-top: -1px;
 }
 
 .media-external-label {
-    width: 17%; /* Mesma largura da coluna Telefone */
+    width: 17%;
     padding: 1px;
     font-weight: bold;
     text-align: right;
@@ -367,7 +365,7 @@ textarea.auto-grow::placeholder {
 }
 
 .media-external-value {
-    width: 18%; /* Mesma largura da coluna Cotação (R$) */
+    width: 18%;
     padding: 6px;
     text-align: center;
     font-size: 10.5px;

@@ -1,5 +1,5 @@
 // ============================================================
-// 1. MOTOR DE EVENTOS GLOBAIS (script.js)
+// 1. MOTOR DE EVENTOS GLOBAIS (script.js)...
 // ============================================================
 document.addEventListener('input', function (event) {
     const target = event.target;
@@ -267,6 +267,7 @@ function resetarModoMesclar() {
     }
 }
 
+// LISTENER DE CLIQUE PARA AS CÉLULAS (CRONOGRAMA E TABELA DE DESPESAS)
 document.addEventListener('click', function(e) {
     if (!modoMesclarAtivo) return;
     
@@ -308,6 +309,7 @@ function executarMesclagemSelecao() {
         return;
     }
 
+    // Ordena as células pela ordem das linhas na tabela
     celulasSelecionadas.sort((a, b) => a.parentElement.rowIndex - b.parentElement.rowIndex);
 
     const primeiraCelula = celulasSelecionadas[0];
@@ -320,46 +322,50 @@ function executarMesclagemSelecao() {
     });
 
     let totalRowspan = 0;
-    let textoAcumulado = '';
+    
+    // Pega APENAS o valor da primeira célula para manter igual, sem juntar textos
+    const divPrimeira = primeiraCelula.querySelector('.editable');
+    const inputPrimeira = primeiraCelula.querySelector('input');
+    let valorPrincipal = '';
+
+    if (divPrimeira) {
+        valorPrincipal = divPrimeira.innerText.trim();
+    } else if (inputPrimeira) {
+        valorPrincipal = inputPrimeira.value.trim();
+    } else {
+        valorPrincipal = primeiraCelula.innerText.trim();
+    }
 
     celulasSelecionadas.forEach((td, index) => {
         const rSpan = parseInt(td.getAttribute('rowspan') || 1, 10);
         totalRowspan += rSpan;
 
-        const divEditable = td.querySelector('.editable');
-        const inputField = td.querySelector('input');
-        
-        let txt = '';
-        if (divEditable) {
-            txt = divEditable.innerText.trim();
-        } else if (inputField) {
-            txt = inputField.value.trim();
-        } else {
-            txt = td.innerText.trim();
-        }
-
-        if (txt) {
-            textoAcumulado += (textoAcumulado ? '\n' : '') + txt;
-        }
-
+        // Remove as células excedentes que foram mescladas
         if (index > 0) {
             td.remove();
         }
     });
 
+    // Aplica o rowspan unificado na primeira célula
     primeiraCelula.setAttribute('rowspan', totalRowspan);
     
+    // Reaplica o valor único original em vez de somar/concatenar
     const divPrincipal = primeiraCelula.querySelector('.editable');
     const inputPrincipal = primeiraCelula.querySelector('input');
 
     if (divPrincipal) {
-        divPrincipal.innerText = textoAcumulado;
+        divPrincipal.innerText = valorPrincipal;
     } else if (inputPrincipal) {
-        inputPrincipal.value = textoAcumulado;
+        inputPrincipal.value = valorPrincipal;
     }
 
     resetarModoMesclar();
     salvarFormularioAuto();
+    
+    // Se for a tabela de despesas ou orçamento, recalcula os totais
+    if (typeof calcularTotaisTabelaDespesas === 'function') {
+        calcularTotaisTabelaDespesas();
+    }
 }
 
 function desfazerUltimaMesclagem() {

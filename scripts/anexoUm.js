@@ -12,7 +12,6 @@ document.addEventListener('input', function (event) {
 
     // B. MÁSCARAS E CÁLCULOS DE MOEDA (Seção 3 e 5)
     if (target.classList.contains('money-input-budget') || target.closest("#despesas-table")) {
-        // Se for na tabela de despesas, verificamos as colunas de valor
         if (target.closest("#despesas-table")) {
             const colIndex = target.parentElement.cellIndex;
             if (colIndex >= 5 && colIndex <= 7) {
@@ -20,7 +19,6 @@ document.addEventListener('input', function (event) {
                 calcularTotaisDespesas();
             }
         } else {
-            // Se for o resumo da seção 3
             maskMoney(target);
             calcularResumoOrcamento();
         }
@@ -28,16 +26,25 @@ document.addEventListener('input', function (event) {
 
     // C. PÚBLICO ALVO - INTEIROS E SOMA (Seção 18)
     if (target.classList.contains('soma-publico')) {
-        target.value = target.value.replace(/[^0-9]/g, ''); // Trava inteiros
+        target.value = target.value.replace(/[^0-9]/g, '');
         calcularTotalPublico();
     }
 
     // D. FAIXA ETÁRIA - INTEIROS E SOMA (Seção 19)
     if (target.classList.contains('soma-idade')) {
-        target.value = target.value.replace(/[^0-9]/g, ''); // Trava inteiros
+        target.value = target.value.replace(/[^0-9]/g, '');
         calcularIdades();
     }
+
+    // SALVAMENTO AUTOMÁTICO AO DIGITAR
+    salvarFormularioAuto();
 }, false);
+
+document.addEventListener('change', function (event) {
+    if (event.target.tagName === 'SELECT' || event.target.tagName === 'INPUT') {
+        salvarFormularioAuto();
+    }
+});
 
 // ============================================================
 // 2. FUNÇÕES DE APOIO (Moeda e Conversão)
@@ -64,14 +71,19 @@ function formatMoney(value) {
 // 3. LÓGICAS DE CÁLCULO ESPECÍFICAS
 // ============================================================
 
-// Cálculo da Seção 3.3
 function calcularResumoOrcamento() {
-    const vConcedente = parseMoney(document.getElementById('resumo-concedente').value);
-    const vProponente = parseMoney(document.getElementById('resumo-proponente').value);
-    document.getElementById('resumo-total-projeto').value = formatMoney(vConcedente + vProponente);
+    const elConcedente = document.getElementById('resumo-concedente');
+    const elProponente = document.getElementById('resumo-proponente');
+    const elTotal = document.getElementById('resumo-total-projeto');
+
+    const vConcedente = parseMoney(elConcedente ? elConcedente.value : '0');
+    const vProponente = parseMoney(elProponente ? elProponente.value : '0');
+    
+    if (elTotal) {
+        elTotal.value = formatMoney(vConcedente + vProponente);
+    }
 }
 
-// Cálculo da Seção 5 (Tabela de Despesas)
 function calcularTotaisDespesas() {
     let totalFin = 0, totalConc = 0, totalProp = 0;
     const rows = document.querySelectorAll("#despesas-table tbody tr");
@@ -93,7 +105,6 @@ function calcularTotaisDespesas() {
         document.getElementById("total-proponente").value = formatMoney(totalProp);
 }
 
-// Cálculo da Seção 18 (Público Geral)
 function calcularTotalPublico() {
     let total = 0;
     document.querySelectorAll('.soma-publico').forEach(input => {
@@ -103,7 +114,6 @@ function calcularTotalPublico() {
     if (el) el.innerText = total;
 }
 
-// Cálculo da Seção 19 (Tabela de Idades Complexa)
 function calcularIdades() {
     const somarGrupo = (classe) => {
         let soma = 0;
@@ -169,3 +179,117 @@ function removeRow(button) {
     row.parentNode.removeChild(row);
     calcularTotaisDespesas();
 }
+
+// ============================================================
+// 5. MOTOR DE PERSISTÊNCIA (Baseado em IDs Únicos)
+// ============================================================
+
+function capturarDadosEstruturados() {
+    const backup = {
+        camposPorId: {},
+        tbodyCronogramaHtml: document.querySelector('#cronograma-table tbody') ? document.querySelector('#cronograma-table tbody').innerHTML : '',
+        tbodyDespesasHtml: document.querySelector('#despesas-table tbody') ? document.querySelector('#despesas-table tbody').innerHTML : ''
+    };
+
+    // Varre todos os elementos que possuem ID único
+    const elementos = document.querySelectorAll("input[id], select[id], textarea[id]");
+    elementos.forEach(el => {
+        if (el.id) {
+            backup.camposPorId[el.id] = el.value;
+        }
+    });
+
+    return backup;
+}
+
+function aplicarDadosEstruturados(dados) {
+    if (!dados) return;
+
+    // Restaura campos por ID
+    if (dados.camposPorId) {
+        Object.entries(dados.camposPorId).forEach(([id, valor]) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = valor;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+    }
+
+    // Restaura tabelas dinâmicas se existirem
+    if (dados.tbodyCronogramaHtml) {
+        const cronoTbody = document.querySelector('#cronograma-table tbody');
+        if (cronoTbody) cronoTbody.innerHTML = dados.tbodyCronogramaHtml;
+    }
+
+    if (dados.tbodyDespesasHtml) {
+        const despTbody = document.querySelector('#despesas-table tbody');
+        if (despTbody) despTbody.innerHTML = dados.tbodyDespesasHtml;
+    }
+
+    calcularResumoOrcamento();
+    calcularTotaisDespesas();
+    calcularTotalPublico();
+    calcularIdades();
+}
+
+function salvarFormularioAuto() {
+    const dados = capturarDadosEstruturados();
+    localStorage.setItem("PlanoTrabalhoAnexo1_v2", JSON.stringify(dados));
+}
+
+function carregarFormularioAuto() {
+    const localData = localStorage.getItem("PlanoTrabalhoAnexo1_v2");
+    if (localData) {
+        try {
+            const dados = JSON.parse(localData);
+            aplicarDadosEstruturados(dados);
+        } catch (e) {
+            console.error("Erro ao carregar dados salvos do Anexo 1.", e);
+        }
+    }
+}
+
+function exportarBackup() {
+    const dados = capturarDadosEstruturados();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "Backup_Plano_Trabalho_Anexo1.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+function importarBackup(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const dados = JSON.parse(e.target.result);
+            aplicarDadosEstruturados(dados);
+            salvarFormularioAuto();
+            alert("Backup carregado com sucesso!");
+        } catch (err) {
+            alert("Erro ao ler o arquivo JSON.");
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
+}
+
+function novoPlano() {
+    if (confirm("Deseja limpar todos os dados preenchidos deste formulário?")) {
+        localStorage.removeItem("PlanoTrabalhoAnexo1_v2");
+        window.location.reload();
+    }
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+    carregarFormularioAuto();
+    calcularResumoOrcamento();
+    calcularTotaisDespesas();
+});

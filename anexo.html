@@ -63,7 +63,7 @@
                         <tr>
                             <td colspan="3" class="col-label" style="width: 100%;">
                                 <span class="num">1.1</span> Bens / Serviços:
-                                <textarea class="auto-grow input-table-textarea" rows="1" placeholder="(Exemplo: Aquisição de 01 Notebook para gestão do projeto...)"></textarea>
+                                <textarea id="tr-bens-servicos" class="auto-grow input-table-textarea" rows="1" placeholder="(Exemplo: Aquisição de 01 Notebook para gestão do projeto...)"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -71,34 +71,34 @@
                                 <span class="num">1.1.1</span> <span class="label-text">(Opcional) Recursos Contrapartida</span>
                                 <div class="currency-line">
                                     <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text center-text currency-contrapartida" placeholder="0,00">
+                                    <input type="text" id="tr-contrapartida" class="bold-text center-text currency-contrapartida" placeholder="0,00">
                                 </div>
                             </td>
                             <td class="col-label" style="width: 33%;">
                                 <span class="num">1.1.2</span> <span class="label-text">Recursos FDID:</span>
                                 <div class="currency-line">
                                     <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text center-text currency-fdid" placeholder="0,00">
+                                    <input type="text" id="tr-fdid" class="bold-text center-text currency-fdid" placeholder="0,00">
                                 </div>
                             </td>
                             <td class="col-label" style="width: 34%;">
                                 <span class="num">1.1.3</span> <span class="label-text">Valor Total:</span>
                                 <div class="currency-line">
                                     <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text center-text currency-total" placeholder="0,00" readonly>
+                                    <input type="text" id="tr-total" class="bold-text center-text currency-total" placeholder="0,00" readonly>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="3" class="col-label">
                                 <span class="num">1.1.4</span> Justificativa da aquisição do bem/serviço:
-                                <textarea class="auto-grow input-table-textarea" rows="3" placeholder="(Explique por que este bem ou serviço é essencial para o desenvolvimento das atividades...)"></textarea>
+                                <textarea id="tr-justificativa" class="auto-grow input-table-textarea" rows="3" placeholder="(Explique por que este bem ou serviço é essencial para o desenvolvimento das atividades...)"></textarea>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="3" class="col-label">
                                 <span class="num">1.1.5</span> Utilização do bem/serviço nas atividades/Tempo de uso:
-                                <textarea class="auto-grow input-table-textarea" rows="3" placeholder="(Descreva como será utilizado e por quanto tempo...)"></textarea>
+                                <textarea id="tr-utilizacao" class="auto-grow input-table-textarea" rows="3" placeholder="(Descreva como será utilizado e por quanto tempo...)"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -111,21 +111,21 @@
                                 Valor Contrapartida (C1):
                                 <div class="currency-line">
                                     <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text subtotal-c1" placeholder="0,00" readonly>
+                                    <input type="text" id="tr-sub-c1" class="bold-text subtotal-c1" placeholder="0,00" readonly>
                                 </div>
                             </td>
                             <td class="col-label" style="background-color: #fff;">
                                 Valor FDID:
                                 <div class="currency-line">
                                     <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text subtotal-fdid" placeholder="0,00" readonly>
+                                    <input type="text" id="tr-sub-fdid" class="bold-text subtotal-fdid" placeholder="0,00" readonly>
                                 </div>
                             </td>
                             <td class="col-label" style="background-color: #fff;">
                                 Valor Total:
                                 <div class="currency-line">
                                     <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text subtotal-geral" placeholder="0,00" readonly>
+                                    <input type="text" id="tr-sub-geral" class="bold-text subtotal-geral" placeholder="0,00" readonly>
                                 </div>
                             </td>
                         </tr>
@@ -137,103 +137,131 @@
             <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
                 <div class="box-title"><span class="num">2</span> ESPECIFICAÇÃO TÉCNICA</div>
                 <p class="box-instruction">Descreva detalhadamente as características técnicas, marcas de referência (se houver), modelo, potência, dimensões ou padrões exigidos para o bem ou serviço.</p>
-                <textarea class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: Processador i5, 8GB RAM, SSD 256GB, Tela 15.6 polegadas...)"></textarea>
+                <textarea id="tr-especificacao" class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: Processador i5, 8GB RAM, SSD 256GB, Tela 15.6 polegadas...)"></textarea>
             </div>
 
             <!-- SEÇÃO 3: REFERÊNCIA DE META E ETAPA NO PROJETO -->
             <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
                 <div class="box-title"><span class="num">3</span> REFERÊNCIA DE META E ETAPA NO PROJETO</div>
                 <p class="box-instruction">Indique a qual meta, resultado esperado ou etapa do projeto esta aquisição está vinculada.</p>
-                <textarea class="auto-grow input-table-textarea" rows="3" placeholder="(Exemplo: Vinculado ao Objetivo Específico 1, Resultado Esperado 2...)"></textarea>
+                <textarea id="tr-meta-etapa" class="auto-grow input-table-textarea" rows="3" placeholder="(Exemplo: Vinculado ao Objetivo Específico 1, Resultado Esperado 2...)"></textarea>
             </div>
 
             <!-- SEÇÃO 4: APLICAÇÃO DO BEM/SERVIÇO -->
             <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
                 <div class="box-title"><span class="num">4</span> APLICAÇÃO DO BEM/SERVIÇO NO PROJETO E APÓS VIGÊNCIA DO INSTRUMENTO LEGAL</div>
                 <p class="box-instruction">Explique a forma de aplicação durante a execução e qual será o destino/utilização do bem após o encerramento do projeto.</p>
-                <textarea class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: O equipamento continuará sendo utilizado pela associação nas atividades comunitárias...)"></textarea>
+                <textarea id="tr-aplicacao" class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: O equipamento continuará sendo utilizado pela associação nas atividades comunitárias...)"></textarea>
             </div>
 
             <!-- SEÇÃO 5: METODOLOGIA -->
             <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
                 <div class="box-title"><span class="num">5</span> METODOLOGIA</div>
                 <p class="box-instruction">Descreva a metodologia de seleção, cotação de preços ou forma de contratação/aquisição adotada.</p>
-                <textarea class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: Serão realizadas pelo menos 3 cotações de preços no mercado local...)"></textarea>
+                <textarea id="tr-metodologia" class="auto-grow input-table-textarea" rows="4" placeholder="(Exemplo: Serão realizadas pelo menos 3 cotações de preços no mercado local...)"></textarea>
             </div>
 
             <!-- SEÇÃO 6: RESPONSÁVEL PELO BEM/SERVIÇO -->
             <div class="form-table-container" style="margin-top: 20px; padding: 8px;">
                 <div class="box-title"><span class="num">6</span> RESPONSÁVEL PELO BEM/SERVIÇO</div>
                 <p class="box-instruction">Indique o nome, cargo e contato do responsável direto pela guarda, controle e gestão deste bem/serviço.</p>
-                <textarea class="auto-grow input-table-textarea" rows="3" placeholder="(Exemplo: João da Silva - Coordenador Administrativo...)"></textarea>
+                <textarea id="tr-responsavel" class="auto-grow input-table-textarea" rows="3" placeholder="(Exemplo: João da Silva - Coordenador Administrativo...)"></textarea>
             </div>
 
             <!-- SEÇÃO 7: ORÇAMENTO DETALHADO -->
             <div class="form-table-container" style="margin-top: 20px;">
-                <div class="table-header-title text-left" style="padding-left: 8px;">7. ORÇAMENTO DETALHADO (preços praticados no mercado)</div>
-                
-                <table class="form-table budget-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 8%; text-align: center;">Nº</th>
-                            <th style="width: 37%;">Empresa (nome)</th>
-                            <th style="width: 20%; text-align: center;">CNPJ</th>
-                            <th style="width: 17%; text-align: center;">Telefone</th>
-                            <th style="width: 18%; text-align: center;">Cotação (R$)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="text-center bold-text">1</td>
-                            <td><input type="text" class="input-table-clean" placeholder="Nome da empresa 1..."></td>
-                            <td><input type="text" class="input-table-clean center-text" placeholder="00.000.000/0000-00"></td>
-                            <td><input type="text" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
-                            <td>
-                                <div class="currency-line" style="justify-content: center;">
-                                    <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text currency-cotacao" placeholder="0,00" style="width: 80px;">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-center bold-text">2</td>
-                            <td><input type="text" class="input-table-clean" placeholder="Nome da empresa 2..."></td>
-                            <td><input type="text" class="input-table-clean center-text" placeholder="00.000.000/0000-00"></td>
-                            <td><input type="text" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
-                            <td>
-                                <div class="currency-line" style="justify-content: center;">
-                                    <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text currency-cotacao" placeholder="0,00" style="width: 80px;">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-center bold-text">3</td>
-                            <td><input type="text" class="input-table-clean" placeholder="Nome da empresa 3..."></td>
-                            <td><input type="text" class="input-table-clean center-text" placeholder="00.000.000/0000-00"></td>
-                            <td><input type="text" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
-                            <td>
-                                <div class="currency-line" style="justify-content: center;">
-                                    <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text currency-cotacao" placeholder="0,00" style="width: 80px;">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="media-row">
-                            <td colspan="4" class="media-label">
-                                <strong>Média</strong>
-                            </td>
-                            <td class="media-value">
-                                <div class="currency-line" style="justify-content: center;">
-                                    <span class="currency-symbol">R$:</span>
-                                    <input type="text" class="bold-text currency-media" readonly>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div class="table-header-title text-left" style="padding-left: 8px;">7. ORÇAMENTO DETALHADO (preços praticados no mercado)</div>
+    
+    <table class="form-table budget-table">
+        <thead>
+            <tr>
+                <th style="width: 8%; text-align: center;">Nº</th>
+                <th style="width: 42%;">Empresa (nome)</th>
+                <th style="width: 20%; text-align: center;">CNPJ</th>
+                <th style="width: 17%; text-align: center;">Telefone</th>
+                <th style="width: 13%; text-align: center;">Cotação (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center bold-text">1</td>
+                <td>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                        <input type="text" id="cot-empresa-1" class="input-table-clean" placeholder="Nome da empresa 1..." style="flex: 1;">
+                        <div class="no-print" style="white-space: nowrap;">
+                            <input type="file" id="file-cot-1" accept=".pdf,image/*" style="display: none;" onchange="tratarAnexo(this, 1)">
+                            <button type="button" onclick="document.getElementById('file-cot-1').click()" title="Anexar Orçamento" style="cursor: pointer; background: none; border: 1px solid #ccc; border-radius: 3px; padding: 1px 4px; font-size: 11px;">📎</button>
+                            <span id="view-cot-1" style="font-size: 9px; margin-left: 2px;"></span>
+                        </div>
+                    </div>
+                </td>
+                <td><input type="text" id="cot-cnpj-1" class="input-table-clean center-text input-cnpj" placeholder="00.000.000/0000-00" maxlength="18"></td>
+                <td><input type="text" id="cot-fone-1" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
+                <td>
+                    <div class="currency-line" style="justify-content: center;">
+                        <span class="currency-symbol">R$:</span>
+                        <input type="text" id="cot-valor-1" class="bold-text currency-cotacao" placeholder="0,00" style="width: 65px;">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center bold-text">2</td>
+                <td>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                        <input type="text" id="cot-empresa-2" class="input-table-clean" placeholder="Nome da empresa 2..." style="flex: 1;">
+                        <div class="no-print" style="white-space: nowrap;">
+                            <input type="file" id="file-cot-2" accept=".pdf,image/*" style="display: none;" onchange="tratarAnexo(this, 2)">
+                            <button type="button" onclick="document.getElementById('file-cot-2').click()" title="Anexar Orçamento" style="cursor: pointer; background: none; border: 1px solid #ccc; border-radius: 3px; padding: 1px 4px; font-size: 11px;">📎</button>
+                            <span id="view-cot-2" style="font-size: 9px; margin-left: 2px;"></span>
+                        </div>
+                    </div>
+                </td>
+                <td><input type="text" id="cot-cnpj-2" class="input-table-clean center-text input-cnpj" placeholder="00.000.000/0000-00" maxlength="18"></td>
+                <td><input type="text" id="cot-fone-2" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
+                <td>
+                    <div class="currency-line" style="justify-content: center;">
+                        <span class="currency-symbol">R$:</span>
+                        <input type="text" id="cot-valor-2" class="bold-text currency-cotacao" placeholder="0,00" style="width: 65px;">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center bold-text">3</td>
+                <td>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                        <input type="text" id="cot-empresa-3" class="input-table-clean" placeholder="Nome da empresa 3..." style="flex: 1;">
+                        <div class="no-print" style="white-space: nowrap;">
+                            <input type="file" id="file-cot-3" accept=".pdf,image/*" style="display: none;" onchange="tratarAnexo(this, 3)">
+                            <button type="button" onclick="document.getElementById('file-cot-3').click()" title="Anexar Orçamento" style="cursor: pointer; background: none; border: 1px solid #ccc; border-radius: 3px; padding: 1px 4px; font-size: 11px;">📎</button>
+                            <span id="view-cot-3" style="font-size: 9px; margin-left: 2px;"></span>
+                        </div>
+                    </div>
+                </td>
+                <td><input type="text" id="cot-cnpj-3" class="input-table-clean center-text input-cnpj" placeholder="00.000.000/0000-00" maxlength="18"></td>
+                <td><input type="text" id="cot-fone-3" class="input-table-clean center-text" placeholder="(00) 0000-0000"></td>
+                <td>
+                    <div class="currency-line" style="justify-content: center;">
+                        <span class="currency-symbol">R$:</span>
+                        <input type="text" id="cot-valor-3" class="bold-text currency-cotacao" placeholder="0,00" style="width: 65px;">
+                    </div>
+                </td>
+            </tr>
+            <tr class="media-row">
+                <td colspan="4" class="media-label">
+                    <strong>Média</strong>
+                </td>
+                <td class="media-value">
+                    <div class="currency-line" style="justify-content: center;">
+                        <span class="currency-symbol">R$:</span>
+                        <input type="text" id="cot-media-geral" class="bold-text currency-media" readonly>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
         </section>
+
         <!-- INSTRUÇÕES PARA PREENCHIMENTO -->
         <section class="form-section" style="margin-bottom: 20px; font-size: 10.5px; line-height: 1.4;">
             <div style="font-weight: bold; text-transform: uppercase; margin-bottom: 6px;">
