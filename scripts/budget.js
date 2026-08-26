@@ -114,30 +114,24 @@ function validarTotaisFormulario() {
     const despProponente = parseVal('total-projeto-propon');
     const despTotalGeral = parseVal('total-projeto-geral');
 
+    // 1. SOMA DINÂMICA DOS MESES DO CONCEDENTE (TÓPICO 4.2)
     let cronoConcedente = 0;
+    const inputsMesesConcedente = document.querySelectorAll('#tbody-desembolso-concedente-1 input.money-mask, #tbody-desembolso-concedente-2 input.money-mask');
+    inputsMesesConcedente.forEach(inp => {
+        const v = parseFloat(inp.value.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
+        cronoConcedente += v;
+    });
+
+    // 2. SOMA DOS MESES DA CONTRAPARTIDA / PROPONENTE (TÓPICO 4.3)
     let cronoProponente = 0;
-
-    const tabelasStatic = document.querySelectorAll('.form-section:has(h4) .static-table');
-    
-    if (tabelasStatic.length >= 2) {
-        [tabelasStatic[0], tabelasStatic[1]].forEach(tab => {
-            tab.querySelectorAll('tbody tr input[type="text"]').forEach((inp, idx) => {
-                if (idx > 0) {
-                    const v = parseFloat(inp.value.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
-                    cronoConcedente += v;
-                }
-            });
-        });
-    }
-
-    if (tabelasStatic.length >= 4) {
-        [tabelasStatic[2], tabelasStatic[3]].forEach(tab => {
-            tab.querySelectorAll('tbody tr input[type="text"]').forEach((inp, idx) => {
-                if (idx > 0) {
-                    const v = parseFloat(inp.value.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
-                    cronoProponente += v;
-                }
-            });
+    const secoes = document.querySelectorAll('.form-section');
+    if (secoes.length > 4) {
+        const secaoContrapartida = secoes[4];
+        secaoContrapartida.querySelectorAll('.static-table tbody tr input[type="text"]').forEach((inp, idx) => {
+            if (idx > 0) {
+                const v = parseFloat(inp.value.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
+                cronoProponente += v;
+            }
         });
     }
 
@@ -172,3 +166,17 @@ function validarTotaisFormulario() {
 
     return true;
 }
+
+// ============================================================
+// GATILHOS DE EVENTOS PARA OS CAMPOS DE ORÇAMENTO (TÓPICO 3)
+// ============================================================
+
+document.addEventListener('input', function (event) {
+    const target = event.target;
+
+    // Aplica máscara de moeda e recalcula o resumo do orçamento ao digitar
+    if (target.classList.contains('money-input-budget')) {
+        maskMoney(target);
+        calcularTotalOrcamentoResumo();
+    }
+});

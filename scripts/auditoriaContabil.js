@@ -5,20 +5,15 @@
 // Tabela Oficial de Referência Contábil para o Prompt da IA
 const TABELA_REFERENCIA_CONTABIL = [
     { codigo: "33390.04.00", nome: "Contratação por tempo determinado", tipo: "Corrente", desc: "Salário de pessoal temporário contratado por tempo determinado (ex: educadores, assistentes sociais por prazo fixo)." },
-    { codigo: "33390.14.00", nome: "Diárias - Civil", tipo: "Corrente", desc: "Custeio de hospedagem e alimentação para viagens a serviço da equipe." },
-    { codigo: "33390.18.00", nome: "Auxílio financeiro a estudantes", tipo: "Corrente", desc: "Bolsas de estudo ou auxílio pago diretamente a alunos/estagiários participantes." },
     { codigo: "33390.30.00", nome: "Material de consumo", tipo: "Corrente", desc: "Bens gastáveis e de consumo rápido (durabilidade < 2 anos): papelaria, combustível, lanches de expediente, itens de limpeza." },
-    { codigo: "33390.31.00", nome: "Premiações culturais e desportivas", tipo: "Corrente", desc: "Prêmios em dinheiro, troféus e medalhas para torneios ou concursos." },
     { codigo: "33390.32.00", nome: "Material para distribuição gratuita", tipo: "Corrente", desc: "Bens comprados para DOAÇÃO direta aos beneficiários: cestas básicas, kits escolares, fardamentos, kits de higiene." },
     { codigo: "33390.33.00", nome: "Passagens e despesas com locomoção", tipo: "Corrente", desc: "Bilhetes de transporte aéreo/rodoviário ou vale/reembolso de transporte para deslocamentos da equipe ou beneficiários." },
     { codigo: "33390.35.00", nome: "Serviços de consultoria", tipo: "Corrente", desc: "Serviços técnicos especializados prestados por peritos ou pareceristas altamente qualificados." },
     { codigo: "33390.36.00", nome: "Outros serviços de terceiros – Pessoa Física", tipo: "Corrente", desc: "Serviço pontual prestado por autônomo (CPF) via RPA (ex: palestrantes, eletricistas, pareceristas individuais)." },
-    { codigo: "33390.37.00", nome: "Locação de mão-de-obra", tipo: "Corrente", desc: "Contratação de empresa terceirizada para fornecimento contínuo de pessoal de apoio (ex: vigilância, limpeza contínua)." },
     { codigo: "33390.39.00", nome: "Outros serviços de terceiros – Pessoa Jurídica", tipo: "Corrente", desc: "Serviços prestados por empresas (CNPJ): gráficas, locação de ônibus/espaços, internet, energia, refeições prontas/buffet." },
     { codigo: "33390.47.00", nome: "Obrigações tributárias e contributivas", tipo: "Corrente", desc: "Taxas, impostos, IPTU, taxas cartorárias ou licenças governamentais." },
     { codigo: "33390.48.00", nome: "Outros auxílios financeiros a pessoa física", tipo: "Corrente", desc: "Repasse direto de ajuda de custo financeira/assistencial para pessoas em vulnerabilidade social." },
     { codigo: "33390.49.00", nome: "Auxílio-transporte", tipo: "Corrente", desc: "Vale-transporte pago na folha aos funcionários contratados do projeto." },
-    { codigo: "4422.51.00", nome: "Obras e instalações", tipo: "Capital", desc: "Construção, reformas estruturais grandes, ampliação de espaços ou instalação de redes/energia solar." },
     { codigo: "4422.52.00", nome: "Equipamentos e material permanente", tipo: "Capital", desc: "Bens móveis duráveis (durabilidade > 2 anos) incorporados ao patrimônio: computadores, ar-condicionado, móveis, veículos." }
 ];
 

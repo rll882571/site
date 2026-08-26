@@ -21,9 +21,10 @@ document.addEventListener('input', function (event) {
     }
 
     // C. MÁSCARA DE MOEDA
-    if (
+   if (
         (target.classList.contains('bold-text') && target.closest('.currency-input')) ||
-        target.classList.contains('money-input-budget')
+        target.classList.contains('money-input-budget') ||
+        target.classList.contains('money-mask') // <-- Linha nova adicionada!
     ) {
         maskMoney(target);
     }
@@ -386,4 +387,123 @@ function desfazerUltimaMesclagem() {
         salvarFormularioAuto();
         alert("Última mesclagem desfeita com sucesso!");
     }
+}
+
+// ============================================================
+// 8. VALIDAÇÃO DE TOTAIS (Resumo vs Detalhamento)
+// ============================================================
+
+window.validarTotaisFormulario = function() {
+    // Função auxiliar interna para converter string formatada (1.000,00) em número (1000.00)
+    const converterParaNumero = (valorString) => {
+        if (!valorString) return 0;
+        return parseFloat(valorString.replace(/\./g, '').replace(',', '.')) || 0;
+    };
+
+    // 1. Coleta os valores digitados/calculados no Tópico 3 (RESUMO)
+    const resumoCorrentes = converterParaNumero(document.getElementById('resumo-despesas-correntes')?.value);
+    const resumoCapital = converterParaNumero(document.getElementById('resumo-despesas-capital')?.value);
+    
+    // 2. Coleta os totais calculados automaticamente no Tópico 5 (DETALHAMENTO)
+    const detalheCorrentes = converterParaNumero(document.getElementById('total-corrente-geral')?.value);
+    const detalheCapital = converterParaNumero(document.getElementById('total-capital-geral')?.value);
+
+    let divergencias = [];
+
+    // 3. Compara os valores
+    if (resumoCorrentes !== detalheCorrentes) {
+        divergencias.push(`- Despesas Correntes: O resumo informa R$ ${resumoCorrentes.toFixed(2)}, mas o detalhamento soma R$ ${detalheCorrentes.toFixed(2)}.`);
+    }
+
+    if (resumoCapital !== detalheCapital) {
+        divergencias.push(`- Despesas de Capital: O resumo informa R$ ${resumoCapital.toFixed(2)}, mas o detalhamento soma R$ ${detalheCapital.toFixed(2)}.`);
+    }
+
+    // 4. Exibe o aviso, mas deixa você escolher se quer continuar
+    if (divergencias.length > 0) {
+        const prosseguir = confirm(
+            "⚠️ ATENÇÃO: Foram encontradas divergências no formulário!\n\n" + 
+            divergencias.join("\n") + 
+            "\n\nDeseja prosseguir com a geração do PDF mesmo com os valores divergentes?"
+        );
+        
+        return prosseguir; // Se clicar em OK, gera o PDF. Se clicar em Cancelar, ele para.
+    }
+
+    return true;
+    };
+    // ============================================================
+// 9. CRONOGRAMA DE DESEMBOLSO DO CONCEDENTE (TÓPICO 4.2) DINÂMICO
+// ============================================================
+
+function addLinhaDesembolsoConcedente(tipo, dadosLinha = null) {
+    const tbody1 = document.getElementById('tbody-desembolso-concedente-1');
+    const tbody2 = document.getElementById('tbody-desembolso-concedente-2');
+    if (!tbody1 || !tbody2) return;
+
+    const rotuloTipo = tipo === 'corrente' ? 'Corrente' : 'Capital';
+    const idUnico = 'desemp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+
+    // 1. Cria a linha da Tabela 1 (Mês 01 a 06)
+    const row1 = document.createElement('tr');
+    row1.setAttribute('data-id-vinculo', idUnico);
+    row1.classList.add(tipo === 'corrente' ? 'linha-corrente' : 'linha-capital');
+
+    row1.innerHTML = `
+        <td>${rotuloTipo}</td>
+        <td><div class="editable meta-desembolso" contenteditable="true" data-placeholder="Meta">${dadosLinha ? (dadosLinha.meta || '') : ''}</div></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[0] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[1] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[2] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[3] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[4] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[5] || '') : ''}"></td>
+        <td class="no-print coluna-acoes">
+            <button type="button" class="btn-remove" onclick="removeLinhaDesembolsoConcedente('${idUnico}')">×</button>
+        </td>
+    `;
+
+    // 2. Cria a linha da Tabela 2 (Mês 07 a 12)
+    const row2 = document.createElement('tr');
+    row2.setAttribute('data-id-vinculo', idUnico);
+    row2.classList.add(tipo === 'corrente' ? 'linha-corrente' : 'linha-capital');
+
+    row2.innerHTML = `
+        <td>${rotuloTipo}</td>
+        <td><div class="editable meta-desembolso" contenteditable="true" data-placeholder="Meta">${dadosLinha ? (dadosLinha.meta || '') : ''}</div></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[6] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[7] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[8] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[9] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[10] || '') : ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[11] || '') : ''}"></td>
+        <td class="no-print coluna-acoes">
+            <button type="button" class="btn-remove" onclick="removeLinhaDesembolsoConcedente('${idUnico}')">×</button>
+        </td>
+    `;
+
+    // Sincronização em tempo real do campo "Meta" entre as duas tabelas
+    const divMeta1 = row1.querySelector('.meta-desembolso');
+    const divMeta2 = row2.querySelector('.meta-desembolso');
+
+    divMeta1.addEventListener('input', () => {
+        divMeta2.innerText = divMeta1.innerText;
+    });
+
+    divMeta2.addEventListener('input', () => {
+        divMeta1.innerText = divMeta2.innerText;
+    });
+
+    tbody1.appendChild(row1);
+    tbody2.appendChild(row2);
+
+    if (!dadosLinha) {
+        salvarFormularioAuto();
+    }
+}
+
+function removeLinhaDesembolsoConcedente(idVinculo) {
+    const linhas = document.querySelectorAll(`tr[data-id-vinculo="${idVinculo}"]`);
+    linhas.forEach(row => row.remove());
+    salvarFormularioAuto();
 }

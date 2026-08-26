@@ -10,10 +10,11 @@ function capturarDadosEstruturados() {
         tbodyDespesasHtml: '', 
         linhasDespesas: [],
         linhasCronograma: [],
-        tabelasDesembolso: []
+        desembolsoConcedente: [], // NOVO: Linhas dinâmicas do 4.2
+        tabelasDesembolsoContrapartida: [] // Tópico 4.3
     };
 
-    // 1. CAPTURA OS DADOS DAS LINHAS DO CRONOGRAMA DE EXECUÇÃO (TÓPICO 4.1)
+    // 1. CAPTURA OS DADOS DO CRONOGRAMA DE EXECUÇÃO (TÓPICO 4.1)
     document.querySelectorAll('#cronograma-table tbody tr').forEach(row => {
         const meta = row.children[0]?.querySelector('.editable')?.innerText.trim() || '';
         const etapa = row.children[1]?.querySelector('.editable')?.innerText.trim() || '';
@@ -31,23 +32,46 @@ function capturarDadosEstruturados() {
         backup.tbodyCronogramaHtml = tbodyCrono.innerHTML;
     }
 
-    // 2. CAPTURA OS DADOS DOS CRONOGRAMAS DE DESEMBOLSO (TÓPICOS 4.2 e 4.3)
-    document.querySelectorAll('.form-section:has(h4) .static-table').forEach((tabela, indexTabela) => {
-        tabela.querySelectorAll('tbody tr').forEach((row, indexRow) => {
-            const meta = row.querySelector('.editable')?.innerText.trim() || row.querySelector('input')?.value || '';
-            const valoresMeses = [];
-            
-            row.querySelectorAll('input[type="text"]').forEach((inp, idx) => {
-                if (idx > 0) {
-                    valoresMeses.push(inp.value);
-                }
-            });
+    // 2. CAPTURA AS LINHAS DINÂMICAS DO DESEMBOLSO DO CONCEDENTE (TÓPICO 4.2)
+    const rowsTabela1 = document.querySelectorAll('#tbody-desembolso-concedente-1 tr');
+    rowsTabela1.forEach(row1 => {
+        const idVinculo = row1.getAttribute('data-id-vinculo');
+        const tipo = row1.classList.contains('linha-corrente') ? 'corrente' : 'capital';
+        const meta = row1.querySelector('.meta-desembolso')?.innerText.trim() || '';
+        
+        const row2 = document.querySelector(`#tbody-desembolso-concedente-2 tr[data-id-vinculo="${idVinculo}"]`);
+        const meses = [];
 
-            backup.tabelasDesembolso.push({ indexTabela, indexRow, meta, valoresMeses });
-        });
+        // Mês 01 ao 06
+        row1.querySelectorAll('input.money-mask').forEach(inp => meses.push(inp.value));
+        // Mês 07 ao 12
+        if (row2) {
+            row2.querySelectorAll('input.money-mask').forEach(inp => meses.push(inp.value));
+        }
+
+        backup.desembolsoConcedente.push({ tipo, meta, meses });
     });
 
-    // 3. CAPTURA OS DADOS DA TABELA DE DESPESAS (TÓPICO 5)
+    // 3. CAPTURA OS DADOS DO CRONOGRAMA DE CONTRAPARTIDA (TÓPICO 4.3)
+    const secaoContrapartida = document.querySelector('.form-section:has(h4:contains("4.3"))') || document.querySelectorAll('.form-section')[4];
+    if (secaoContrapartida) {
+        secaoContrapartida.querySelectorAll('.static-table').forEach((tabela, indexTabela) => {
+            tabela.querySelectorAll('tbody tr').forEach((row, indexRow) => {
+                const meta = row.querySelector('.editable')?.innerText.trim() || row.querySelector('input')?.value || '';
+                const valoresMeses = [];
+                
+                row.querySelectorAll('input[type="text"]').forEach((inp, idx) => {
+                    if (idx > 0) {
+                        valoresMeses.push(inp.value);
+                    }
+                });
+
+                backup.tabelasDesembolsoContrapartida.push({ indexTabela, indexRow, meta, valoresMeses });
+            });
+        });
+    }
+
+    // 4. CAPTURA OS DADOS DA TABELA DE DESPESAS (TÓPICO 5)
     const tbodyDesp = document.querySelector('#tabela-despesas-unica tbody');
     if (tbodyDesp) {
         backup.tbodyDespesasHtml = tbodyDesp.innerHTML; 
@@ -65,7 +89,7 @@ function capturarDadosEstruturados() {
         backup.linhasDespesas.push({ tipo, codigo, desc, unid, qtd, vConced, vPropon });
     });
 
-    // 4. CAPTURA OS CAMPOS COM ID (ORÇAMENTO E DEMAIS INPUTS)
+    // 5. CAPTURA OS CAMPOS COM ID (ORÇAMENTO E DEMAIS INPUTS)
     document.querySelectorAll("input[id], textarea[id], select[id]").forEach(el => {
         if (el.type === 'checkbox') {
             backup.camposPorId[el.id] = el.checked;
@@ -80,7 +104,7 @@ function capturarDadosEstruturados() {
 function aplicarDadosEstruturados(dados) {
     if (!dados) return;
 
-    // 1. RESTAURA O CRONOGRAMA DE EXECUÇÃO E SEUS VALORES NAS COLUNAS (4.1)
+    // 1. RESTAURA O CRONOGRAMA DE EXECUÇÃO (4.1)
     const tbodyCrono = document.querySelector('#cronograma-table tbody');
     if (tbodyCrono && dados.tbodyCronogramaHtml) {
         tbodyCrono.innerHTML = dados.tbodyCronogramaHtml;
@@ -99,31 +123,50 @@ function aplicarDadosEstruturados(dados) {
         }
     }
 
-    // 2. RESTAURA OS DADOS DOS CRONOGRAMAS DE DESEMBOLSO (4.2 e 4.3)
-    if (dados.tabelasDesembolso && dados.tabelasDesembolso.length > 0) {
-        const tabelasStatic = document.querySelectorAll('.form-section:has(h4) .static-table');
-        dados.tabelasDesembolso.forEach(item => {
-            const tabela = tabelasStatic[item.indexTabela];
-            if (tabela) {
-                const row = tabela.querySelectorAll('tbody tr')[item.indexRow];
-                if (row) {
-                    const divMeta = row.querySelector('.editable');
-                    if (divMeta) divMeta.innerText = item.meta;
+    // 2. RESTAURA AS LINHAS DINÂMICAS DO DESEMBOLSO DO CONCEDENTE (4.2)
+    const tbodyDesemp1 = document.getElementById('tbody-desembolso-concedente-1');
+    const tbodyDesemp2 = document.getElementById('tbody-desembolso-concedente-2');
+    if (tbodyDesemp1 && tbodyDesemp2) {
+        tbodyDesemp1.innerHTML = '';
+        tbodyDesemp2.innerHTML = '';
 
-                    const inputs = row.querySelectorAll('input[type="text"]');
-                    let inputIdx = 0;
-                    inputs.forEach((inp, idx) => {
-                        if (idx > 0 && item.valoresMeses[inputIdx] !== undefined) {
-                            inp.value = item.valoresMeses[inputIdx];
-                            inputIdx++;
-                        }
-                    });
+        if (dados.desembolsoConcedente && dados.desembolsoConcedente.length > 0) {
+            dados.desembolsoConcedente.forEach(item => {
+                if (typeof addLinhaDesembolsoConcedente === 'function') {
+                    addLinhaDesembolsoConcedente(item.tipo, item);
                 }
-            }
-        });
+            });
+        }
     }
 
-    // 3. RESTAURA A TABELA DE DESPESAS (TÓPICO 5) COM DADOS COMPLETOS
+    // 3. RESTAURA O CRONOGRAMA DE CONTRAPARTIDA (4.3)
+    if (dados.tabelasDesembolsoContrapartida && dados.tabelasDesembolsoContrapartida.length > 0) {
+        const secaoContrapartida = document.querySelectorAll('.form-section')[4];
+        if (secaoContrapartida) {
+            const tabelasStatic = secaoContrapartida.querySelectorAll('.static-table');
+            dados.tabelasDesembolsoContrapartida.forEach(item => {
+                const tabela = tabelasStatic[item.indexTabela];
+                if (tabela) {
+                    const row = tabela.querySelectorAll('tbody tr')[item.indexRow];
+                    if (row) {
+                        const divMeta = row.querySelector('.editable');
+                        if (divMeta) divMeta.innerText = item.meta;
+
+                        const inputs = row.querySelectorAll('input[type="text"]');
+                        let inputIdx = 0;
+                        inputs.forEach((inp, idx) => {
+                            if (idx > 0 && item.valoresMeses[inputIdx] !== undefined) {
+                                inp.value = item.valoresMeses[inputIdx];
+                                inputIdx++;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    // 4. RESTAURA A TABELA DE DESPESAS (TÓPICO 5)
     const tbodyDesp = document.querySelector('#tabela-despesas-unica tbody');
     if (tbodyDesp) {
         tbodyDesp.innerHTML = ''; 
@@ -162,7 +205,7 @@ function aplicarDadosEstruturados(dados) {
         }
     }
 
-    // 4. RESTAURA OS CAMPOS POR ID
+    // 5. RESTAURA OS CAMPOS POR ID
     if (dados.camposPorId) {
         Object.keys(dados.camposPorId).forEach(id => {
             const el = document.getElementById(id);
@@ -199,7 +242,7 @@ function carregarFormularioAuto() {
 }
 
 function exportarBackup() {
-    if (!validarTotaisFormulario()) {
+    if (typeof validarTotaisFormulario === 'function' && !validarTotaisFormulario()) {
         return;
     }
     const dados = capturarDadosEstruturados();

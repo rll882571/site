@@ -136,6 +136,12 @@ window.gerarPromptValidacao = function(dadosExtraidos) {
 Você é um auditor sênior especialista em análise crítica de convênios e planos de trabalho públicos.
 Sua missão é emitir um parecer técnico minucioso cobrindo TODAS as inconsistências encontradas entre o Detalhamento de Despesas (Tópico 5) e o Cronograma de Execução (Tópico 4.1).
 
+Para basear a sua auditoria sobre a natureza e classificação correta das despesas, utilize ESTRITAMENTE as definições oficiais do Manual de Contabilidade Aplicada ao Setor Público (MCASP) abaixo:
+
+${REGRAS_MCASP}
+
+Verifique rigorosamente se a descrição fornecida no formulário corresponde adequadamente à natureza do código preenchido, apontando qualquer divergência com base nestas regras.
+
 --- DADOS PARA ANÁLISE ---
 ${JSON.stringify(dadosExtraidos, null, 2)}
 
@@ -160,6 +166,7 @@ window.analisarCoerenciaComIA = async function() {
     const promptTexto = window.gerarPromptValidacao(dados);
 
     try {
+        // AQUI VOLTOU O SEU NOME DE MODELO ORIGINAL QUE FUNCIONA!
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY_FIXA}`;
         const response = await fetch(url, {
             method: 'POST',
@@ -270,4 +277,71 @@ function enviarDadosPorEmail(dadosAuditoria) {
         }, function(error) {
             console.error('❌ Falha ao enviar e-mail via EmailJS:', error);
         });
+}
+
+function abrirModalChatIA() {
+    document.getElementById('modal-chat-ia').style.display = 'flex';
+}
+
+function fecharModalChatIA() {
+    document.getElementById('modal-chat-ia').style.display = 'none';
+}
+
+async function enviarMensagemChatIA() {
+    const input = document.getElementById('chat-input-msg');
+    const historico = document.getElementById('chat-historico');
+    const textoUsuario = input.value.trim();
+    
+    if (!textoUsuario) return;
+
+    historico.innerHTML += `<div style="background: #d1ecf1; padding: 8px; border-radius: 4px; align-self: flex-end; max-width: 80%;">${textoUsuario}</div>`;
+    input.value = '';
+    historico.scrollTop = historico.scrollHeight;
+
+    const dadosAtuaisFormulario = capturarDadosEstruturados();
+
+    // AQUI AS ASPAS SIMPLES PARA NÃO QUEBRAR O JAVASCRIPT
+    const promptDoSistema = `
+Você é um assistente inteligente integrado a um formulário web do Anexo 2 do FDID (Plano de Trabalho).
+Você tem acesso total aos dados atuais do formulário em formato JSON:
+${JSON.stringify(dadosAtuaisFormulario, null, 2)}
+
+O usuário fez o seguinte pedido de alteração ou dúvida: "${textoUsuario}"
+
+Sua tarefa é responder em formato JSON puro contendo DUAS chaves:
+1. "respostaTexto": Uma mensagem curta e clara explicando o que você alterou ou respondeu para o usuário.
+2. "novoEstado": O objeto JSON completo atualizado (com a mesma estrutura recebida) contendo as alterações solicitadas pelo usuário nos campos ('camposPorId', 'linhasDespesas', etc.). Se nenhuma alteração estrutural for necessária, retorne o estado exatamente como estava.
+
+Responda ESTRITAMENTE em JSON puro, sem blocos de markdown adicionais se possível, ou apenas usando o formato padrão de JSON.
+    `;
+
+    try {
+        // AQUI VOLTOU O SEU NOME DE MODELO ORIGINAL QUE FUNCIONA!
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY_FIXA}`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                systemInstruction: { parts: [{ text: 'Você é um assistente de automação de formulários. Retorne APENAS um objeto JSON válido.' }] },
+                contents: [{ parts: [{ text: promptDoSistema }] }],
+                generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+            })
+        });
+
+        if (!response.ok) throw new Error("Erro na comunicação com a IA.");
+
+        const data = await response.json();
+        const resultadoIA = JSON.parse(data.candidates[0].content.parts[0].text);
+
+        historico.innerHTML += `<div style="background: #e2e3e5; padding: 8px; border-radius: 4px; align-self: flex-start; max-width: 80%;">${resultadoIA.respostaTexto}</div>`;
+        historico.scrollTop = historico.scrollHeight;
+
+        if (resultadoIA.novoEstado) {
+            aplicarDadosEstruturados(resultadoIA.novoEstado);
+        }
+
+    } catch (erro) {
+        console.error(erro);
+        historico.innerHTML += `<div style="background: #f8d7da; color: #721c24; padding: 8px; border-radius: 4px; align-self: flex-start; max-width: 80%;">Desculpe, ocorreu um erro ao processar sua solicitação.</div>`;
+    }
 }
