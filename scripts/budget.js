@@ -114,9 +114,14 @@ function validarTotaisFormulario() {
     const despProponente = parseVal('total-projeto-propon');
     const despTotalGeral = parseVal('total-projeto-geral');
 
+    const resCorrentes = parseVal('resumo-despesas-correntes');
+    const resCapital = parseVal('resumo-despesas-capital');
+    const despCorrentes = parseVal('total-corrente-geral');
+    const despCapital = parseVal('total-capital-geral');
+
     // 1. SOMA DINÂMICA DOS MESES DO CONCEDENTE (TÓPICO 4.2)
     let cronoConcedente = 0;
-    const inputsMesesConcedente = document.querySelectorAll('#tbody-desembolso-concedente-1 input.money-mask, #tbody-desembolso-concedente-2 input.money-mask');
+    const inputsMesesConcedente = document.querySelectorAll('#tabela-desembolso-concedente-1 input.money-mask, #tabela-desembolso-concedente-2 input.money-mask');
     inputsMesesConcedente.forEach(inp => {
         const v = parseFloat(inp.value.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
         cronoConcedente += v;
@@ -137,8 +142,13 @@ function validarTotaisFormulario() {
 
     let erros = [];
 
-    if (Math.abs(resConcedente - despConcedente) > 0.01) {
-        erros.push(`- Concedente: Resumo 3.1 (R$ ${formatar(resConcedente)}) não bate com Detalhamento 5 (R$ ${formatar(despConcedente)})`);
+    // Usando diretamente a função formatar() com a variável numérica corrigida
+    if (resCorrentes > 0 && Math.abs(resCorrentes - despCorrentes) > 0.01) {
+        erros.push(`- Despesas Correntes: O resumo informa R$ ${formatar(resCorrentes)}, mas o detalhamento soma R$ ${formatar(despCorrentes)}.`);
+    }
+
+    if (resCapital > 0 && Math.abs(resCapital - despCapital) > 0.01) {
+        erros.push(`- Despesas de Capital: O resumo informa R$ ${formatar(resCapital)}, mas o detalhamento soma R$ ${formatar(despCapital)}.`);
     }
 
     if (Math.abs(resProponente - despProponente) > 0.01) {
@@ -158,9 +168,9 @@ function validarTotaisFormulario() {
     }
 
     if (erros.length > 0) {
-        const mensagem = "⚠️ ATENÇÃO: DIVERGÊNCIA NOS VALORES ENCONTRADA!\n\n" +
+        const mensagem = "⚠️ ATENÇÃO: Foram encontradas divergências no formulário!\n\n" +
                          erros.join("\n") + 
-                         "\n\nDeseja prosseguir mesmo assim?";
+                         "\n\nDeseja prosseguir com a geração do PDF mesmo com os valores divergentes?";
         return confirm(mensagem);
     }
 

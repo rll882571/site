@@ -510,3 +510,51 @@ function removeLinhaDesembolsoConcedente(idVinculo) {
     linhas.forEach(row => row.remove());
     salvarFormularioAuto();
 }
+
+// ============================================================
+// CRONOGRAMA DE DESEMBOLSO DO CONCEDENTE (TÓPICO 4.2) INDEPENDENTE
+// ============================================================
+
+function addLinhaTabelaUnica(idTabelaAlvo, tipo, dadosLinha = null) {
+    const tabela = document.getElementById(idTabelaAlvo);
+    if (!tabela) return;
+    const tbody = tabela.querySelector('tbody');
+    if (!tbody) return;
+
+    const rotuloTipo = tipo === 'corrente' ? 'Corrente' : 'Capital';
+    const metaTexto = dadosLinha && dadosLinha.meta ? dadosLinha.meta : '';
+    const mesesValores = dadosLinha && dadosLinha.meses ? dadosLinha.meses : Array(6).fill('');
+
+    const row = document.createElement('tr');
+    row.classList.add(tipo === 'corrente' ? 'linha-corrente' : 'linha-capital');
+
+    row.innerHTML = `
+        <td>${rotuloTipo}</td>
+        <td><div class="editable meta-desembolso" contenteditable="true" data-placeholder="Meta">${metaTexto}</div></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${mesesValores[0] || ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${mesesValores[1] || ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${mesesValores[2] || ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${mesesValores[3] || ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${mesesValores[4] || ''}"></td>
+        <td><input type="text" class="money-mask" placeholder="0,00" value="${mesesValores[5] || ''}"></td>
+        <td class="no-print coluna-acoes">
+            <button type="button" class="btn-remove" onclick="removeLinhaUnicaDesembolso(this)">×</button>
+        </td>
+    `;
+
+    tbody.appendChild(row);
+
+    if (!dadosLinha && typeof salvarFormularioAuto === 'function') {
+        salvarFormularioAuto();
+    }
+}
+
+function removeLinhaUnicaDesembolso(button) {
+    const row = button.closest('tr');
+    if (row) {
+        row.remove();
+        if (typeof salvarFormularioAuto === 'function') {
+            salvarFormularioAuto();
+        }
+    }
+}

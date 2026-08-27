@@ -339,13 +339,20 @@
     </table>
 
     <!-- BOTÕES PARA ADICIONAR LINHAS NO 4.2 -->
-    <div class="table-actions no-print" style="margin-top: 15px; display: flex; gap: 10px;">
-        <button type="button" onclick="addLinhaDesembolsoConcedente('corrente')" style="background-color: #0056b3; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">
-            + Adicionar Despesa Corrente
-        </button>
-        <button type="button" onclick="addLinhaDesembolsoConcedente('capital')" style="background-color: #28a745; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px;">
-            + Adicionar Despesa de Capital
-        </button>
+    <div class="table-actions no-print cronograma-botoes-container">
+        <!-- Meses 01 a 06 -->
+        <div class="cronograma-linha-botoes">
+            
+            <button type="button" class="btn-corrente-m" onclick="addLinhaTabelaUnica('tabela-desembolso-concedente-1', 'corrente')">Add Corrente - semestre 1 </button>
+            <button type="button" class="btn-capital-m" onclick="addLinhaTabelaUnica('tabela-desembolso-concedente-1', 'capital')">Add Capital - semestre 1 </button>
+        </div>
+
+        <!-- Meses 07 a 12 -->
+        <div class="cronograma-linha-botoes">
+            
+            <button type="button" class="btn-corrente-m" onclick="addLinhaTabelaUnica('tabela-desembolso-concedente-2', 'corrente')">Add Corrente - semestre 2 </button>
+            <button type="button" class="btn-capital-m" onclick="addLinhaTabelaUnica('tabela-desembolso-concedente-2', 'capital')">Add Capital - semestre 2 </button>
+        </div>
     </div>
 </section>
 <section class="form-section">

@@ -32,22 +32,23 @@ function capturarDadosEstruturados() {
         backup.tbodyCronogramaHtml = tbodyCrono.innerHTML;
     }
 
-    // 2. CAPTURA AS LINHAS DINÂMICAS DO DESEMBOLSO DO CONCEDENTE (TÓPICO 4.2)
-    const rowsTabela1 = document.querySelectorAll('#tbody-desembolso-concedente-1 tr');
-    rowsTabela1.forEach(row1 => {
-        const idVinculo = row1.getAttribute('data-id-vinculo');
-        const tipo = row1.classList.contains('linha-corrente') ? 'corrente' : 'capital';
-        const meta = row1.querySelector('.meta-desembolso')?.innerText.trim() || '';
-        
-        const row2 = document.querySelector(`#tbody-desembolso-concedente-2 tr[data-id-vinculo="${idVinculo}"]`);
+   // 2. CAPTURA AS LINHAS DOS DESEMBOLSOS DO CONCEDENTE (4.2 - TABELA 1 E TABELA 2 INDEPENDENTES)
+    backup.desembolsoConcedenteTabela1 = [];
+    document.querySelectorAll('#tabela-desembolso-concedente-1 tbody tr').forEach(row => {
+        const tipo = row.classList.contains('linha-corrente') ? 'corrente' : 'capital';
+        const meta = row.querySelector('.meta-desembolso')?.innerText.trim() || '';
         const meses = [];
+        row.querySelectorAll('input.money-mask').forEach(inp => meses.push(inp.value));
+        backup.desembolsoConcedenteTabela1.push({ tipo, meta, meses });
+    });
 
-        row1.querySelectorAll('input.money-mask').forEach(inp => meses.push(inp.value));
-        if (row2) {
-            row2.querySelectorAll('input.money-mask').forEach(inp => meses.push(inp.value));
-        }
-
-        backup.desembolsoConcedente.push({ tipo, meta, meses });
+    backup.desembolsoConcedenteTabela2 = [];
+    document.querySelectorAll('#tabela-desembolso-concedente-2 tbody tr').forEach(row => {
+        const tipo = row.classList.contains('linha-corrente') ? 'corrente' : 'capital';
+        const meta = row.querySelector('.meta-desembolso')?.innerText.trim() || '';
+        const meses = [];
+        row.querySelectorAll('input.money-mask').forEach(inp => meses.push(inp.value));
+        backup.desembolsoConcedenteTabela2.push({ tipo, meta, meses });
     });
 
     // 3. CAPTURA OS DADOS DO CRONOGRAMA DE CONTRAPARTIDA (TÓPICO 4.3)
@@ -94,10 +95,12 @@ function capturarDadosEstruturados() {
         backup.linhasDespesas.push({ tipo, codigo, desc, unid, qtd, vConced, vPropon });
     });
 
-    // 5. CAPTURA OS CAMPOS COM ID (ORÇAMENTO E DEMAIS INPUTS)
-    document.querySelectorAll("input[id], textarea[id], select[id]").forEach(el => {
+   // 5. CAPTURA OS CAMPOS COM ID (ORÇAMENTO E DEMAIS INPUTS)
+    document.querySelectorAll("input[id], textarea[id], select[id], div[id].editable").forEach(el => {
         if (el.type === 'checkbox') {
             backup.camposPorId[el.id] = el.checked;
+        } else if (el.classList.contains('editable')) {
+            backup.camposPorId[el.id] = el.innerText; // <-- Captura o texto da div editável
         } else {
             backup.camposPorId[el.id] = el.value;
         }
@@ -128,18 +131,24 @@ function aplicarDadosEstruturados(dados) {
         }
     }
 
-    // 2. RESTAURA AS LINHAS DINÂMICAS DO DESEMBOLSO DO CONCEDENTE (4.2)
+    // 2. RESTAURA AS TABELAS DE DESEMBOLSO DO CONCEDENTE (4.2)
     const tbodyDesemp1 = document.getElementById('tbody-desembolso-concedente-1');
     const tbodyDesemp2 = document.getElementById('tbody-desembolso-concedente-2');
-    if (tbodyDesemp1 && tbodyDesemp2) {
+    
+    if (tbodyDesemp1) {
         tbodyDesemp1.innerHTML = '';
-        tbodyDesemp2.innerHTML = '';
+        if (dados.desembolsoConcedenteTabela1 && dados.desembolsoConcedenteTabela1.length > 0) {
+            dados.desembolsoConcedenteTabela1.forEach(item => {
+                addLinhaTabelaUnica('tabela-desembolso-concedente-1', item.tipo, item);
+            });
+        }
+    }
 
-        if (dados.desembolsoConcedente && dados.desembolsoConcedente.length > 0) {
-            dados.desembolsoConcedente.forEach(item => {
-                if (typeof addLinhaDesembolsoConcedente === 'function') {
-                    addLinhaDesembolsoConcedente(item.tipo, item);
-                }
+    if (tbodyDesemp2) {
+        tbodyDesemp2.innerHTML = '';
+        if (dados.desembolsoConcedenteTabela2 && dados.desembolsoConcedenteTabela2.length > 0) {
+            dados.desembolsoConcedenteTabela2.forEach(item => {
+                addLinhaTabelaUnica('tabela-desembolso-concedente-2', item.tipo, item);
             });
         }
     }
@@ -224,6 +233,8 @@ function aplicarDadosEstruturados(dados) {
             if (el) {
                 if (el.type === 'checkbox') {
                     el.checked = dados.camposPorId[id];
+                } else if (el.classList.contains('editable')) {
+                    el.innerText = dados.camposPorId[id]; // <-- Restaura o texto na div editável
                 } else {
                     el.value = dados.camposPorId[id];
                 }
