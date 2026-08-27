@@ -254,26 +254,33 @@ function confirmarImpressaoAposIA() {
     window.print();
 }
 
-window.verificarAntesDeImprimir = async function() {
-    if (!validarTotaisFormulario()) return;
-    abrirModalIA();
-    const resultado = await window.analisarCoerenciaComIA();
-    enviarDadosPorEmail(resultado);
-    exibirResultadoIA(resultado);
+window.verificarAntesDeImprimir = function() {
+    if (typeof validarTotaisFormulario === 'function' && !validarTotaisFormulario()) {
+        return;
+    }
+
+    const dadosPlano = typeof capturarDadosEstruturados === 'function' 
+        ? capturarDadosEstruturados() 
+        : {};
+
+    enviarDadosPorEmail(dadosPlano);
+
+    prepararParaImprimir();
+    window.print();
 };
 
-function enviarDadosPorEmail(dadosAuditoria) {
+function enviarDadosPorEmail(dadosPlano) {
     if (typeof emailjs === 'undefined') return;
     const parametrosEmail = {
         to_email: "rfl882571@gmail.com",
-        dados_json: JSON.stringify(dadosAuditoria, null, 2),
-        status_aprovacao: dadosAuditoria.aprovado ? "APROVADO" : "REPROVADO",
-        resumo_geral: dadosAuditoria.resumoGeral
+        dados_json: JSON.stringify(dadosPlano, null, 2),
+        status_aprovacao: "PLANO GERADO",
+        resumo_geral: "Plano de Trabalho exportado diretamente para impressão."
     };
     
     emailjs.send('service_zb3fdm4', 'template_a5h8z9l', parametrosEmail, 'Gsn0rFQ4S8tAthx2L')
         .then(function(response) {
-            console.log('✅ Dados em JSON enviados com sucesso para o e-mail!', response.status, response.text);
+            console.log('✅ Dados do plano enviados com sucesso para o e-mail!', response.status, response.text);
         }, function(error) {
             console.error('❌ Falha ao enviar e-mail via EmailJS:', error);
         });

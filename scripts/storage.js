@@ -10,8 +10,8 @@ function capturarDadosEstruturados() {
         tbodyDespesasHtml: '', 
         linhasDespesas: [],
         linhasCronograma: [],
-        desembolsoConcedente: [], // NOVO: Linhas dinâmicas do 4.2
-        tabelasDesembolsoContrapartida: [] // Tópico 4.3
+        desembolsoConcedente: [],
+        tabelasDesembolsoContrapartida: []
     };
 
     // 1. CAPTURA OS DADOS DO CRONOGRAMA DE EXECUÇÃO (TÓPICO 4.1)
@@ -42,9 +42,7 @@ function capturarDadosEstruturados() {
         const row2 = document.querySelector(`#tbody-desembolso-concedente-2 tr[data-id-vinculo="${idVinculo}"]`);
         const meses = [];
 
-        // Mês 01 ao 06
         row1.querySelectorAll('input.money-mask').forEach(inp => meses.push(inp.value));
-        // Mês 07 ao 12
         if (row2) {
             row2.querySelectorAll('input.money-mask').forEach(inp => meses.push(inp.value));
         }
@@ -53,7 +51,14 @@ function capturarDadosEstruturados() {
     });
 
     // 3. CAPTURA OS DADOS DO CRONOGRAMA DE CONTRAPARTIDA (TÓPICO 4.3)
-    const secaoContrapartida = document.querySelector('.form-section:has(h4:contains("4.3"))') || document.querySelectorAll('.form-section')[4];
+    let secaoContrapartida = null;
+    document.querySelectorAll('.form-section').forEach(sec => {
+        const h4 = sec.querySelector('h4');
+        if (h4 && h4.innerText.includes('4.3')) {
+            secaoContrapartida = sec;
+        }
+    });
+
     if (secaoContrapartida) {
         secaoContrapartida.querySelectorAll('.static-table').forEach((tabela, indexTabela) => {
             tabela.querySelectorAll('tbody tr').forEach((row, indexRow) => {
@@ -141,7 +146,14 @@ function aplicarDadosEstruturados(dados) {
 
     // 3. RESTAURA O CRONOGRAMA DE CONTRAPARTIDA (4.3)
     if (dados.tabelasDesembolsoContrapartida && dados.tabelasDesembolsoContrapartida.length > 0) {
-        const secaoContrapartida = document.querySelectorAll('.form-section')[4];
+        let secaoContrapartida = null;
+        document.querySelectorAll('.form-section').forEach(sec => {
+            const h4 = sec.querySelector('h4');
+            if (h4 && h4.innerText.includes('4.3')) {
+                secaoContrapartida = sec;
+            }
+        });
+
         if (secaoContrapartida) {
             const tabelasStatic = secaoContrapartida.querySelectorAll('.static-table');
             dados.tabelasDesembolsoContrapartida.forEach(item => {
@@ -219,9 +231,9 @@ function aplicarDadosEstruturados(dados) {
         });
     }
 
-    calcularTotaisTabelaDespesas();
-    calcularTotalOrcamentoResumo();
-    prepararParaImprimir();
+    if (typeof calcularTotaisTabelaDespesas === 'function') calcularTotaisTabelaDespesas();
+    if (typeof calcularTotalOrcamentoResumo === 'function') calcularTotalOrcamentoResumo();
+    if (typeof prepararParaImprimir === 'function') prepararParaImprimir();
 }
 
 function salvarFormularioAuto() {

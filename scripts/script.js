@@ -443,6 +443,7 @@ function addLinhaDesembolsoConcedente(tipo, dadosLinha = null) {
 
     const rotuloTipo = tipo === 'corrente' ? 'Corrente' : 'Capital';
     const idUnico = 'desemp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    const metaTexto = dadosLinha && dadosLinha.meta ? dadosLinha.meta : '';
 
     // 1. Cria a linha da Tabela 1 (Mês 01 a 06)
     const row1 = document.createElement('tr');
@@ -451,7 +452,7 @@ function addLinhaDesembolsoConcedente(tipo, dadosLinha = null) {
 
     row1.innerHTML = `
         <td>${rotuloTipo}</td>
-        <td><div class="editable meta-desembolso" contenteditable="true" data-placeholder="Meta">${dadosLinha ? (dadosLinha.meta || '') : ''}</div></td>
+        <td><div class="editable meta-desembolso" contenteditable="true" data-placeholder="Meta">${metaTexto}</div></td>
         <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[0] || '') : ''}"></td>
         <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[1] || '') : ''}"></td>
         <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[2] || '') : ''}"></td>
@@ -470,7 +471,7 @@ function addLinhaDesembolsoConcedente(tipo, dadosLinha = null) {
 
     row2.innerHTML = `
         <td>${rotuloTipo}</td>
-        <td><div class="editable meta-desembolso" contenteditable="true" data-placeholder="Meta">${dadosLinha ? (dadosLinha.meta || '') : ''}</div></td>
+        <td><div class="editable meta-desembolso" contenteditable="true" data-placeholder="Meta">${metaTexto}</div></td>
         <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[6] || '') : ''}"></td>
         <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[7] || '') : ''}"></td>
         <td><input type="text" class="money-mask" placeholder="0,00" value="${dadosLinha && dadosLinha.meses ? (dadosLinha.meses[8] || '') : ''}"></td>
@@ -482,16 +483,18 @@ function addLinhaDesembolsoConcedente(tipo, dadosLinha = null) {
         </td>
     `;
 
-    // Sincronização em tempo real do campo "Meta" entre as duas tabelas
+    // Sincronização em tempo real e salvamento automático ao digitar na Meta
     const divMeta1 = row1.querySelector('.meta-desembolso');
     const divMeta2 = row2.querySelector('.meta-desembolso');
 
     divMeta1.addEventListener('input', () => {
         divMeta2.innerText = divMeta1.innerText;
+        salvarFormularioAuto();
     });
 
     divMeta2.addEventListener('input', () => {
         divMeta1.innerText = divMeta2.innerText;
+        salvarFormularioAuto();
     });
 
     tbody1.appendChild(row1);
